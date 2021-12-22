@@ -123,4 +123,18 @@
                   &= \frac{\partial^2 \phi }{\partial x_i^2}
 \end{align*}
 
+\section{Differential Equations}
+
+\textbf{Euler-Cauchy}
+\begin{align*}
+    \mathcal{L}[y] = \beta_{k}x^k \frac{d^ky}{dx^k} + \dots + \beta_{1} x \frac{dy}{dx} = f(x) 
+\end{align*}
+Try substitution $x=e^z$:
+\begin{align*}
+    \frac{dy}{dx} &= \frac{1}{x} \frac{dy}{dz} \\
+    \frac{d^2y}{dx^2} &= \frac{1}{x^2} [\frac{d^2y}{dz^2}-\frac{dy}{dz}] \\
+    \frac{d^3y}{dx^3} &= \frac{1}{x^3} [\frac{d^3y}{dz^3}-3 \ \frac{d^2y}{dz^2}+2 \ \frac{dy}{dz}]
+\end{align*}
+Note the $a(a-1)(a-2)$ factorial like pattern here.
+
 \end{document}
