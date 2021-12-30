@@ -8,7 +8,7 @@
 
 \section{Some Integrals}
 
-\Large \subsection{Integrating Hyperbolic Functions}
+\Large \textbf{Integrating Hyperbolic Functions}
 
 \begin{align*}
     \int sinh(ax) dx = \frac{1}{a} cosh \ ax + C
@@ -49,8 +49,11 @@
 \begin{align*}
     \int coth(ax) dx = \frac{1}{a} ln(sinh \ ax) + C
 \end{align*}
+\newline
 
-\subsection{Integrating to Hyperbolic Functions}
+
+
+\textbf{Integrating to Hyperbolic Functions}
 
 \begin{align*}
     \int \frac{1}{\sqrt{a^2+x^2}} dx = arcsinh(\frac{x}{a}) + C
@@ -77,7 +80,7 @@
 \end{align*}
 \newline
 
-\subsection{Integrating Trigs}
+\textbf{Integrating Trigs}
 
 \begin{align*}
     \int sin^2(ax) dx = \frac{x}{2} - \frac{1}{4a} sin \ 2ax + C
@@ -94,7 +97,9 @@
 \begin{align*}
     \int x \ cos(ax) dx = \frac{cos \ ax}{a^2} - \frac{x \ sin \ ax}{a}+ C
 \end{align*}
-\newline
+
+\newpage
+
 
 \section{Some Vector Calculus}
 \Large \textbf{Tensors}
@@ -121,7 +126,55 @@
 \begin{align*}
     \nabla^2 \phi &= div(\nabla \phi) \\
                   &= \frac{\partial^2 \phi }{\partial x_i^2}
+\end{align*}  
+\noindent
+\textbf{Green's Theorem}  
+\begin{flushleft}
+Closed curve $C$, $L$ and $M$ are continuously differentiable over $R$. 
+\end{flushleft} 
+\begin{align*}
+    \oint_{C} \  (L \ dx + M \ dy) &= \int_{R} (\frac{\partial M}{\partial x}-\frac{\partial L}{\partial y}) \ dxdy \\
+    \oint_{C} \  \mathbf{F} \cdot \mathbf{\hat{n}} \ ds &= \int_R div \mathbf{F} \  dxdy \\
 \end{align*}
+\newline
+\newline
+
+\noindent
+\textbf{Divergence Theorem}  
+
+Volume $\tau$, closed surface $S$, outward normal $\mathbf{\hat{n}}$ 
+continuous derivatives.
+\begin{align*}
+    \int_S \mathbf{A} \cdot \mathbf{\hat{n}} \ dS= \int_{\tau} \text{div} \mathbf{A}
+\end{align*}  
+\newline
+
+\noindent
+\textbf{Gauss' Flux Theorem}  
+
+\begin{flushleft}
+    $S$ closed surface with outward unit normal $\mathbf{\hat{n}}$, $O$ is the origin of the coordinate system.
+\end{flushleft} 
+\begin{equation}
+    \int_S \frac{\mathbf{r} \cdot \mathbf{\hat{n}}}{r^3} \ dS= 
+    \begin{cases}
+        & 0, \ \text{if $O$ is outside} \\
+        & 4\pi, \ otherwise \\
+    \end{cases}
+\end{equation}  
+\newline
+
+\noindent
+\textbf{Stokes Theorem}
+\begin{flushleft}
+    $S$ an open surface, simple closed curve $\gamma$, $\mathbf{A}$ with continuous partial derivatives, 
+    outward normal $\mathbf{\hat{n}}$ determined by right-hand rule
+\end{flushleft} 
+\begin{align*}
+    \oint_{\gamma} \  \mathbf{A} \cdot \mathbf{dr} = \int_{S} curl \mathbf{A} \cdot \mathbf{\hat{n}} \ dS
+\end{align*}  
+
+\section{Curvilinear coordinates}
 
 \section{Differential Equations}
 
