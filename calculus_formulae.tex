@@ -1,6 +1,9 @@
 \documentclass{article}
 %\usepackage{amsmath}
 \usepackage[fleqn]{amsmath}
+\usepackage{geometry}
+ %\usepackage{showframe} %This line can be used to clearly show the new margins
+\newgeometry{vmargin={15mm}, hmargin={12mm,15mm}}
 \title{Calculus Formulae}
 
 \begin{document}
@@ -8,52 +11,38 @@
 
 \section{Some Integrals}
 
-\Large \textbf{Integrating Hyperbolic Functions}
-
+\subsection{Integrating Hyperbolic Functions}
+\begin{minipage}{.5\linewidth}
 \begin{align*}
-    \int sinh(ax) dx = \frac{1}{a} cosh \ ax + C
+    \int sinh(ax) dx &= \frac{1}{a} cosh \ ax + C \\
 \end{align*}
-
 \begin{align*}
     \int sinh^2(ax) dx &= \frac{1}{4a} sinh \ 2ax - \frac{x}{2} + C
 \end{align*}
-
-\begin{align*}
-    \int sinh^n(ax) dx &= \frac{1}{na} (sinh^{n-1} \ 2ax)(cosh ax) - \frac{n-1}{n} \int sinh^{n-2}(ax) dx
-\end{align*}
-
 \begin{align*}
     \int x \ sinh(ax) dx &= \frac{1}{a} x \ cosh \ ax - \frac{1}{a^2} sinh \ ax + C
 \end{align*}
-
+\end{minipage}%%%%%%%%%%%%%%%%%%%%%%  
+\begin{minipage}{.5\linewidth}
 \begin{align*}
     \int cosh(ax) dx &= \frac{1}{a}sinh \ ax + C
 \end{align*}
-
 \begin{align*}
     \int cosh^2(ax) dx &= \frac{1}{4a} sinh \ 2ax - \frac{x}{2} + C
 \end{align*}
-
-\begin{align*}
-    \int cosh^n(ax) dx &= \frac{1}{na} (cosh^{n-1} \ 2ax)(sinh ax) + \frac{n-1}{n} \int cosh^{n-2}(ax) dx
-\end{align*}
-
 \begin{align*}
     \int x \ cosh(ax) dx &= \frac{1}{a} x \ sinh \ ax - \frac{1}{a^2} cosh \ ax + C
 \end{align*}
+\end{minipage}  
+
 
 \begin{align*}
-    \int tanh(ax) dx = \frac{1}{a} ln(cosh \ ax) + C
+    \int sinh^n(ax) dx &= \frac{1}{na} (sinh^{n-1} \ 2ax)(cosh ax) - \frac{n-1}{n} \int sinh^{n-2}(ax) dx \\
+    \int cosh^n(ax) dx &= \frac{1}{na} (cosh^{n-1} \ 2ax)(sinh ax) + \frac{n-1}{n} \int cosh^{n-2}(ax) dx \\
+    \int tanh(ax) dx &= \frac{1}{a} ln(cosh \ ax) + C \\
+    \int coth(ax) dx &= \frac{1}{a} ln(sinh \ ax) + C \\
 \end{align*}
-
-\begin{align*}
-    \int coth(ax) dx = \frac{1}{a} ln(sinh \ ax) + C
-\end{align*}
-\newline
-
-
-
-\textbf{Integrating to Hyperbolic Functions}
+\subsection{Integrating to Hyperbolic Functions}
 
 \begin{align*}
     \int \frac{1}{\sqrt{a^2+x^2}} dx = arcsinh(\frac{x}{a}) + C
@@ -97,7 +86,10 @@
 \begin{align*}
     \int x \ cos(ax) dx = \frac{cos \ ax}{a^2} - \frac{x \ sin \ ax}{a}+ C
 \end{align*}
-
+\textbf{Integrating to Trigs}  
+% \begin{minipage}
+    
+% \end{minipage}
 \newpage
 
 
@@ -145,7 +137,7 @@ Closed curve $C$, $L$ and $M$ are continuously differentiable over $R$.
 Volume $\tau$, closed surface $S$, outward normal $\mathbf{\hat{n}}$ 
 continuous derivatives.
 \begin{align*}
-    \int_S \mathbf{A} \cdot \mathbf{\hat{n}} \ dS= \int_{\tau} \text{div} \mathbf{A}
+    \int_S \mathbf{A} \cdot \mathbf{\hat{n}} \ dS= \int_{\tau} \text{div} \mathbf{A} \ d\tau
 \end{align*}  
 \newline
 
@@ -173,8 +165,54 @@ continuous derivatives.
 \begin{align*}
     \oint_{\gamma} \  \mathbf{A} \cdot \mathbf{dr} = \int_{S} curl \mathbf{A} \cdot \mathbf{\hat{n}} \ dS
 \end{align*}  
+\newline
 
-\section{Curvilinear coordinates}
+\noindent
+\Large \textbf{Curvilinear coordinates}  
+\newline
+\newline
+
+\textbf{Cylindrical Coordinates}  
+
+The Jacobian determinant is $r$.  
+
+$x = r cos \phi \qquad y = rsin \phi \qquad z=z$
+\begin{align*}
+    h_1 &= 1 \\
+    h_2 &= r \\ 
+    h_3 &= 1 \\
+\end{align*}
+
+\indent Gradient, Divergence, Curl, and Laplacian
+\begin{align*}
+    \nabla &= \hat{r} \frac{\partial}{\partial r} + \frac{\hat{\phi}}{r} \frac{\partial}{\partial \phi} + \hat{k} \frac{\partial}{\partial z} \\
+    \nabla \cdot \mathbf{A} &= \frac{\partial A_1}{\partial r} + \frac{A_1}{r} + \frac{1}{r} \frac{\partial A_2}{\partial \phi} + \frac{\partial A_3}{\partial z} \\
+    curl \mathbf{A} &=\frac{1}{r} \begin{vmatrix}
+        \mathbf{\hat{r}} & r \hat{\phi} & \mathbf{\hat{k}} \\ 
+        \frac{\partial}{\partial r} & \frac{\partial}{\partial \phi} & \frac{\partial}{\partial z} \\ 
+        A_1 & rA_2 & A_3 \\ 
+        \end{vmatrix} \\
+    \nabla^2 \Phi &= \frac{\partial^2 \Phi}{\partial r^2} + \frac{1}{r} \frac{\partial \Phi}{\partial r} + \frac{1}{r^2} \frac{\partial^2 \Phi}{\partial \phi} + \frac{1}{r} \frac{\partial^2 \Phi}{\partial z}
+\end{align*}
+
+\textbf{Spherical Polar}  
+
+The Jacobian determinant is $r^2 sin \theta$.  
+
+$x = r sin \theta cos \phi \qquad y = rsin \theta sin \phi \qquad z=r cos\theta$  
+\begin{align*}
+h_1 &= 1 \\
+h_2 &= r \\ 
+h_3 &= rsin\theta \\
+\end{align*}
+
+\textbf{Grad, Div, Curl and Laplacian in Curvilinear}  
+
+\begin{align*}
+    \nabla &= \frac{\hat{e_1}}{h_1}  \frac{\partial}{\partial u_1} + \frac{\hat{e_2}}{h_2} \frac{\partial}{\partial u_2} + \frac{\hat{e_3}}{h_3}  \frac{\partial}{\partial u_3} \\
+\end{align*}
+
+
 
 \section{Differential Equations}
 
