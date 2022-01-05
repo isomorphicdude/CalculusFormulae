@@ -1,0 +1,18 @@
+---
+output:
+  pdf_document: default
+  html_document: default
+---
+# Calculus Formulae Sheet
+
+## 1 Integrals  
+
+### 1.1 Hyperbolic Functions
+
+
+\begin{align} 
+  \int sinh(ax) dx &= \frac{1}{a} cosh \ ax + C \\
+  \int sinh^2(ax) dx &= \frac{1}{4a} sinh \ 2ax - \frac{x}{2} + C \\
+  \int x \ sinh(ax) dx &= \frac{1}{a} x \ cosh \ ax - \frac{1}{a^2} sinh \ ax + C \\
+\end{align}
+
