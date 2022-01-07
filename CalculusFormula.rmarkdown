@@ -1,18 +1,371 @@
 ---
+title: "Calculus Formulae"
+date: 2022/01/06
 output:
-  pdf_document: default
-  html_document: default
+  pdf_document:
+    number_sections: true
 ---
-# Calculus Formulae Sheet
+# Integrals  
 
-## 1 Integrals  
+## Integrating Hyperbolic Functions
 
-### 1.1 Hyperbolic Functions
+The $sinh$ related:  
 
 
-\begin{align} 
+$$
+\begin{aligned}
   \int sinh(ax) dx &= \frac{1}{a} cosh \ ax + C \\
   \int sinh^2(ax) dx &= \frac{1}{4a} sinh \ 2ax - \frac{x}{2} + C \\
   \int x \ sinh(ax) dx &= \frac{1}{a} x \ cosh \ ax - \frac{1}{a^2} sinh \ ax + C \\
-\end{align}
+   \int sinh^n(ax) dx &= \frac{1}{na} (sinh^{n-1} \ 2ax)(cosh ax) - \frac{n-1}{n} \int sinh^{n-2}(ax) dx \\
+\end{aligned}
+$$
+
+The $cosh$ related:  
+
+$$
+\begin{aligned}
+  \int cosh(ax) dx &= \frac{1}{a}sinh \ ax + C \\
+  \int cosh^2(ax) dx &= \frac{1}{4a} sinh \ 2ax - \frac{x}{2} + C \\
+  \int x \ cosh(ax) dx &= \frac{1}{a} x \ sinh \ ax - \frac{1}{a^2} cosh \ ax + C \\
+  \int cosh^n(ax) dx &= \frac{1}{na} (cosh^{n-1} \ 2ax)(sinh ax) + \frac{n-1}{n} \int cosh^{n-2}(ax) dx
+\end{aligned}
+$$ 
+Others:  
+
+$$
+\begin{aligned}
+  \int tanh(ax) dx &= \frac{1}{a} ln(cosh \ ax) + C \\
+  \int coth(ax) dx &= \frac{1}{a} ln(sinh \ ax) + C \\
+\end{aligned}
+$$
+
+## Integrating to Hyperbolic  
+
+$$
+\begin{aligned}
+  \int \frac{1}{\sqrt{a^2+x^2}} dx &= arcsinh(\frac{x}{a}) + C \\
+  \int \frac{1}{\sqrt{x^2-a^2}} dx &= arccosh(\frac{x}{a}) + C \\
+  \int \frac{1}{a^2-x^2} dx &= \frac{1}{a} \ arctanh(\frac{x}{a}) + C \qquad (x^2<a^2) \\
+  \int \frac{1}{a^2-x^2} dx &= \frac{1}{a} \ arccoth(\frac{x}{a}) + C \qquad (x^2>a^2) \\
+  \int \frac{1}{x\sqrt{a^2-x^2}} dx &= -\frac{1}{a} \ arcsech(\frac{x}{a}) + C \\
+  \int \frac{1}{x\sqrt{a^2+x^2}} dx &= -\frac{1}{a} \ arcsech|\frac{x}{a}| + C \\
+\end{aligned}
+$$  
+
+## Integrating Trigs  
+
+The $sin$ related:  
+
+$$
+\begin{aligned}
+    \int sin^2(ax) dx &= \frac{x}{2} - \frac{1}{4a} sin \ 2ax + C \\
+    \int x \ sin(ax) dx &= \frac{sin \ ax}{a^2} - \frac{x \ cos \ ax}{a}+ C
+\end{aligned}
+$$
+
+The  $cos$ related:  
+
+$$
+\begin{aligned}
+    \int cos^2(ax) dx &= \frac{x}{2} + \frac{1}{4a} sin \ 2ax + C \\
+    \int x \ cos(ax) dx &= \frac{cos \ ax}{a^2} - \frac{x \ sin \ ax}{a}+ C \\
+\end{aligned}
+$$  
+
+Others:  
+
+$$
+\int tan(x) = ln \ |secx|+C
+$$
+
+## Integrating to  Trigs
+
+$$
+\begin{aligned} 
+\int \frac{du}{\sqrt{a^2-u^2}}&=arcsin \left(\frac{u}{a}\right)+C \\ 
+\int \frac{du}{a^2+u^2}&=\dfrac{1}{a}\ arctan \left(\frac{u}{a}\right)+C \\ 
+\int \frac{du}{u\sqrt{u^2-a^2}}&=\frac{1}{a} \ arcsec\left(\frac{|u|}{a}\right)+C \\
+\end{aligned}
+$$
+## Weierstrass Sub  
+
+Set $t=tan(\frac{x}{2})$, then  
+
+$$
+\begin{aligned}
+dx &= \frac{2}{1+t^2} \ dt \\
+sin(x) &= \frac{2}{1+t^2} \\ 
+cos(x) &= \frac{1-t^2}{1+t^2}
+\end{aligned}
+$$
+
+# Vector Calculus
+
+## Tensors
+$$
+\varepsilon_{ijk} \varepsilon_{klm} = \delta_{il} \delta_{jm} - \delta_{im} \delta_{jl}
+$$
+$$
+\varepsilon_{ijk} \varepsilon_{ilm} = \delta_{jl} \delta_{km} - \delta_{jm}\delta_{kl}
+$$  
+
+## Grad,Div,Curl  
+
+### Directional Derivative  
+
+$$
+\begin{aligned}
+    \frac{\partial \phi}{\partial s} &= \frac{\partial \phi}{\partial n} (\hat{n} \cdot  \hat{s}) \\
+                                     &= \mathbf{\hat{s}} \cdot \nabla \phi
+\end{aligned}
+$$  
+
+
+
+### Laplacian  
+
+$$
+\begin{aligned}
+    \nabla^2 \phi &= div(\nabla \phi) \\
+                  &= \frac{\partial^2 \phi }{\partial x_i^2}
+\end{aligned}
+$$ 
+
+## Green, Divergence, Gauss, Stokes  
+
+### Green  
+
+Closed curve $C$, $L$ and $M$ are continuously differentiable over $R$. 
+$$
+\begin{aligned}
+    \oint_{C} \  (L \ dx + M \ dy) &= \int_{R} (\frac{\partial M}{\partial x}-\frac{\partial L}{\partial y}) \ dxdy \\
+    \oint_{C} \  \mathbf{F} \cdot \mathbf{\hat{n}} \ ds &= \int_R \text{div} \mathbf{F} \  dxdy \\
+\end{aligned}
+$$  
+
+### Divergence  
+
+Volume $\tau$, closed surface $S$, outward normal $\mathbf{\hat{n}}$ 
+continuous derivatives.
+$$
+\begin{aligned}
+    \int_S \mathbf{A} \cdot \mathbf{\hat{n}} \ dS= \int_{\tau} \text{div} \mathbf{A} \ d\tau
+\end{aligned}  
+$$  
+
+### Gauss  
+
+$S$ closed surface with outward unit normal $\mathbf{\hat{n}}$, $O$ is the origin of the coordinate system.
+ 
+\begin{equation}
+    \int_S \frac{\mathbf{r} \cdot \mathbf{\hat{n}}}{r^3} \ dS= 
+    \begin{cases}
+        & 0, \ \text{if $O$ is outside} \\
+        & 4\pi, \ otherwise \\
+    \end{cases}
+\end{equation}  
+
+
+### Stokes  
+
+$S$ an open surface, simple closed curve $\gamma$, $\mathbf{A}$ with continuous partial derivatives, outward normal $\mathbf{\hat{n}}$ determined by right-hand rule
+$$
+\begin{aligned}
+    \oint_{\gamma} \  \mathbf{A} \cdot \mathbf{dr} = \int_{S} curl \mathbf{A} \cdot \mathbf{\hat{n}} \ dS
+\end{aligned}
+$$  
+
+
+# Curvilinear Coordinates
+
+## Cylindrical  
+
+The Jacobian determinant is $r$.  
+
+$$
+x = r cos \phi \qquad y = rsin \phi \qquad z=z
+$$  
+The scale factors:  
+
+$$
+\begin{aligned}
+    h_1 &= 1 \\
+    h_2 &= r \\ 
+    h_3 &= 1 \\
+\end{aligned}
+$$  
+The graident  
+
+$$
+\nabla = \hat{r} \frac{\partial}{\partial r} + \frac{\hat{\phi}}{r} \frac{\partial}{\partial \phi} + \hat{k} \frac{\partial}{\partial z}
+$$ 
+The divergence:  
+$$
+\text{div} \mathbf{A} = \frac{\partial A_1}{\partial r} + \frac{A_1}{r} + \frac{1}{r} \frac{\partial A_2}{\partial \phi} + \frac{\partial A_3}{\partial z}
+$$  
+
+The curl: 
+$$
+curl \mathbf{A} =\frac{1}{r} \begin{vmatrix}
+        \mathbf{\hat{r}} & r \hat{\phi} & \mathbf{\hat{k}} \\ 
+        \frac{\partial}{\partial r} & \frac{\partial}{\partial \phi} & \frac{\partial}{\partial z} \\ 
+        A_1 & rA_2 & A_3 \\ 
+        \end{vmatrix}
+$$  
+
+The Laplacian:  
+
+$$
+\nabla^2 \Phi = \frac{\partial^2 \Phi}{\partial r^2} + \frac{1}{r} \frac{\partial \Phi}{\partial r} + \frac{1}{r^2} \frac{\partial^2 \Phi}{\partial \phi^2} + \frac{1}{r} \frac{\partial^2 \Phi}{\partial z^2}
+$$  
+
+## Spherical  
+
+The Jacobian determinant is $r^2 sin \theta$.  
+
+$$
+x = r sin \theta cos \phi \qquad y = rsin \theta sin \phi \qquad z=r cos\theta
+$$
+
+The scale factors:  
+
+$$
+\begin{aligned}
+h_1 &= 1 \\
+h_2 &= r \\ 
+h_3 &= rsin\theta \\
+\end{aligned}
+$$  
+The graident  
+
+$$
+\nabla = \hat{r} \frac{\partial}{\partial r} + \frac{\hat{\theta}}{r} \frac{\partial}{\partial \theta} + \frac{\hat{\phi}}{rsin \ \theta} \frac{\partial}{\partial \phi}
+$$ 
+The divergence:  
+$$
+\text{div} \mathbf{A} = \frac{1}{r^2 \ sin \ \theta} \left \{\frac{\partial}{\partial r} (r^2 \ sin \ \theta \  A_1)+ \frac{\partial}{\partial \theta}(r \ sin \theta \ A_2) + \frac{\partial}{\partial \phi}(r \ A_3)\right \}
+$$  
+
+The curl: 
+$$
+curl \mathbf{A} =\frac{1}{r^2 \ sin \ \theta} \begin{vmatrix}
+        \mathbf{\hat{r}} & r \hat{\theta} & r \ sin \theta \ \hat{\phi} \\ 
+        \frac{\partial}{\partial r} & \frac{\partial}{\partial \theta} & \frac{\partial}{\partial \phi} \\ 
+        A_1 & rA_2 & r \ sin \ \theta \ A_3 \\ 
+        \end{vmatrix}
+$$  
+
+The Laplacian:  
+
+$$
+\nabla^2 \Phi = \frac{\partial^2 \Phi}{\partial r^2} + \frac{2}{r} \frac{\partial \Phi}{\partial r} + \frac{cot \ \theta}{r^2} \frac{\partial \Phi}{\partial \theta}+ \frac{1}{r^2} \frac{\partial^2 \Phi}{\partial \theta^2} + \frac{1}{r^2 sin^2 \ \theta} \frac{\partial^2 \Phi}{\partial \phi^2}
+$$  
+
+## General  
+
+The graident  
+
+$$
+\nabla = \frac{\hat{e_1}}{h_1} \frac{\partial}{\partial u_1} + \frac{\hat{e_2}}{h_2} \frac{\partial}{\partial u_2} + \frac{\hat{e_3}}{h_3} \frac{\partial}{\partial u_3}
+$$ 
+The divergence:  
+$$
+\text{div} \mathbf{A} = \frac{1}{h_1h_2h_3} \left \{\frac{\partial}{\partial u_1} (A_1 \  h_2 \ h_3)+\frac{\partial}{\partial u_2} (A_2 \ h_3 \ h_1)+\frac{\partial}{\partial u_3} (A_3 \ h_1 \  h_2)\right \}
+$$  
+
+The curl: 
+$$
+curl \mathbf{A} =\frac{1}{h_1h_2h_3} \begin{vmatrix}
+        h_1 \mathbf{\hat{e_1}} & h_2 \mathbf{\hat{e_2}} &  h_3 \mathbf{\hat{e_3}} \\ 
+        \frac{\partial}{\partial u_1} & \frac{\partial}{\partial u_2} & \frac{\partial}{\partial u_3} \\ 
+        h_1 \ A_1 & h_2 \ A_2 & h_3 \ A_3 \\ 
+        \end{vmatrix}
+$$  
+
+The Laplacian:  
+
+$$
+\nabla^2 \Phi = \frac{1}{h_1h_2h_3} \left \{\frac{\partial}{\partial u_1} (\frac{h_2 \ h_3}{h_1} \ \frac{\partial \Phi}{\partial u_1})+\frac{\partial}{\partial u_2} (\frac{h_1 \ h_3}{h_2} \ \frac{\partial \Phi}{\partial u_2})+\frac{\partial}{\partial u_3} (\frac{h_2 \ h_1}{h_3} \ \frac{\partial \Phi}{\partial u_3})\right \}
+$$ 
+
+## Vector Jacobian  
+
+$S$ parametrised by $u_1$, $u_2$.  
+$$x=x(u_1,u_2) \qquad y=y(u_1,u_2) \qquad z=z(u_1,u_2)$$
+
+$$dS \ = \ |\mathbf{J}| \ du_1du_2$$  
+where $\mathbf{J}$ is $\frac{\partial \mathbf{r}}{\partial u_1} \times \frac{\partial \mathbf{r}}{\partial u_2}$, $\mathbf{r}=x \ \hat{i} + y \ \hat{j}+z \ \hat{k}$
+
+
+# Calculus of variations  
+
+## Independent of $y$
+$$
+\frac{\partial L}{\partial y'} = K
+$$  
+
+## Independent of $y'$
+$$
+\frac{\partial L}{\partial y} = 0
+$$  
+
+## Independent of $x$
+$$
+L-y' \ \frac{\partial L}{\partial y'} = K
+$$  
+
+## Multivariate  
+A system of **E-L** equations  
+
+$$
+\frac{\partial L}{\partial x_i}-\frac{d}{dt}\frac{\partial L}{\partial x_i'}=0
+$$
+
+## With constraint  
+$$
+\frac{\partial}{\partial y} (L+\lambda g)-\frac{d}{dx}\left(\frac{\partial }{\partial y'}(L+\lambda g)\right)=0
+$$
+
+## Higher dimensions  
+$$
+\frac{\partial L}{\partial f}- \ \text{div}(\mathbf{\nabla_{\nabla f}} \ L)=0
+$$  
+where $\mathbf{\nabla_{p}} A=i\frac{\partial}{\partial p_1}+j\frac{\partial}{\partial p_2}$  
+
+
+# Differential Equations  
+
+## Euler-Cauchy  
+$$
+\mathcal{L}[y] = \beta_{k}x^k \frac{d^ky}{dx^k} + \dots + \beta_{1} x \frac{dy}{dx} = f(x) 
+$$
+Try substitution $x=e^z$:
+$$
+\begin{aligned}
+    \frac{dy}{dx} &= \frac{1}{x} \frac{dy}{dz} \\
+    \frac{d^2y}{dx^2} &= \frac{1}{x^2} [\frac{d^2y}{dz^2}-\frac{dy}{dz}] \\
+    \frac{d^3y}{dx^3} &= \frac{1}{x^3} [\frac{d^3y}{dz^3}-3 \ \frac{d^2y}{dz^2}+2 \ \frac{dy}{dz}]
+\end{aligned}
+$$
+Note the $a(a-1)(a-2)$ factorial like pattern here.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
