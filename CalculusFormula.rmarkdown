@@ -102,14 +102,24 @@ $$
 
 # Vector Calculus
 
-## Tensors
+## Tensors  
+
+### Levi-Civita  
+
+
 $$
 \varepsilon_{ijk} \varepsilon_{klm} = \delta_{il} \delta_{jm} - \delta_{im} \delta_{jl}
 $$
 $$
 \varepsilon_{ijk} \varepsilon_{ilm} = \delta_{jl} \delta_{km} - \delta_{jm}\delta_{kl}
 $$  
+### Common expressions  
 
+$$
+\begin{aligned}
+  
+\end{aligned}
+$$
 ## Grad,Div,Curl  
 
 ### Directional Derivative  
