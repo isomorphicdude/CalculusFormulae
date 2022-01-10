@@ -1,0 +1,8 @@
+---
+title: "Analysis Examples and Counter-examples"
+date: 2022/01/10
+output:
+  pdf_document:
+    number_sections: true
+---
+
