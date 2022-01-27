@@ -1,0 +1,107 @@
+# **Week 2**
+
+## **Constructing Measure**
+
+### **Pre-measure**
+- Maps from an **algebra** to $[0,\infty]$
+- $\mu(\empty)=0$
+- Countably additive whenever that countable union is in the algebra
+
+### **Outer-measure**
+- Maps from $\mathbf{2^X}$ to $[0,\infty]$
+- $\mu(\empty)=0$
+- Sigma-subadditive
+### **Cover**
+A family in $\mathbf{2^X}$ wrt $X$
+- Has empty set
+- Countably many sets' union equals $X$
+- An algebra is easily a cover
+- **e.g.** the union of all intervals cover $R^n$
+### **Extend Pre to Outer**
+$\mathcal{K}$ is a cover, $\tilde{\mu}: \mathcal{K} \rightarrow [0, \infty]$ function on the sets in this cover with $\tilde{\mu}(\empty)=0$ , outer measure for a set is the infimum of the sum of all possible coverings of that set
+$$
+\mu^*(A) = inf \left\{\sum_{j=1}^{\infty} \tilde{\mu} (K_j): \qquad  K_j \in \mathcal{K}, A \subset \cup_{j=1}^{\infty} K_j \right\}
+\qquad
+A \in 2^X
+$$  
+
+This is well-defined, as $A \subset X$ is always covered by some sequence of sets, to show sigma sub-additivity, $A \subset \cup_{k=1}^{\infty} A_k$, and $A_k \subset \cup_{j=1}^{\infty} K_{k,j}$, by infimum $\sum_{j=1}^{\infty} \tilde{\mu}(K_{k,j}) \leq \mu*(A_k) +2^{-k} \epsilon$, then sum over $k$
+### **Generate $\mathbf{\sigma}$-algebra from outer-measure**
+From outer measure $\mu^*$ define:  
+
+$$
+\Sigma = \left\{A \subset X: \qquad \mu^*(B)=\mu^*(B \cap A)+\mu^*(B\setminus A), \ \forall B \subset X\right\}
+$$
+The equality can be replaced by $\geq$ by sigma sub-additivity.  
+
+
+### **Hahn-Caratheodory Extension**
+Extending a pre-measure to a real measure given an algebra.  
+
+**Conditions**
+- $X$ with $\mathcal{A}$ an algebra over it
+
+- $\tilde{\mu}: \mathcal{A} \mapsto [0,\infty]$ a pre-measure
+
+- Define $\mu^*$ with $\mathcal{A}$ being the cover, and $\Sigma$ by previous construction
+
+- Limit $\mu^*$ to $\Sigma$, then $\mu = \mu^* |_{\Sigma}$ is a measure
+
+**Results**
+- $(X, \Sigma, \mu)$ is a measure space
+
+- $\mathcal{A} \subset \Sigma$
+
+- $\mu(A) = \mu^*(A) = \tilde{\mu}(A), \quad \forall A \in \mathcal{A}$
+  
+**Proof**  
+
+- Verify $\mu$ is a measure. Already satisfy $\mu(\empty)=0$ and range $[0,\infty]$. 
+  >- To show **finite additivity**, use definition of $\Sigma$. 
+  >- To show **sigma additivity**, use sub-additivity of $\mu^*$ and other direction of inequality by finite additivity.  
+&nbsp;  
+- Show $\mathcal{A} \subset \Sigma$.  
+  >- $\forall A \in \mathcal{A}$, show $A \in \Sigma$, equiv to $\mu^*(B)=\mu^*(B \cap A)+\mu^*(B\setminus A)$
+  >- Use $\mu^*(K) \leq \tilde{\mu}(K)$
+  >- Use $inf$ definition, and take cover of $B$, $\sum \tilde{\mu} (K_i) \leq \mu^*(B)+\epsilon$
+  >- by additivity of pre-measure.
+  >- $$
+  \mu^*(B \cap A)+\mu^*(B\setminus A) \leq \sum \tilde{\mu} (K_i \cap A)+\tilde{\mu} (K_i \setminus A)=\sum K_i
+  $$
+
+&nbsp;  
+
+- Show $\mu^*(A) = \tilde{\mu}(A)$ in $\mathcal{A}$.
+  >- Only need $\mu^*(A) \geq \tilde{\mu}(A)$
+  >- Consider cover of $A$, $K_i$'s, made into disjoint $\tilde{K_i}$'s, intersected with $A$, $\tilde{\tilde{K_i}}$'s. 
+  >- $$
+   \tilde{\mu}(A) = \sum \tilde{\mu}(\tilde{\tilde{K_i}}) \leq \sum \tilde{\mu} (\tilde{K_i}) \leq \sum \tilde{\mu} (K_i)
+   $$
+  >- Finish by taking infimum.
+
+**Proof of uniqueness**  
+Assume there is another pre-measure with $\nu |_\mathcal{A}=\tilde{\mu}$, then we show their extensions are equal, namely on the same sigma algebra, $\nu |_\Sigma = \mu$
+
+- $\nu (A)\leq \mu (A)$  
+
+Taking cover as usual, 
+$$
+\nu(A) \leq \sum \nu (K_i) =\sum \tilde{\mu}(K_i)
+$$
+Taking infimum, obtain $\nu(A) \leq \mu^*(A) = \mu (A)$  
+
+- $\nu (A)\geq \mu (A)$  
+
+Suppose first $S$ finite  
+
+$$
+\nu(A)+\nu(S\setminus A) \leq \mu(A) + \mu(S\setminus A) = \mu(S)=\tilde{\mu}(S)=\nu(A) \leq \nu(A)+\nu(S\setminus A)
+$$
+So 
+$$
+\mu(A) = \nu(A)+[\nu(S\setminus A)-\mu(S\setminus A)] \leq \nu(A)
+$$  
+For case $S$ infinite, use disjoint covering sets of $A$  
+$$
+\nu(A) \geq lim \ \nu(\cup K_i) = lim \ \mu(\cup K_i)
+=\mu(A)$$
