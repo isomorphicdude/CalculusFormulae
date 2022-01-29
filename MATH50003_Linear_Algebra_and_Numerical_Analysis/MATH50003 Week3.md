@@ -18,8 +18,8 @@ A = [1 2; 4 5; 7 8]
 vec(A) # 1 4 7 2 5 8
 ```
 - **Matrix Multiplication** 
-> - normal  $O(mn)$ complexity
-> - 
+> - normally  $O(mn)$ complexity
+> - Can be reduced to $O(m)$
 ### **Triangular**
 Solution with **forward/back** substitution
 ```julia
@@ -56,7 +56,7 @@ A **bijection** from set to itself. Using two rows notation, sort columns when f
 - Permute to $(v_{\sigma(1)}, \cdots, v_{\sigma(n)})$
 - Permuation is a linear map
 - Find the matrices of the linear maps by consdiering canonical vectors $Pe_k=e_j$, *i.e.* the transpositions $(k,j)$
-- Take identity matrix arranging the $1$ in each column according to above
+- Take identity matrix arranging the $1$ in each **row** according to above
 ### **Permuation Matrices**
 - Permuation matrices are orthogonal (inverse is transpose)
 ```julia
@@ -72,7 +72,8 @@ All orthogonal matrices are products of rotations and reflections
 $$
 Q_θ := \begin{pmatrix} \cos \theta & -\sin \theta \cr \sin \theta & \cos \theta \end{pmatrix}
 $$  
-Rotations perform better than lower triangular matrices. 
+Rotations perform better than lower triangular matrices, as the latter is numerically unstable.  
+
 ### **Reflections**
 Define $\bar{v} = \frac{x}{||x||}$, the reflection matrix $Q_v$ is given by $Q_{\bar{v}}=I-2\bar{v} \bar{v}^T$, reflection across $x$
 - $Q_{\bar{v}}x=-x$
@@ -83,4 +84,6 @@ Define $\bar{v} = \frac{x}{||x||}$, the reflection matrix $Q_v$ is given by $Q_{
 
 **Householder Relfection**  
 
-Choose $y = \mp ||x||e_1+x$ and $v$ as normalized $y$, then $Q=I-2\bar{v} \bar{v}^T$ relfects $x$ to the positive/negative $x-axis$. (positive for minus sign)
+Choose $y = \mp ||x||e_1+x$ and $v$ as normalized $y$, then $Q=I-2\bar{v} \bar{v}^T$ relfects $x$ to the positive/negative $x-axis$. (positive for minus sign).  
+
+Note that `sign(x1)` is often used to avoid numerical instability when applying the `-` sign.  
