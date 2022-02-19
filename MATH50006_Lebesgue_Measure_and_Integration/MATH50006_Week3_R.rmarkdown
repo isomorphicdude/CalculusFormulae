@@ -7,8 +7,6 @@ output:
   
 ---
 
-# **Week 2**
-
 ## **Constructing Measure**
 
 ### **Pre-measure**  
@@ -41,7 +39,7 @@ $$
 A \in 2^X
 $$  
 
-This is well-defined, as $A \subset X$ is always covered by some sequence of sets, to show sigma sub-additivity, $A \subset \cup_{k=1}^{\infty} A_k$, and $A_k \subset \cup_{j=1}^{\infty} K_{k,j}$, by infimum $\sum_{j=1}^{\infty} \tilde{\mu}(K_{k,j}) \leq \mu*(A_k) +2^{-k} \epsilon$, then sum over $k$  
+This is well-defined, as $A \subset X$ is always covered by some sequence of sets, to show sigma sub-additivity, $A \subset \cup_{k=1}^{\infty} A_k$, and $A_k \subset \cup_{j=1}^{\infty} K_{k,j}$, by infimum $\sum_{j=1}^{\infty} \tilde{\mu}(K_{k,j}) \leq \mu^*(A_k) +2^{-k} \epsilon$, then sum over $k$  
 
 ### **Generate $\mathbf{\sigma}$-algebra from outer-measure**  
 
@@ -77,30 +75,33 @@ Extending a pre-measure to a real measure given an algebra.
   
 **Proof**  
 
-- Verify $\mu$ is a measure. Already satisfy $\mu(\empty)=0$ and range $[0,\infty]$. 
+- Verify $\mu$ is a measure. Already satisfy $\mu(\emptyset)=0$ and range $[0,\infty]$. 
 
-  > - To show **finite additivity**, use definition of $\Sigma$. 
+  > - To show **finite additivity**, use definition of $\Sigma$.  
   > - To show **sigma additivity**, use sub-additivity of $\mu^*$ and other direction of inequality by finite additivity.  
   
 &nbsp;  
+
 - Show $\mathcal{A} \subset \Sigma$.  
-  >- $\forall A \in \mathcal{A}$, show $A \in \Sigma$, equiv to $\mu^*(B)=\mu^*(B \cap A)+\mu^*(B\setminus A)$
-  >- Use $\mu^*(K) \leq \tilde{\mu}(K)$
-  >- Use $inf$ definition, and take cover of $B$, $\sum \tilde{\mu} (K_i) \leq \mu^*(B)+\epsilon$
-  >- by additivity of pre-measure.
+
+  >- $\forall A \in \mathcal{A}$, show $A \in \Sigma$, equiv to $\mu^*(B)=\mu^*(B \cap A)+\mu^*(B\setminus A)$  
+  >- Use $\mu^*(K) \leq \tilde{\mu}(K)$  
+  >- Use $inf$ definition, and take cover of $B \subset \cup K_i$, $\sum \tilde{\mu} (K_i) \leq \mu^*(B)+\epsilon$  
+  >- by additivity of pre-measure.  
   >- $$
-  \mu^*(B \cap A)+\mu^*(B\setminus A) \leq \sum \tilde{\mu} (K_i \cap A)+\tilde{\mu} (K_i \setminus A)=\sum K_i
+  \mu^*(B \cap A)+\mu^*(B\setminus A) \leq \sum \tilde{\mu} (K_i \cap A)+\tilde{\mu} (K_i \setminus A)=\sum \tilde{\mu}(K_i)
   $$
 
 &nbsp;  
 
-- Show $\mu^*(A) = \tilde{\mu}(A)$ in $\mathcal{A}$.
-  >- Only need $\mu^*(A) \geq \tilde{\mu}(A)$
-  >- Consider cover of $A$, $K_i$'s, made into disjoint $\tilde{K_i}$'s, intersected with $A$, $\tilde{\tilde{K_i}}$'s. 
+- Show $\mu^*(A) = \tilde{\mu}(A)$ in $\mathcal{A}$.  
+
+  >- Only need $\mu^*(A) \geq \tilde{\mu}(A)$  
+  >- Consider cover of $A$, $K_i$'s, made into disjoint $\tilde{K_i}$'s, intersected with $A$, $\tilde{\tilde{K_i}}$'s.  
   >- $$
-   \tilde{\mu}(A) = \sum \tilde{\mu}(\tilde{\tilde{K_i}}) \leq \sum \tilde{\mu} (\tilde{K_i}) \leq \sum \tilde{\mu} (K_i)
-   $$
-  >- Finish by taking infimum.
+   \tilde{\mu}(A) = \sum \tilde{\mu}(\tilde{\tilde{K_i}}) \leq \sum \tilde{\mu} (\tilde{K_i}) \leq \sum \tilde{\mu}
+   $$  
+  >- Finish by taking infimum of rightmost to $\mu(A)$.  
 
 **Proof of uniqueness**  
 
@@ -119,13 +120,13 @@ Taking infimum, obtain $\nu(A) \leq \mu^*(A) = \mu (A)$
 Suppose first $S$ finite  
 
 $$
-\nu(A)+\nu(S\setminus A) \leq \mu(A) + \mu(S\setminus A) = \mu(S)=\tilde{\mu}(S)=\nu(A) \leq \nu(A)+\nu(S\setminus A)
+\nu(A)+\nu(S\setminus A) \leq \mu(A) + \mu(S\setminus A) = \mu(S)=\tilde{\mu}(S)=\nu(S) \leq \nu(A)+\nu(S\setminus A)
 $$
 So 
 $$
 \mu(A) = \nu(A)+[\nu(S\setminus A)-\mu(S\setminus A)] \leq \nu(A)
 $$  
-For case $S$ infinite, use disjoint covering sets of $A$  
+For case $S$ infinite, use previous result with disjoint covering sets of $A$  
 $$
-\nu(A) \geq lim \ \nu(\cup K_i) = lim \ \mu(\cup K_i)
+\nu(A) \geq lim_{m \rightarrow \infty} \ \nu(\cup_{i=1}^{m} K_i) = lim \ \mu(\cup_{i=1}^{m} K_i)
 =\mu(A)$$
