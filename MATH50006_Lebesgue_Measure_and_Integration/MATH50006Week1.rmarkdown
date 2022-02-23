@@ -1,4 +1,10 @@
-# MATH 50006 Week1
+---
+title: "MATH50006 Week 1"
+date: "18/02/2022"
+output: 
+  pdf_document:
+    number_sections: true
+---
 
 ### **Algebra**
 $X$ an arbitrary set.

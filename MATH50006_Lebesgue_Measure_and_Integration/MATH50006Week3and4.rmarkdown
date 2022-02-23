@@ -1,0 +1,87 @@
+---
+title: "MATH50006 Week 3 and 4"
+date: "18/02/2022"
+output: 
+  pdf_document:
+    number_sections: true
+---
+
+# **The Lebesgue Measure**  
+&nbsp;  
+
+Defined as the Hahn-Caratheodory extension of pre-measure $\tilde{\lambda}$ on $\mathcal{A}$ the **algebra** of collections of **elementray figures**  
+
+$(a,b)=\prod(a_k, b_k)$, with $a_k < b_k$ is the **interval**, whose finite disjoint union forms **elementary figures**  
+
+$$\tilde{\lambda}([a,b])=b-a$$ 
+  
+$\tilde{\lambda}(\cup I)=\sum \tilde{\lambda}(I_i)$ for disjoint $I_j$, is a pre-measure  
+
+### **$\mathbf{\tilde{\lambda}}$ is a Pre-measure**
+- Only need to verify sigma additivity*
+
+- $\tilde{\lambda}(I) \leq \sum^{\infty} I_i$ already by taking limits of finite additivity  
+
+- The other direction is by compactness argument
+
+- Case where $I$ is interval first
+
+- Take $\bar{I}_L=\bar{I} \cap [-L,L]^N$ to ensure boundedness, hence compactness, and for taking $L$ to $\infty$
+
+- Aim to find an open cover for $\bar{I}_L$
+
+- Operate on the $I_i$'s, cover by $I_i^{\epsilon}$, then cover $I_i^{\epsilon}$ by open set $\tilde{I}_i^{\epsilon}$, where 
+
+- $\tilde{\lambda}(\tilde{I}_i^{\epsilon}) \leq (1+\epsilon)^n \lambda(I_i) + \epsilon \ 2^{-i}$
+
+- So can take finite subcover formed by $\tilde{I}_i^{\epsilon}$
+
+- $\tilde{\lambda}(\bar{I}_L) \leq (1+\epsilon)^n \sum \lambda (I_i) +\epsilon$, taking first $\epsilon$ to $0$ then $L \rightarrow \infty$  
+
+### **Borel sigma algebra contained in extension algebra**
+$$
+\mathcal{B}(\mathbb{R}^n) \subset \Sigma
+$$  
+
+where $\Sigma$ is defined from extension thm. 
+  - Note from extension thm., $\mathcal{A} \subset \Sigma$
+  - So suffice to show for open set $\mathcal{O} \in \mathcal{B}(\mathbb{R}^n)$, $\mathcal{O} \in \sigma(\mathcal{A})$ 
+  - Choose half open cubes $[\epsilon, \epsilon+2^{-m})$ at each step in $\mathcal{O}$ and disjoint with previous (finitely many each step)
+
+- Above result finishes Lebesgue measure construction as original domain is $\Sigma$ and borel algebra  
+-
+
+## **Restriction of a Measure**  
+Restriction to $A \subset \mathcal{F}$ in a measure space $(X, \mathcal{F}, \mu)$ with the $\sigma-algebra$, $\mathcal{F}|_A = \{A \cup B: B \subset \mathcal{F}\}$  
+
+**Example:** $A=[0,1]$, with Lebesgue measure is a probability measure, and for $[a,b]$, use $\frac{1}{b-a} \lambda(A)$.
+
+-
+## **Properties of Lebesgue Measure**  
+### **Approximating measure**
+
+For all $A \in \mathcal{B}(\mathbb{R}^n)$,  
+$$
+\lambda(A) = \inf_{A \subset G} \lambda(G), \qquad G \quad \text{open}
+$$  
+Proof by  
+- $\lambda(A) \leq \lambda(G)$ from monotonicity
+
+- Show $\lambda(A) \geq \lambda(G)$ using property $\lambda^* = \lambda$, and take open cover $\lambda (G) \leq \sum \lambda (\tilde{I}_j) \leq \sum \lambda(I_j) + \epsilon$, where the open sets are chosen similarly to above, finally by definition of $\sum \lambda (I_j) \leq \lambda^*(A)+\epsilon$; take to zero  
+
+It also follows there is $\lambda(G \setminus A) <\epsilon$, for some $G$   
+
+More commonly it's closed set with in $F \subset A \subset G$, s.t. $\lambda(G \setminus F) < \epsilon$ 
+
+### **Approximating with general extended measure**
+For all $A \in \sigma(A)$, we have mutually disjoint sets $A_i$ with  
+$$
+\mu(\cup_{i=1}^{\infty} A_i \setminus A) < \epsilon
+$$
+### **Translational Invariance**  
+Define the translation of sets as $\Phi_{x_0} (A) = A+x_0$ in borel sigma algebra,   
+$$\lambda(\Phi_{x_0}(A)) = \lambda(A)$$  
+Proof by considering intervals first, then open sets written as union of intervals, finally use open set approximation for arbitrary sets.  
+
+### **Vitali Sets**
+
