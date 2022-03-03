@@ -14,10 +14,13 @@ Defined as the Hahn-Caratheodory extension of pre-measure $\tilde{\lambda}$ on $
 $(a,b)=\prod(a_k, b_k)$, with $a_k < b_k$ is the **interval**, whose finite disjoint union forms **elementary figures**  
 
 $$\tilde{\lambda}([a,b])=b-a$$ 
+
+while for higher dimensions $\tilde{\lambda}(\prod_{i=1}^{n}[a_i,b_i])=\prod_{i=1}^{n}(b_i-a_i)$  
   
 $\tilde{\lambda}(\cup I)=\sum \tilde{\lambda}(I_i)$ for disjoint $I_j$, is a pre-measure  
 
-### **$\mathbf{\tilde{\lambda}}$ is a Pre-measure**
+### **$\mathbf{\tilde{\lambda}}$ is a Pre-measure**  
+
 - Only need to verify sigma additivity*
 
 - $\tilde{\lambda}(I) \leq \sum^{\infty} I_i$ already by taking limits of finite additivity  
@@ -56,8 +59,8 @@ Restriction to $A \subset \mathcal{F}$ in a measure space $(X, \mathcal{F}, \mu)
 
 **Example:** $A=[0,1]$, with Lebesgue measure is a probability measure, and for $[a,b]$, use $\frac{1}{b-a} \lambda(A)$.
 
--
 ## **Properties of Lebesgue Measure**  
+
 ### **Approximating measure**
 
 For all $A \in \mathcal{B}(\mathbb{R}^n)$,  
@@ -65,6 +68,7 @@ $$
 \lambda(A) = \inf_{A \subset G} \lambda(G), \qquad G \quad \text{open}
 $$  
 Proof by  
+
 - $\lambda(A) \leq \lambda(G)$ from monotonicity
 
 - Show $\lambda(A) \geq \lambda(G)$ using property $\lambda^* = \lambda$, and take open cover $\lambda (G) \leq \sum \lambda (\tilde{I}_j) \leq \sum \lambda(I_j) + \epsilon$, where the open sets are chosen similarly to above, finally by definition of $\sum \lambda (I_j) \leq \lambda^*(A)+\epsilon$; take to zero  

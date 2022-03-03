@@ -358,7 +358,17 @@ $$
     \frac{d^3y}{dx^3} &= \frac{1}{x^3} [\frac{d^3y}{dz^3}-3 \ \frac{d^2y}{dz^2}+2 \ \frac{dy}{dz}]
 \end{aligned}
 $$
-Note the $a(a-1)(a-2)$ factorial like pattern here.
+Note the $a(a-1)(a-2)$ factorial like pattern here.  
+
+## Linear 1st order ODE  
+
+$$
+\frac{dx}{dt} + a(t)x = f(t)
+$$  
+solved by  
+$$
+\lambda(t) = e^{-\int a(t) dt} \left[ \int e^{\int a(t) dt} f(t) dt + c\right]
+$$  
 
 
 
