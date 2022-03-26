@@ -2,7 +2,8 @@
 title: "MATH50003 Problem Sheets and Solutions"
 date: "25/02/2022"
 output: 
-  pdf_document
+  pdf_document:
+    latex_engine: xelatex
 ---
 # Week 1  
 
@@ -374,8 +375,120 @@ $$
 |\delta_{x,h}^{\rm CD}| \leq {|f'(x)| \over 2} \epsilon_{\rm m} + {M \over 3} h^2 + {2 c \epsilon_{\rm m} \over h}
 $$  
 
+To compute the errors of the central difference approximation of $f'(x)$ we compute
+
+$$\left| \frac{f(x+h)-f(x-h)}{2h} - f'(x) \right|=$$
+$$ =\left| \frac{1 + (x+h) + (x+h)^2 - 1 - (x-h) - (x-h)^2}{2h} - (1+2x)\right|=$$
+$$ =\left| \frac{2h + 4hx}{2h} - 1 -2x\right| = 0.$$
+
+As we can see, in this case the central difference approximation is exact. The errors we start observing for small step sizes are thus numerical in nature. The values of the function at $f(x+h)$ and $f(x-h)$ eventually become numerically indistinguishable and thus this finite difference approximation to the derivative incorrectly results in $0$.
 
 
+To compute the errors of the central difference approximation of $g'(x)$ we compute
+
+$$\left| \frac{g(x+h)-g(x-h)}{2h} - g'(x) \right|=$$
+$$ =\left| \frac{1 + \frac{(x+h)}{3} + (x+h)^2 - 1 - \frac{(x-h)}{3} - (x-h)^2}{2h} - \left(\frac{1}{3}+2x \right)\right|=$$
+$$ =\left| \frac{1}{3} + 2x - \frac{1}{3} - 2x\right| = 0.$$
+
+
+
+**Problem 1.3 (A)** Use Taylor's theorem to derive an error bound on the second-order derivative approximation
+$$
+f''(x) \approx {f(x+h) - 2f(x) + f(x-h) \over h^2}
+$$
+Find an error bound when implemented in floating point arithmetic, assuming that
+$$
+f^{\rm FP}(x) = f(x) + \delta_x
+$$
+where $|\delta_x| \leq c \epsilon_{\rm m}$.
+
+**SOLUTION**
+
+Using the same two formulas as in 1.1 we have
+$$f(x+h) = f(x) + f'(x)h + \frac{f''(x)}{2}h^2 + \frac{f'''(z_1)}{6}h^3,$$
+for some $z_1 \in (x, x+h)$
+and
+$$f(x-h) = f(x) + f'(x)(-h) + \frac{f''(x)}{2}h^2 - \frac{f'''(z_2)}{6}h^3,$$
+for some $z_2 \in (x-h, x)$.
+
+Summing the two we obtain
+$$f(x+h) + f(x-h) = 2f(x) + f''(x)h^2 + \frac{f'''(z_1)}{6}h^3 - \frac{f'''(z_2)}{6}h^3.$$
+
+Thus,
+$$f''(x) = \frac{f(x+h) - 2f(x) + f(x-h)}{h^2} + \frac{f'''(z_2) - f'''(z_1)}{6}h.$$
+
+Hence, the error is 
+$$\left|f''(x) - \frac{f(x+h) - 2f(x) + f(x-h)}{h^2}\right| = \left|\frac{f'''(z_2) - f'''(z_1)}{6}h\right|\le 2Ch ,$$
+where again
+$$C = \max_{y\in[x-h,x+h]}\left|\frac{f'''(y)}{6}\right|.$$
+
+In floating point arithmetic, the error is
+$$\left|f''^{FP}(x) - f''(x) \right|=  
+\left|\frac{f^{FP}(x+h) - 2f^{FP}(x) + f^{FP}(x-h)}{h^2} - \frac{f(x+h) - 2f(x) + f(x-h)}{h^2} - \frac{f'''(z_2) - f'''(z_1)}{6}h\right|$$
+$$\le \left|\frac{(f^{FP}(x+h) - f(x+h)) - 2(f^{FP}(x)  - f(x)) + (f^{FP}(x-h) - f(x-h))}{h^2}\right| + \left|\frac{f'''(z_2) - f'''(z_1)}{6}h\right|$$
+$$\le \left|\frac{\delta_{x+h} - 2\delta_x + \delta_{x-h}}{h^2}\right| + 2Ch \le \frac{4c\epsilon_m}{h^2} + 2Ch.$$
+
+
+# Week 3  
+
+## 1. Banded Matrices  
+
+**Problem 2.2 (B)** Given $\mathbf{x} \in \mathbb{R}^n$, find a lower triangular matrix of the form
+$$
+L = I - 2 \mathbf{v} \mathbf{e}_1^⊤
+$$
+such that:
+$$
+L \mathbf{x} = x_1 \mathbf{e}_1.
+$$
+What does $L\mathbf{y}$ equal if $\mathbf{y}  \in \mathbb{R}^n$ satisfies $y_1 = \mathbf{e}_1^⊤ \mathbf{y} = 0$?
+
+**SOLUTION**
+
+By straightforward computation we find
+
+$$Lx = x - 2 \mathbf{v} \mathbf{e}_1^⊤x = x - 2 \mathbf{v} x_1$$
+
+and thus we find such a lower triangular $L$ by choosing $v_1 = 0$ and $v_k = \frac{x_k}{2 x_1}$ for $k=2..n$ and $x_1 \neq 0$.   
+
+
+## 2. Orthogonal Matrices  
+
+
+**Problem 5.1⋆ (C)** Show that orthogonal matrices preserve the 2-norm of vectors:
+$$
+\|Q 𝐯\| = \|𝐯\|.
+$$
+
+**SOLUTION**
+$$
+\|Q 𝐯\|^2 = (Q 𝐯)^⊤ Q 𝐯 = 𝐯^⊤ Q^⊤ Q 𝐯 = 𝐯^⊤  𝐯 = \|𝐯\|^2
+$$
+∎
+
+**Problem 5.2⋆ (B)** Show that the eigenvalues $λ$ of an orthogonal matrix $Q$ are
+on the unit circle: $|λ| = 1$.
+
+**SOLUTION**
+Let $𝐯$ be a unit eigenvector corresponding to $λ$: $Q 𝐯 = λ 𝐯$ with $\|𝐯\| = 1$. Then
+$$
+1 = \| 𝐯 \| = \|Q 𝐯 \| =  \| λ 𝐯 \| = |λ|.
+$$
+∎
+
+**Problem 5.3⋆ (A)** Explain why an orthogonal matrix $Q$ must be equal to $I$ if all its eigenvalues are 1.
+
+**SOLUTION**
+
+Note that $Q$ is normal ($Q^⊤ Q = I$) and therefore by the spectral theorem for 
+normal matrices we have
+$$
+Q = Q̃ Λ Q̃^⋆ = Q̃ Q̃^⋆ = I
+$$
+since $Q̃$ is unitary. 
+
+**Problem 5.4 (B)** Complete the implementation of a type representing
+reflections that supports `Q[k,j]` and such that `*` takes $O(n)$ operations.
 
 
 

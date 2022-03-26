@@ -373,7 +373,9 @@ $$
 - $tr<0, \ det>0 \implies Re \lambda <0, stable$
 - $tr^2-4det <0 \implies Non-real$  
 - $tr>0, \ det>0 \implies Re \lambda >0, unstable$
-- $det<0 \implies saddle$ (opposite signs)
+- $det<0 \implies saddle$ (opposite signs)  
+
+## 
 
 
 
