@@ -87,8 +87,10 @@ $$
 \int \frac{du}{a^2+u^2}&=\dfrac{1}{a}\ arctan \left(\frac{u}{a}\right)+C \\ 
 \int \frac{du}{u\sqrt{u^2-a^2}}&=\frac{1}{a} \ arcsec\left(\frac{|u|}{a}\right)+C \\
 \end{aligned}
-$$
+$$  
+
 ## Weierstrass Sub  
+
 
 Set $t=tan(\frac{x}{2})$, then  
 
@@ -115,11 +117,7 @@ $$
 $$  
 ### Common expressions  
 
-$$
-\begin{aligned}
-  
-\end{aligned}
-$$
+
 ## Grad,Div,Curl  
 
 ### Directional Derivative  
@@ -168,13 +166,13 @@ $$
 
 $S$ closed surface with outward unit normal $\mathbf{\hat{n}}$, $O$ is the origin of the coordinate system.
  
-\begin{equation}
-    \int_S \frac{\mathbf{r} \cdot \mathbf{\hat{n}}}{r^3} \ dS= 
+$$
+\int_S \frac{\mathbf{r} \cdot \mathbf{\hat{n}}}{r^3} \ dS= 
     \begin{cases}
         & 0, \ \text{if $O$ is outside} \\
         & 4\pi, \ otherwise \\
     \end{cases}
-\end{equation}  
+$$
 
 
 ### Stokes  
@@ -369,6 +367,13 @@ solved by
 $$
 \lambda(t) = e^{-\int a(t) dt} \left[ \int e^{\int a(t) dt} f(t) dt + c\right]
 $$  
+
+## Trace and Det. Rule  
+
+- $tr<0, \ det>0 \implies Re \lambda <0, stable$
+- $tr^2-4det <0 \implies Non-real$  
+- $tr>0, \ det>0 \implies Re \lambda >0, unstable$
+- $det<0 \implies saddle$ (opposite signs)
 
 
 
