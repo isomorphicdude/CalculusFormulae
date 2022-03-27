@@ -1,6 +1,6 @@
 ---
 title: "Calculus Formulae"
-date: 2022/01/06
+date: 2022/03/27
 output:
   pdf_document:
     number_sections: true
@@ -108,25 +108,40 @@ $$
 
 ### Levi-Civita  
 
-
 $$
 \varepsilon_{ijk} \varepsilon_{klm} = \delta_{il} \delta_{jm} - \delta_{im} \delta_{jl}
 $$
 $$
 \varepsilon_{ijk} \varepsilon_{ilm} = \delta_{jl} \delta_{km} - \delta_{jm}\delta_{kl}
-$$  
+$$   
+
 ### Common expressions  
+
+- $[A \times B]_i = \varepsilon_{ijk} A_j B_k$  
+
+- $A \cdot B = A_i B_i$  
+
+- (Divergence) $div A = \frac{\partial A_i}{\partial x_i}$, *solenoidal* if zero
+
+- (Gradient) $[\nabla \phi]_i = \frac{\partial \phi}{\partial x_i}$  
+
+- (Curl) $[curl A]_i = \varepsilon_{ijk} \frac{\partial \phi}{\partial x_j} A_k$, *irrotational* if zero. 
 
 
 ## Grad,Div,Curl  
 
 ### Directional Derivative  
+Surface $\phi$ in direction of $\hat{s} := \vec{PQ}$ with length $s=|PQ|$.  
 
 $$
 \begin{aligned}
     \frac{\partial \phi}{\partial s} &= \frac{\partial \phi}{\partial n} (\hat{n} \cdot  \hat{s}) \\
                                      &= \mathbf{\hat{s}} \cdot \nabla \phi
 \end{aligned}
+$$  
+For Cartesian,  
+$$
+\nabla \phi = \frac{\partial \phi}{\partial x} i +\frac{\partial \phi}{\partial y} j + \frac{\partial \phi}{\partial z} k
 $$  
 
 
@@ -375,7 +390,69 @@ $$
 - $tr>0, \ det>0 \implies Re \lambda >0, unstable$
 - $det<0 \implies saddle$ (opposite signs)  
 
-## 
+## Complex Jordan Forms  
+
+Eigenvalues $\lambda=a\pm ib$ and evectors $u \pm iv$ resp.  
+
+$$
+J = \begin{pmatrix}a&b\\-b&a\end{pmatrix}, \  T= (u,v) 
+$$  
+
+
+## Matrix Exponentials  
+
+**Real**  
+$d$ is dimension of this block  
+
+$$
+exp(\begin{pmatrix}
+    \lambda&1&\cdots&0 \\ 
+    & \ddots & \ddots\\
+   &  & \ddots & 1 \\
+    0 & & & \lambda
+\end{pmatrix}) = e^{\lambda t} \begin{pmatrix}
+1 & t & \frac{t^2}{2} & \cdots & \frac{t^{d-1}}{(d-1)!} \\
+0 & 1 & t & \ddots & \vdots \\
+& & \ddots & \ddots & \frac{t^2}{2} \\
+0   & & & 1 & t \\
+0 & 0 & 0 &  & 1 
+\end{pmatrix}
+$$
+
+**Complex**  
+Eigenvalues $\lambda=a\pm ib$ and $G(t)=\begin{pmatrix}cos(bt) & sin(bt) \\ -sin(bt) & cos(bt) \end{pmatrix}$  
+
+$$
+exp(\begin{pmatrix}
+    C&I_2&\cdots&0 \\ 
+    & \ddots & \ddots\\
+   &  & \ddots & I_2 \\
+    0 & & & C
+\end{pmatrix}) = e^{at} \begin{pmatrix}
+G(t) & tG(t) & \frac{t^2}{2}G(t) & \cdots & \frac{t^{d-1}}{(d-1)!}G(t) \\
+0 & G(t) & tG(t) & \ddots & \vdots \\
+& & \ddots & \ddots & \frac{t^2}{2}G(t) \\
+0   & & & G(t) & tG(t) \\
+0 & 0 & 0 &  & G(t)
+\end{pmatrix}
+$$  
+
+
+
+
+
+## Ansatz für Lyapunov Functions  
+
+$$
+V(x,y) = ax^2 + 2abxy+cy^2
+$$  
+with $a>0$ and $ac-b^2>0$.  
+
+
+
+
+
+
 
 
 
