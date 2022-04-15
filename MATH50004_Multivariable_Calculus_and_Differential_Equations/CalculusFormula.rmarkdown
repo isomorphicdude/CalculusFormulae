@@ -1,6 +1,6 @@
 ---
 title: "Calculus Formulae"
-date: 2022/03/27
+date: '`r format(Sys.time(), "%d %B, %Y")`'
 output:
   pdf_document:
     number_sections: true
@@ -145,7 +145,6 @@ $$
 $$  
 
 
-
 ### Laplacian  
 
 $$
@@ -153,9 +152,35 @@ $$
     \nabla^2 \phi &= div(\nabla \phi) \\
                   &= \frac{\partial^2 \phi }{\partial x_i^2}
 \end{aligned}
-$$ 
+$$  
+
+
+### Some Results  
+
+- (Linearity) $\nabla (\phi_1+\phi_2)=\nabla \phi_1+\nabla \phi_2$, the same holds for div and curl
+
+- (Chain-like $\nabla$) $\nabla(\phi \psi)=\psi  \ \nabla(\phi)+\phi \  \nabla(\psi)$ 
+
+- (Chain-like $div$) $div(\phi \mathbf{A}) =\phi \ div(\mathbf{A}) + \nabla \phi \cdot \mathbf{A}$, with $\mathbf{A}$ being a vector field
+
+- (Chain-like $curl$) $curl(\phi \mathbf{A}) =\phi curl(\mathbf{A}) + \nabla \phi \times \mathbf{A}$, with $\mathbf{A}$ being a vector field  
+
+- $div(curl  \ \mathbf{A})=0$  
+
+- $curl(curl(\mathbf{A}))=\nabla(div(\mathbf{A}))-\nabla^2 \mathbf{A}$  
+
+
 
 ## Green, Divergence, Gauss, Stokes  
+
+
+### Projection  
+ 
+Choose plane of projection $\Sigma$, e.g. $z=0$ with normal $\mathbf{k}$, only valid when the plane $S$ with normal $\hat{n}$ is not orthogonal to plane of projection 
+
+$$
+  \int_S f(P) dS = \int_{\Sigma} f(P) \frac{dxdy}{|\hat{n} \cdot \mathbf{k}|}
+$$
 
 ### Green  
 
@@ -165,7 +190,9 @@ $$
     \oint_{C} \  (L \ dx + M \ dy) &= \int_{R} (\frac{\partial M}{\partial x}-\frac{\partial L}{\partial y}) \ dxdy \\
     \oint_{C} \  \mathbf{F} \cdot \mathbf{\hat{n}} \ ds &= \int_R \text{div} \mathbf{F} \  dxdy \\
 \end{aligned}
-$$  
+$$   
+The second identity is *Divergence Thm.* in $2-D$.  
+
 
 ### Divergence  
 
@@ -323,6 +350,16 @@ where $\mathbf{J}$ is $\frac{\partial \mathbf{r}}{\partial u_1} \times \frac{\pa
 
 # Calculus of variations  
 
+Family of curves $y(x,\epsilon)=Y(x)+\epsilon \eta(x)$  
+
+With *functional* $L:=L(x,y,y')$  
+
+## One Dimensional  
+
+$$
+\frac{\partial L}{\partial y'} - \frac{d}{dx} (\frac{\partial L}{\partial Y'})=0
+$$
+
 ## Independent of $y$
 $$
 \frac{\partial L}{\partial y'} = K
@@ -346,6 +383,8 @@ $$
 $$
 
 ## With constraint  
+
+Constraint $J_0 = \int_{x_1}^{x_2}g(x,y,y')dx$ being a fixed constant
 $$
 \frac{\partial}{\partial y} (L+\lambda g)-\frac{d}{dx}\left(\frac{\partial }{\partial y'}(L+\lambda g)\right)=0
 $$
@@ -388,15 +427,46 @@ $$
 - $tr<0, \ det>0 \implies Re \lambda <0, stable$
 - $tr^2-4det <0 \implies Non-real$  
 - $tr>0, \ det>0 \implies Re \lambda >0, unstable$
-- $det<0 \implies saddle$ (opposite signs)  
+- $det<0 \implies saddle$ (opposite signs)   
+
+## Solution to Linear Systems  
+
+$$
+\dot{x}=Ax
+$$  
+is solved by  
+
+$$
+x(t)=\exp(At)x_0
+$$  
+**Lyapunov Exponents**  
+Defined for nontrivial solutions starting in $E_j$ (cf. Pg.57&PS5)   
+
+$$
+\sigma_{Lyap}(\varphi(\cdot,x))=\lim_{t\to \infty} \frac{\ln||\varphi(t,x)||}{t}
+$$  
+
 
 ## Complex Jordan Forms  
 
 Eigenvalues $\lambda=a\pm ib$ and evectors $u \pm iv$ resp.  
 
 $$
-J = \begin{pmatrix}a&b\\-b&a\end{pmatrix}, \  T= (u,v) 
+J = \begin{pmatrix}a&b\\-b&a\end{pmatrix}, \  T=\begin{pmatrix}u_1&v_1 \\ u_2&v_2\end{pmatrix}
+$$   
+$T$ has columns as basis vectors.  
+
+$$
+A=TJT^{-1}
 $$  
+
+Easier to see the sign of $b$ by writing (either is fine)  
+$$
+\begin{aligned}
+  Au&=au-bv \\
+  Av&=bu+av
+\end{aligned}
+$$   
 
 
 ## Matrix Exponentials  
@@ -405,7 +475,7 @@ $$
 $d$ is dimension of this block  
 
 $$
-exp(\begin{pmatrix}
+\exp(\begin{pmatrix}
     \lambda&1&\cdots&0 \\ 
     & \ddots & \ddots\\
    &  & \ddots & 1 \\
@@ -417,13 +487,20 @@ exp(\begin{pmatrix}
 0   & & & 1 & t \\
 0 & 0 & 0 &  & 1 
 \end{pmatrix}
+$$  
+In $\mathbb{R}^2$  
+
 $$
+\exp(t \ \begin{pmatrix}\lambda &1 \\ 0&\lambda \end{pmatrix}) = \begin{pmatrix} e^{\lambda t} & te^{\lambda t} \\ 0 & e^{\lambda t}\end{pmatrix}
+$$
+&nbsp;  
+
 
 **Complex**  
 Eigenvalues $\lambda=a\pm ib$ and $G(t)=\begin{pmatrix}cos(bt) & sin(bt) \\ -sin(bt) & cos(bt) \end{pmatrix}$  
 
 $$
-exp(\begin{pmatrix}
+\exp(\begin{pmatrix}
     C&I_2&\cdots&0 \\ 
     & \ddots & \ddots\\
    &  & \ddots & I_2 \\
@@ -437,6 +514,12 @@ G(t) & tG(t) & \frac{t^2}{2}G(t) & \cdots & \frac{t^{d-1}}{(d-1)!}G(t) \\
 \end{pmatrix}
 $$  
 
+In $\mathbb{R}^2$  
+
+$$
+\exp(t \ \begin{pmatrix}a&b\\-b&a\end{pmatrix})= e^{at}\begin{pmatrix}cos(bt) & sin(bt) \\ -sin(bt) & cos(bt) \end{pmatrix}
+$$
+
 
 
 
@@ -444,7 +527,7 @@ $$
 ## Ansatz für Lyapunov Functions  
 
 $$
-V(x,y) = ax^2 + 2abxy+cy^2
+V(x,y) = ax^2 + 2bxy+cy^2
 $$  
 with $a>0$ and $ac-b^2>0$.  
 

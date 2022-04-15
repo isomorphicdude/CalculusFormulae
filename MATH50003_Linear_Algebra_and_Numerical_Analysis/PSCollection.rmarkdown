@@ -485,10 +485,3117 @@ normal matrices we have
 $$
 Q = \tilde{Q} Λ \tilde{Q}^⋆ = \tilde{Q} \tilde{Q}^⋆ = I
 $$
-since $Q̃$ is unitary. 
+since $Q̃$ is unitary.  
 
-**Problem 5.4 (B)** Complete the implementation of a type representing
-reflections that supports `Q[k,j]` and such that `*` takes $O(n)$ operations.
+
+**Problem 5.6⋆ (A)** Consider a Householder reflection with $𝐱 = [1,h]$
+with $h = 2^{-n}$. What is the floating point error in
+computing $𝐲 = ∓ \|𝐱\| 𝐞_1 + 𝐱$ for each choice of sign.
+
+**SOLUTION**
+
+Since $\|𝐱\|=\sqrt{1+h^2}$, we have $𝐲=[1∓\sqrt{1+h^2},h]$. We note first that $h^{fp}$ and $(h^2)^{fp}$ are exact due to the choice of $h$, so we only need to discuss the floating error in computing $1\mp\sqrt{1+h^2}$.
+
+Numerically, let the length of the significand be $S$, then
+$$
+1\oplus h^2=
+\begin{cases}
+1+h^2 & n\le S/2 \\
+1 & n>S/2
+\end{cases}
+=1+h^2+\delta_1
+$$
+where $|\delta_1|\le \frac{\epsilon_m}{2}$.
+
+$+$ PLUS $+$
+
+Since $\sqrt{1\oplus h^2}^{fp}>0$, we know that
+$$\begin{split}
+1\oplus\sqrt{1\oplus h^2}^{fp}=&(1+\delta_2)(1+\sqrt{1\oplus h^2}^{fp})\\
+=&(1+\delta_2)(1+\sqrt{1+h^2+\delta_1}(1+\delta_3))
+\end{split}$$
+where $|\delta_2|,|\delta_3|\le \frac{\epsilon_m}{2}$. Then
+$$\begin{split}
+\frac{1\oplus\sqrt{1\oplus h^2}^{fp}}{1+\sqrt{1+h^2}}=&(1+\delta_2)\left(1+\frac{\sqrt{1+h^2+\delta_1}(1+\delta_3)-\sqrt{1+h^2}}{1+\sqrt{1+h^2}}\right)\\
+=&(1+\delta_2)\left(1+\frac{(1+\delta_3)(\sqrt{1+h^2+\delta_1}-\sqrt{1+h^2})+\delta_3\sqrt{1+h^2}}{1+\sqrt{1+h^2}}\right)\\
+\approx &(1+\delta_2)\left(1+\frac{\delta_1}{2(1+\sqrt{1+h^2})\sqrt{1+h^2}}+\delta_3\frac{\sqrt{1+h^2}}{1+\sqrt{1+h^2}}\right)
+\end{split}$$
+and we can bound the relative error by
+$$|\delta_2|+|\delta_1|\frac{1}{2(1+\sqrt{1+h^2})\sqrt{1+h^2}}+|\delta_3|\frac{\sqrt{1+h^2}}{1+\sqrt{1+h^2}}\le |\delta_2|+\frac{|\delta_1|}{4}+\frac{3|\delta_3|}{4}\le \epsilon_m.$$
+
+In conclusion, it's very accurate to compute $1+\sqrt{1+h^2}$.   
+
+
+$-$ MINUS $-$
+
+If $n>S/2$, then $1\ominus\sqrt{1\oplus h^2}^{fp}=1\ominus\sqrt{1}^{fp}=1\ominus 1=0$ so the relative error is 100%.
+
+If $n\le S/2$ but not too small, $1\oplus h^2$ is exactly $1+h^2$ but $\sqrt{1+h^2}^{fp}$ can have rounding error. Expand $\sqrt{1+h^2}$ into Taylor series:
+$$\sqrt{1+h^2}=1+\frac{1}{2}h^2-\frac{1}{8}h^4+\frac{1}{16}h^6-O(h^8)=1+2^{-2n-1}-2^{-4n-3}+2^{-6n-4}-O(2^{-8n})$$
+so
+$$\sqrt{1+h^2}^{fp}=
+\begin{cases}
+1 & n=S/2\\
+1+\frac{1}{2}h^2 & \frac{S-3}{4}\le n<S/2\\
+1+\frac{1}{2}h^2-\frac{1}{8}h^4 & \frac{S-4}{6}\le n<\frac{S-3}{4}\\
+\vdots & \vdots
+\end{cases}$$
+where we can conclude that the absolute error is approximately $\frac{1}{2}h^2,\frac{1}{8}h^4,\frac{1}{16}h^6,\dots$ for each stage when $h$ is small. Keeping in mind that $1-\sqrt{1+h^2}\approx -\frac{1}{2}h^2$ when $h$ is small, the relative error is approximately $1, \frac{1}{4}h^2,\frac{1}{8}h^4,\dots$ for each stage. Special note: the relative error is exactly 1 in the first stage when $n=S/2$.
+
+If $n$ is so small that $\sqrt{1+h^2}$ is noticably larger than 1, the absolute error can be bounded by $\frac{\epsilon_m}{2}$ so the relative error is bounded by $\frac{\epsilon_m}{2(\sqrt{1+h^2}-1)}\approx \frac{\epsilon_m}{h^2}$.  
+
+
+# Week 4  
+
+## 1. Least Squares and QR  
+
+**Problem 1.2⋆ (B)** Show that every matrix has a QR decomposition such that the diagonal of $R$ is non-negative.
+Make sure to include the case of more columns than rows.
+
+**SOLUTION**
+
+Beginning with the square case, a square matrix $A=QR$ with square orthogonal $Q$ and square upper triangular $R$ can always be rewritten in the form $A=QD^{-1}DR$ where $D$ is a diagonal matrix with $sign(R[j,j])$ on the diagonal. As a result, $DR$ is an upper triangular matrix with positive diagonal. It remains to check that $QD^{-1}=-QD$ is still orthogonal - this is easy to check since $$-QD(-QD)^T = QDDQ^T = QQ^T = I.$$
+Note we have made use of the fact that the inverse of a diagonal matrix is diagonal, that any diagonal matrix satisfies $D^{T} = D$ and that $DD=I$ since $\text{sign}(R[j,j])^2 = 1$.
+
+The same argument works for the non-square cases as long as we take care to consider the appropriate dimensions and pad with the identity matrix. Note that $Q$ is always a square matrix in the $QR$ decomposition. Assume the $R$ factor has more columns $m$ than rows $n$. Then a square $n \times n$ diagonal matrix with its $n$ diagonal entries being $\text{sign}(R[j,j]), j=1..n$ works with the same argument as above.
+
+Finally, assume that $R$ has less colums $m$ than rows $n$. In this case the square $n \times n$ diagonal matrix with its first $m$ diagonal entries being $\text{sign}(R[j,j]), j=1..m$ and any remaining diagonal entries being $1$ works with the same argument as above.
+
+Since the matrix $D$ is always square diagonal and orthogonal by construction, everything else for both of these cases is exactly as in the square case.  
+
+**Problem 1.3⋆ (B)** Show that the QR decomposition of a square invertible matrix is unique,
+provided that the diagonal of $R$ is positive.
+
+
+**SOLUTION**
+
+Assume there is a second decomposition also with positive diagonal
+$$
+A = QR = \tilde{Q} \tilde{R}
+$$
+Then we know
+$$
+Q^⊤ \tilde{Q} = R \tilde{R}^{-1}
+$$
+Note $Q^⊤ \tilde{Q}$ is orthogonal, and $R \tilde{R}^{-1}$ has positive eigenvalues (the diagonal), hence all $m$ eigenvalues of
+$Q^⊤ \tilde{Q}$ are 1. This means that $Q^⊤ \tilde{Q} = I$ and hence $\tilde{Q} = Q$, which then implies $\tilde{R} = R$.∎  
+
+
+
+## 2. Gram–Schmidt  
+
+
+**Problem 2.1⋆ (B)** The modified Gram–Schmidt algorithm is a slight variation of Gram–Schmidt where
+instead of computing
+$$
+𝐯_j := 𝐚_j - \sum_{k=1}^{j-1} \underbrace{𝐪_k^\top 𝐚_j}_{r_{kj}} 𝐪_k
+$$
+we compute it step-by-step:
+$$
+\begin{aligned}
+𝐯_j^1 &:= 𝐚_j \\
+𝐯_j^{k+1} &:= 𝐯_j^k - 𝐪_k^\top 𝐯_j^k 𝐪_k
+\end{aligned}
+$$
+Show that $𝐯_j^j = 𝐯_j$.
+
+**SOLUTION**
+
+Recall that the column vectors of $Q$ are orthonormal i.e. $(𝐪_i,𝐪_j) = \delta_{ij}$.
+Next observe that substituting from $𝐯^1_j$ for $𝐚_j$, for each $𝐯^i_j$ we get $i$ terms (note that the second term in the definition of $𝐯_j^{k+1}$ contributes only 1 term by orthonormality of $Q$, retrieving the contribution from $𝐯^{i-1}_j$ plus one.)
+$$
+𝐯^i_j := 𝐚_j - \sum_{k=1}^{i-2}{q_k^\top 𝐚_j} q_k - {q_{i-1}^\top 𝐚_j} q_{i-1}
+$$  
+
+## 4. Banded QR with Given's rotations  
+
+
+**Problem 4.1⋆ (A)**  Describe an algorithm for computing the QR decomposition
+of a tridiagonal matrix using rotations instead of reflections to upper-triangularise
+column-by-column.
+
+**SOLUTION**
+
+Let $A$ be a tridiagonal matrix:
+
+$$
+A = \begin{bmatrix}
+a_{11} & a_{12} & 0 & \cdots  &0\\
+a_{21} & a_{22} & a_{23} & \ddots  &\vdots\\
+0      & a_{32} & a_{33} & \ddots  &0\\
+       & 0      & \ddots & \ddots  &a_{n-1,n}\\
+       &        & 0      & a_{n,n-1}  & a_{nn}
+\end{bmatrix} =
+\begin{bmatrix}
+\mathbf{a}_1 & \mathbf{a}_2 &\cdots & \mathbf{a}_n
+\end{bmatrix},
+$$
+where each $\mathbf{a}_j \in \mathbb{R}^n$ and $[\mathbf{a}_j]_k = 0$ for $|j-k| > 1$.
+
+Recall that,
+$$
+\frac{1}{\sqrt{a^2 + b^2}} \begin{bmatrix}
+a & b \\
+-b & a
+\end{bmatrix} \begin{bmatrix}
+a \\ b
+\end{bmatrix} = \begin{bmatrix}
+\sqrt{a^2 + b^2} \\ 0
+\end{bmatrix},
+$$
+and that,
+$$
+\frac{1}{\sqrt{a^2 + b^2}} \begin{bmatrix}
+a & b \\
+-b & a
+\end{bmatrix} = \begin{bmatrix}
+\cos \theta & -\sin\theta \\
+\sin\theta & \cos\theta
+\end{bmatrix},
+$$
+is a rotation matrix where $\theta = -\arctan(b/a)$. With this in mind, consider multiplying $A$ from the left by,
+$$
+Q_1 = \begin{bmatrix}
+\frac{a_{11}}{r_{11}} & \frac{a_{21}}{r_{11}} \\
+-\frac{a_{21}}{r_{11}} & \frac{a_{11}}{r_{11}} \\
+&&1\\
+&&&\ddots\\
+&&&&1
+\end{bmatrix},
+$$
+where $r_{11} = \sqrt{a_{11}^2 + a_{21}^2}$. This rotates dimensions 1 and 2 through angle $\theta=-\arctan(a_{21}/a_{11})$. We have,
+$$
+Q_1 \mathbf{a}_1 = \begin{bmatrix}
+r_{11} \\0 \\ \vdots \\ 0
+\end{bmatrix},\hspace{10mm}
+Q_1 \mathbf{a}_2 = \begin{bmatrix}
+r_{12} := \frac{1}{r_{11}}(a_{11}a_{12} + a_{21}a_{22}) \\
+t_1    := \frac{1}{r_{11}}(a_{11}a_{22} - a_{21}a_{12}) \\
+a_{32} \\
+0 \\
+\vdots \\ 0
+\end{bmatrix},\hspace{10mm}
+Q_1 \mathbf{a}_3 = \begin{bmatrix}
+r_{13} := \frac{1}{r_{11}}a_{21}a_{23} \\
+s_1    := \frac{1}{r_{11}}a_{11}a_{23} \\
+a_{33} \\
+a_{43} \\
+0 \\
+\vdots \\ 0
+\end{bmatrix},\hspace{10mm}
+Q_1 \mathbf{a}_k = \mathbf{a}_k \textrm{ for } k > 3.
+$$
+Then we take,
+$$
+Q_2 = \begin{bmatrix}
+1 \\
+& \frac{t_1}{r_{22}} & \frac{a_{32}}{r_{22}} \\
+& -\frac{a_{32}}{r_{22}} & \frac{t_1}{r_{22}} \\
+&&&1 \\
+&&&&\ddots\\
+&&&&&1
+\end{bmatrix},
+$$
+where $r_{22} = \sqrt{t_1^2 + a_{32}^2}$, a matrix which rotates dimensions 2 and 3 through angle $\theta_2 = -\arctan(a_{32}/t_1)$. Then,
+$$
+Q_2 Q_1 \mathbf{a}_{1} = Q_1\mathbf{a}_1 = \begin{bmatrix}
+r_{11} \\0 \\ \vdots \\ 0
+\end{bmatrix},\hspace{10mm}
+Q_2 Q_1 \mathbf{a}_{2} = Q_2\begin{bmatrix}
+r_{12} \\
+t_1    \\
+a_{32} \\
+0 \\
+\vdots \\ 0
+\end{bmatrix} = \begin{bmatrix}
+r_{12} \\
+r_{22} \\
+0 \\
+0 \\
+\vdots \\
+0
+\end{bmatrix},\hspace{10mm}
+Q_2Q_1\mathbf{a}_3 = Q_2 \begin{bmatrix}
+r_{13} \\
+s_1    \\
+a_{33} \\
+a_{43} \\
+0 \\
+\vdots \\ 0
+\end{bmatrix}
+=\begin{bmatrix}
+r_{13} \\
+r_{23} := \frac{1}{r_{22}}(t_1s_1 + a_{32}a_{33})  \\
+t_2 := \frac{1}{r_{22}}(t_1a_{33} - a_{32}s_1) \\
+a_{43} \\
+0 \\
+\vdots \\ 0
+\end{bmatrix}
+$$
+
+$$
+Q_2Q_1\mathbf{a}_4 = Q_2\begin{bmatrix}
+0 \\
+0 \\
+a_{34} \\
+a_{44} \\
+a_{54} \\
+0 \\
+\vdots \\
+0
+\end{bmatrix} = \begin{bmatrix}
+0 \\
+r_{24} := \frac{1}{r_{22}}a_{32}a_{34} \\
+s_2 := \frac{1}{r_{22}} t_1 a_{34} \\
+a_{44} \\
+a_{54} \\
+0 \\
+\vdots \\
+0
+\end{bmatrix}, \hspace{10mm}
+Q_2Q_1 \mathbf{a}_k = \mathbf{a}_k \textrm{ for } k > 4.
+$$
+
+Now, for $j=3\rightarrow n-1$ we take,
+$$
+Q_j := \begin{bmatrix}
+\mathbf{I}_{j-1} \\
+& \frac{t_{j-1}}{r_{jj}} & \frac{a_{j+1, j}}{r_{jj}} \\
+& \frac{a_{j+1, j}}{r_{jj}} & \frac{t_{j-1}}{r_{jj}} \\
+&&& \mathbf{I}_{n-j-1}
+\end{bmatrix},
+$$
+where $r_{jj} := \sqrt{t_{j-1}^2 + a_{j+1, j}^2}$.
+
+This gives,
+$$
+Q_j \dots Q_1 \mathbf{a}_k =  \begin{bmatrix}
+\mathbf{0}_{k-3} \\
+r_{k-2,k} \\
+r_{k-1, k} \\
+r_{k,k} \\
+\mathbf{0}_{n-k}
+\end{bmatrix},
+$$
+for $k \leq j$,
+and,
+$$
+Q_j \dots Q_1 \mathbf{a}_{j+1} = \begin{bmatrix}
+\mathbf{0} \\
+r_{j-1,j+1} \\
+r_{j,j+1} := \frac{1}{r_{jj}}(t_{j-1}s_{j-1} + a_{j+1,j}a_{j+1,j+1}) \\
+t_j := \frac{1}{r_{jj}}(t_{j-1}a_{j+1,j+1} - s_{j-1}a_{j+1,j})\\
+a_{j+2,j+1} \\
+0 \\
+\vdots \\ 0
+\end{bmatrix},\hspace{10mm}
+Q_j \dots Q_1 \mathbf{a}_{j+2} = \begin{bmatrix}
+\mathbf{0} \\
+r_{j,j+2} := \frac{1}{r_{jj}}a_{j+1,j}a_{j+1,j+2} \\
+s_j := \frac{1}{r_{jj}}t_{j-1} a_{j+1,j+2} \\
+a_{j+2,j+2} \\
+0 \\
+\vdots \\
+0
+\end{bmatrix}.
+$$
+Finally we define, $r_{nn} = \frac{1}{r_{n-1,n-1}}(t_{n-2}a_{n,n} - a_{n, n-1}s_{n-2})$, to obtain,
+
+$$
+Q_{n-1}\dots Q_1 A = \begin{bmatrix}
+r_{11} & r_{12} & r_{13} & 0      & \dots & 0\\
+0      & r_{22} & r_{23} & r_{24} &       & 0\\
+       & \ddots      & \ddots & \ddots & \ddots  & \vdots\\
+       &             &    0    &  r_{n-2,n-2} & r_{n-2, n-1}     & r_{n-2,n}\\
+       &             &        &    0    &     r_{n-1,n-1}    & r_{n-1,n}\\
+       &             &        &        &     0    & r_{n,n}\\
+\end{bmatrix} =: R
+$$
+
+so that $A = QR$, for $Q = Q_1^{-1}\dots Q_{n-1}^{-1}$, where each matrix $Q_j$ rotates the coordinates $(j,j+1)$ through the angle $\theta_j = -\arctan(a_{j+1, j}/t_{j-1})$, and thus each matrix $Q_j^{-1}$ rotates the coordinates $(j, j+1)$ through the angle $\arctan(a_{j+1, j}/t_{j-1})$.   
+
+## 5. PLU decomposition  
+
+
+**Problem 5.1⋆ (C)** Compute the PLU decompositions for the following matrices:
+$$
+\begin{bmatrix}
+0 & 2 & 1 \\
+2 & 6 & 1 \\
+1 & 1 & 4
+\end{bmatrix},
+\begin{bmatrix}
+1 & 2 & -1 & 0 \\
+2 & 4 & -2 & 1 \\
+-3 & -5 & 6 & 1 \\
+-1 & 2 & 8 & -2
+\end{bmatrix}
+$$
+
+**SOLUTION**
+**Part 1**
+Compute the PLU decomposition of,
+$$
+\begin{bmatrix}
+0 & 2 & 1 \\
+2 & 6 & 1 \\
+1 & 1 & 4
+\end{bmatrix}
+$$
+We begin by permuting the first and second row as |2| > |0|, hence,
+$$P_1 =  \begin{bmatrix}
+0 & 1 & 0 \\
+1 & 0 & 0 \\
+0 & 0 & 1
+\end{bmatrix}, \hspace{10mm}
+P_1A =  \begin{bmatrix}
+2 & 6 & 1 \\
+0 & 2 & 1 \\
+1 & 1 & 4
+\end{bmatrix}
+$$
+We then choose,
+$$
+L_1 = \begin{bmatrix}
+1 & 0 & 0 \\
+0 & 1 & 0 \\
+-\frac{1}{2} & 0 & 1
+\end{bmatrix}, \hspace{10mm}
+L_1P_1A =  \begin{bmatrix}
+2 & 6 & 1 \\
+0 & 2 & 1 \\
+0 & -2 & \frac{7}{2}
+\end{bmatrix}
+$$
+There is no need to permute at this stage, so $P_2 = I_3$, the $3-$dimensional identity. Then we can choose,
+$$
+L_2 = \begin{bmatrix}
+1 & 0 & 0 \\
+0 & 1 & 0 \\
+0 & 1 & 1
+\end{bmatrix}, \hspace{10mm}
+L_2 P_2 L_1 P_1 A =  \begin{bmatrix}
+2 & 6 & 1 \\
+0 & 2 & 1 \\
+0 & 0 & 9/2
+\end{bmatrix} =: U
+$$
+Since $P_2 = I_3$, this reduces to $L_2L_1P_1A = U \Rightarrow A = P_1^{-1}L_1^{-1}L_2^{-1}U$. Since $P_1$ simply permutes two rows, it is its own inverse, and $L_1^{-1}L_2^{-1}$ is simply,
+$$
+L := L_1^{-1}L_2^{-1} =
+\begin{bmatrix}
+1 & 0 & 0 \\
+0 & 1 & 0 \\
+\frac{1}{2} & -1 & 1
+\end{bmatrix}
+$$
+Hence, we have $A = PLU$, where,
+$$
+P = P_1^{-1}= \begin{bmatrix}
+0 & 1 & 0 \\
+1 & 0 & 0 \\
+0 & 0 & 1
+\end{bmatrix}, \hspace{10mm}
+L = \begin{bmatrix}
+1 & 0 & 0 \\
+0 & 1 & 0 \\
+\frac{1}{2} & -1 & 1
+\end{bmatrix}, \hspace{10mm}
+U=\begin{bmatrix}
+2 & 6 & 1 \\
+0 & 2 & 1 \\
+0 & 0 & 9/2
+\end{bmatrix}
+$$  
+
+**Part 2**
+
+Find the $PLU$ decomposition of,
+$$
+A = \begin{bmatrix}
+1 & 2 & -1 & 0 \\
+2 & 4 & -2 & 1 \\
+-3 & -5 & 6 & 1 \\
+-1 & 2 & 8 & -2
+\end{bmatrix}
+$$
+We see that we must start with the permutation,
+$$
+P_1 :=\begin{bmatrix}
+0 & 0 & 1 & 0 \\
+0 & 1 & 0 & 0 \\
+1 & 0 & 0 & 0 \\
+0 & 0 & 0 & 1
+\end{bmatrix}, \hspace{10mm}
+P_1A = \begin{bmatrix}
+-3 & -5 & 6 & 1 \\
+2 & 4 & -2 & 1 \\
+1 & 2 & -1 & 0 \\
+-1 & 2 & 8 & -2
+\end{bmatrix}
+$$
+We then choose $L_1$,
+$$
+L_1 := \begin{bmatrix}
+1 & 0 & 0 & 0 \\
+\frac{2}{3} & 1 & 0 & 0 \\
+\frac{1}{3} & 0 & 1 & 0 \\
+-\frac{1}{3} & 0 & 0 & 1
+\end{bmatrix}, \hspace{10mm}
+L_1P_1A = \begin{bmatrix}
+-3 & -5 & 6 & 1 \\
+0 & \frac{2}{3} & 2 & \frac{5}{3} \\
+0 & \frac{1}{3} & 1 & \frac{1}{3} \\
+0 & \frac{11}{3} & 6 & -\frac{7}{3}
+\end{bmatrix}
+$$
+We then choose $P_2$,
+$$
+P_2 :=\begin{bmatrix}
+1 & 0 & 0 & 0 \\
+0 & 0 & 0 & 1 \\
+0 & 0 & 1 & 0 \\
+0 & 1 & 0 & 0
+\end{bmatrix}, \hspace{10mm}
+P_2L_1P_1A = \begin{bmatrix}
+-3 & -5 & 6 & 1 \\
+0 & \frac{11}{3} & 6 & -\frac{7}{3} \\
+0 & \frac{1}{3} & 1 & \frac{1}{3} \\
+0 & \frac{2}{3} & 2 & \frac{5}{3}
+\end{bmatrix}
+$$
+We then choose $L_2$,
+$$
+L_2 := \begin{bmatrix}
+1 & 0 & 0 & 0 \\
+0 & 1 & 0 & 0 \\
+0 & -\frac{1}{11} & 1 & 0 \\
+0 & -\frac{2}{11} & 0 & 1
+\end{bmatrix}, \hspace{10mm}
+L_2P_2L_1P_1A = \begin{bmatrix}
+-3 & -5 & 6 & 1 \\
+0 & \frac{11}{3} & 6 & -\frac{7}{3} \\
+0 & 0 & \frac{5}{11} & \frac{6}{11} \\
+0 & 0 & \frac{10}{11} & \frac{23}{11}
+\end{bmatrix}
+$$
+We then choose $P_3$ to swap the third and fourth rows,
+$$
+P_3 :=\begin{bmatrix}
+1 & 0 & 0 & 0 \\
+0 & 1 & 0 & 0 \\
+0 & 0 & 0 & 1 \\
+0 & 0 & 1 & 0
+\end{bmatrix}, \hspace{10mm}
+P_3L_2P_2L_1P_1A = \begin{bmatrix}
+-3 & -5 & 6 & 1 \\
+0 & \frac{11}{3} & 6 & -\frac{7}{3} \\
+0 & 0 & \frac{10}{11} & \frac{23}{11} \\
+0 & 0 & \frac{5}{11} & \frac{6}{11}
+\end{bmatrix}
+$$
+We complete the triangularisation by choosing $L_3$,
+$$
+L_3 := \begin{bmatrix}
+1 & 0 & 0 & 0 \\
+0 & 1 & 0 & 0 \\
+0 & 0 & 1 & 0 \\
+0 & 0 & -\frac{1}{2} & 1
+\end{bmatrix}, \hspace{10mm}
+L_3P_3L_2P_2L_1P_1A = \begin{bmatrix}
+-3 & -5 & 6 & 1 \\
+0 & \frac{11}{3} & 6 & -\frac{7}{3} \\
+0 & 0 & \frac{10}{11} & \frac{23}{11} \\
+0 & 0 & 0 & -\frac{1}{2}
+\end{bmatrix}
+$$
+We now consider,
+$$L_3P_3L_2P_2L_1P_1 = L_3\tilde{L_2}\tilde{L_1}P_3P_2P_1,$$
+where $\tilde{L_1}$ and $\tilde{L_1}$ satisfy,
+$$
+\begin{aligned}
+P_3P_2L_1 &= \tilde{L_1}P_3P_2 \\
+P_3L_2 &= \tilde{L_2}P_3
+\end{aligned}
+$$
+These can be computed via,
+$$
+\begin{aligned}
+\tilde{L_1} &= P_3P_2L_1P_2^{-1}P_3^{-1} \\
+\tilde{L_2} &= P_3L_2P_3^{-1}
+\end{aligned}
+$$
+to obtain,
+$$
+\begin{aligned}
+\tilde{L_1} &= \begin{bmatrix}
+1 & 0 & 0 & 0 \\
+-\frac{1}{3} & 1 & 0 & 0 \\
+\frac{2}{3} & 0 & 1 & 0 \\
+\frac{1}{3} & 0 & 0 & 1 
+\end{bmatrix} \\
+\tilde{L_2} &= \begin{bmatrix}
+1 & 0 & 0 & 0 \\
+0 & 1 & 0 & 0 \\
+0 & -\frac{2}{11} & 1 & 0 \\
+0 & -\frac{1}{11} & 0 & 1 
+\end{bmatrix}
+\end{aligned}
+$$
+This gives us,
+$$
+L^{-1} = L_3 \tilde{L_2} \tilde{L_1} = \begin{bmatrix}
+1 & 0 & 0 & 0 \\
+-\frac{1}{3} & 1 & 0 & 0 \\
+\frac{2}{3} & -\frac{2}{11} & 1 & 0 \\
+\frac{1}{3} & -\frac{1}{11} & -\frac{1}{2} & 1
+\end{bmatrix},
+$$
+from which it is clear that,
+$$
+L =  \begin{bmatrix}
+1 & 0 & 0 & 0 \\
+\frac{1}{3} & 1 & 0 & 0 \\
+-\frac{2}{3} & \frac{2}{11} & 1 & 0 \\
+-\frac{1}{3} & \frac{1}{11} & \frac{1}{2} & 1
+\end{bmatrix}
+$$
+
+Finally, we have that,
+$$
+P = P_1^{-1} P_2^{-1} P_3^{-1} = \begin{bmatrix}
+0 & 0 & 0 & 1 \\
+0 & 0 & 1 & 0 \\
+1 & 0 & 0 & 0 \\
+0 & 1 & 0 & 0
+\end{bmatrix},
+$$
+so that $A = PLU,$ with,
+$$
+P = P_1^{-1} P_2^{-1} P_3^{-1} = \begin{bmatrix}
+0 & 0 & 0 & 1 \\
+0 & 0 & 1 & 0 \\
+1 & 0 & 0 & 0 \\
+0 & 1 & 0 & 0
+\end{bmatrix}, \hspace{10mm}
+L =  \begin{bmatrix}
+1 & 0 & 0 & 0 \\
+\frac{1}{3} & 1 & 0 & 0 \\
+-\frac{2}{3} & \frac{2}{11} & 1 & 0 \\
+-\frac{1}{3} & \frac{1}{11} & \frac{1}{2} & 1
+\end{bmatrix}, \hspace{10mm}
+U=\begin{bmatrix}
+-3 & -5 & 6 & 1 \\
+0 & \frac{11}{3} & 6 & -\frac{7}{3} \\
+0 & 0 & \frac{10}{11} & \frac{23}{11} \\
+0 & 0 & 0 & -\frac{1}{2}
+\end{bmatrix}
+$$   
+
+# Week 5  
+
+
+## 1. Positive definite matrices and Cholesky decompositions
+
+
+**Problem 1.1⋆ (C)** Use the Cholesky decomposition to determine
+which of the following matrices are symmetric positive definite:
+$$
+\begin{bmatrix} 1 & -1  \\
+-1 & 3
+\end{bmatrix}, \begin{bmatrix} 1 & 2 & 2  \\
+2 & 1 & 2\\
+2 & 2 & 1
+\end{bmatrix}, \begin{bmatrix} 3 & 2 & 1  \\
+2 & 4 & 2\\
+1 & 2 & 5
+\end{bmatrix}, 
+\begin{bmatrix} 4 & 2 & 2 & 1  \\
+2 & 4 & 2 & 2\\
+2 & 2 & 4 & 2 \\
+1 & 2 & 2 & 4
+\end{bmatrix}
+$$
+
+**SOLUTION**
+
+A matrix is symmetric positive definite (SPD) if and only if it has a Cholesky decomposition, so the task here is really just to compute Cholesky decompositions (by hand). Since our goal is to tell if the Cholesky decompositions exist, we do not have to compute $L_k$'s. We only need to see if the decomposition process can keep to the end.
+
+**Matrix 1**
+
+$$A_0=\begin{bmatrix} 1 & -1  \\
+-1 & 3
+\end{bmatrix}$$
+
+$A_1=3-\frac{(-1)\times(-1)}{1}>0$, so Matrix 1 is SPD.
+
+**Matrix 2**
+
+$$A_0=\begin{bmatrix}
+1 & 2 & 2 \\
+2 & 1 & 2 \\
+2 & 2 & 1
+\end{bmatrix}$$
+
+$$A_1=\begin{bmatrix}
+1&2\\
+2&1
+\end{bmatrix}-\begin{bmatrix} 2 \\ 2 \end{bmatrix}\begin{bmatrix} 2 & 2 \end{bmatrix}=
+\begin{bmatrix}
+-3&-2\\
+-2&-3
+\end{bmatrix}$$
+
+$A_1[1,1]<0$, so Matrix 2 is not SPD.
+
+**Matrix 3**
+
+$$A_0=\begin{bmatrix}
+3 & 2 & 1 \\
+2 & 4 & 2 \\
+1 & 2 & 5
+\end{bmatrix}$$
+
+$$A_1=
+\begin{bmatrix}
+4&2\\
+2&5
+\end{bmatrix}-\frac{1}{3}\begin{bmatrix} 2 \\ 1 \end{bmatrix}\begin{bmatrix} 2 & 1 \end{bmatrix}=\frac{1}{3}
+\begin{bmatrix}
+8&4\\
+4&13
+\end{bmatrix}$$
+
+$3A_2=13-\frac{4\times 4}{8}>0$, so Matrix 3 is SPD.
+
+**Matrix 4**
+
+$$A_0=\begin{bmatrix}
+4 & 2 & 2 & 1 \\
+2 & 4 & 2 & 2 \\
+2 & 2 & 4 & 2 \\
+1 & 2 & 2 & 4
+\end{bmatrix}$$
+
+$$A_1=\begin{bmatrix}
+4&2&2\\
+2&4&2\\
+2&2&4
+\end{bmatrix}-\frac{1}{4}\begin{bmatrix} 2 \\ 2 \\ 1 \end{bmatrix}\begin{bmatrix} 2 & 2 & 1 \end{bmatrix}=\frac{1}{4}
+\begin{bmatrix}
+12&4&6\\
+4&12&6\\
+6&6&15
+\end{bmatrix}$$
+
+$$4A_2=\begin{bmatrix}
+12&6\\
+6&15
+\end{bmatrix}-\frac{1}{12}\begin{bmatrix} 4 \\ 6 \end{bmatrix}\begin{bmatrix} 4 & 6 \end{bmatrix}=\frac{4}{3}
+\begin{bmatrix}
+8&3\\
+3&9
+\end{bmatrix}$$
+$3A_3=9-\frac{3\times 3}{8}>0$, so Matrix 4 is SPD.  
+
+**Problem 1.2⋆ (B)** Recall that an inner product $⟨𝐱, 𝐲⟩$ on $ℝ^n$
+over the reals $ℝ$ satisfies, for all $𝐱,𝐲,𝐳 ∈ ℝ$ and $a,b ∈ ℝ$:
+1. Symmetry: $⟨𝐱, 𝐲⟩ = ⟨𝐲, 𝐱⟩$
+2. Linearity: $⟨a𝐱+b𝐲, 𝐳⟩ = a ⟨𝐱, 𝐳⟩+ b⟨𝐲, 𝐳⟩$
+3. Posive-definite: $⟨𝐱, 𝐱⟩ > 0, x \neq 0$
+
+Prove that $⟨𝐱, 𝐲⟩$ is an inner product if and only if
+$$
+⟨𝐱, 𝐲⟩ = 𝐱^⊤ K 𝐲
+$$
+where $K$ is a symmetric positive definite matrix.
+
+**SOLUTION**
+
+We begin by showing that $⟨𝐱, 𝐲⟩ = 𝐱^⊤ K 𝐲$ with $K$ spd defines an inner product. To do this we simply verify the three properties: For symmetry, we find
+$$ ⟨𝐱, 𝐲⟩ = 𝐱^⊤ K𝐲 = 𝐱 \cdot (K𝐲) = (K𝐲) \cdot 𝐱$$
+$$=  (K𝐲)^⊤ 𝐱 = 𝐲^⊤ K^⊤𝐱 = 𝐲^⊤ K 𝐱 = ⟨𝐲, 𝐱⟩.$$
+For linearity:
+$$ ⟨a𝐱+b𝐲, 𝐳⟩ = (a𝐱+b𝐲)^⊤ K𝐳 = (a𝐱^⊤+b𝐲^⊤)K𝐳$$
+$$ = a𝐱^⊤ K𝐳 + b𝐲^⊤ K𝐳 = a⟨𝐱, 𝐳⟩ + b⟨𝐲, 𝐳⟩.$$
+Positive-definiteness of the matrix $K$ immediately yields $⟨𝐱, 𝐱⟩ = 𝐱^⊤ K 𝐱 >0$. Now we turn to the converse result, i.e. that there exists a symmetric positive definite matrix $K$ for any inner product ⟨𝐱, 𝐲⟩ such that it can be written as $⟨𝐱, 𝐲⟩ = 𝐱^⊤ K 𝐲$. Define the entries of $K$ by $K_{ij} = ⟨e_i, e_j⟩$ where $e_j$ is the $j$-th standard basis vector. Note that by linearity of the inner product any inner product on $ℝ^n$ can be written as $⟨𝐱, 𝐲⟩ = \sum_{k=0}^n \sum_{l=0}^n x_k y_l ⟨e_k, e_l⟩$ by linearity. But with the elements of $K$ defined as above this is precisely 
+$$⟨𝐱, 𝐲⟩ = \sum_{k=0}^n \sum_{l=0}^n x_k K_{kl} y_l = 𝐱^⊤ K 𝐲.$$
+What remains is to show that this $K$ is symmetric positive definite. Symmetry is an immediate conseqence of the symmetry of its elements, i.e. $K_{ij} = ⟨e_i, e_j⟩ = ⟨e_j, e_i⟩ = K_{ji}$. Finally, positive definiteness follows from the positive definiteness of the inner product $⟨𝐱, 𝐱⟩ > 0$ with $⟨𝐱, 𝐱⟩ = 𝐱^⊤ K 𝐱$.
+
+**END**
+
+**Problem 1.3⋆ (A)** Show that a matrix is symmetric positive definite if and only if it has a Cholesky
+decomposition of the form
+$$
+A = U U^⊤
+$$
+where $U$ is upper triangular with positive entries on the diagonal.
+
+**SOLUTION**
+
+
+
+We didn't discuss this but note that because a symmetric positive definite matrix has stricly positive eigenvalues: for a normalised
+eigenvector we have
+$$
+λ = λ𝐯^⊤ 𝐯 = 𝐯^⊤ K 𝐯 > 0.
+$$
+Thus they are always invertible. Then note that any such matrix has a Cholesky decomposition of standard form $A = L L^⊤$ where $L$ is lower triangular. The inverse of this standard form Cholesky decomposition is then $A^{-1} = L^{-T} L^{-1}$, which is of the desired form since $L$ is lower triangular and $L^{-T}$ is upper triangular. The positive entries on the diagonal follow directly because this is the case for the Cholesky decomposition factors of the original matrix. Thus, since all symmetric positive definite matrices can be written as the inverses of a symmetric positive definite matrix, this shows that they all have a decomposition $A = U U^⊤$ (using the Cholesky factors of its inverse).
+
+Alternatively, we can replicate the procedure of computing the Cholesky decomposition beginning in the bottom right
+instead of the top left. Write:
+$$
+A = \begin{bmatrix} K & 𝐯\\
+                    𝐯^⊤ & α \end{bmatrix} = 
+                    \underbrace{\begin{bmatrix} I & {𝐯 \over \sqrt{α}} \\
+                                        & \sqrt{α}
+                                        \end{bmatrix}}_{U_1}
+                    \begin{bmatrix} K - {𝐯 𝐯^⊤ \over α}  & \\
+                     & 1 \end{bmatrix}
+                     \underbrace{\begin{bmatrix} I \\
+                      {𝐯^⊤ \over \sqrt{α}} & \sqrt{α}
+                                        \end{bmatrix}}_{U_1^⊤}
+$$
+The induction proceeds as in the lower triangular case.
+
+
+**END**
+
+**Problem 1.4⋆ (A)** Prove that the following $n × n$ matrix is symmetric positive definite
+for any $n$:
+$$
+Δ_n := \begin{bmatrix}
+2 & -1 \\
+-1 & 2 & -1 \\
+& -1 & 2 & ⋱ \\
+&& ⋱ & ⋱ & -1 \\
+&&& -1 & 2
+\end{bmatrix}
+$$
+Deduce its two Cholesky decompositions: $Δ_n = L_n L_n^⊤ = U_n U_n^⊤$ where
+$L_n$ is lower triangular and $U_n$ is upper triangular.
+
+**SOLUTION**
+
+We first prove that $L_n$ is lower bidiagonal by induction. Let $A$ be a tridiagonal SPD matrix:
+
+$$A=\left[\begin{array}{c|ccc}
+\alpha & \beta & 0 & \cdots \\\hline
+\beta  &       &   &        \\
+0      &       & K &        \\
+\vdots &       &   &        \\
+\end{array}\right]$$
+where $K$ is again tridiagonal. Denote the Cholesky decomposition of $A$ by $A=LL^\top$. Recalling the proof of the *Theorem (Cholesky & SPD)* from the lecture, we can write
+
+$$L=\left[\begin{array}{c|ccc}
+\sqrt{\alpha}               & & 0         & \\\hline
+\frac{\beta}{\sqrt{\alpha}} & &           &        \\
+0                           & & \tilde{L} &        \\
+\vdots                      & &           &         
+\end{array}\right]$$
+where $\tilde{L}$ satisfies $\tilde{L}\tilde{L}^\top=K-\begin{bmatrix} \beta^2/\alpha & \mathbf{0} \\ \mathbf{0} & \mathbf{0} \end{bmatrix}$ which is a tridiagonal matrix smaller than $A$. Since $L$ is lower bidiagonal when $A$ is $1\times 1$, we know by induction that $L$ is lower bidiagonal for $A$ of any size.
+
+Once we know that $L_n$ is lower bidiagonal, we can write it as
+$$L_n=\begin{bmatrix}
+a_1 & \\
+b_1 & \ddots & \\
+    & \ddots & \ddots  & \\
+    &        & b_{n-1} & a_n
+\end{bmatrix}$$
+which we substitute into $\Delta_n=L_nL_n^\top$ to get
+$$\left\{\begin{array}{l}
+a_1=\sqrt{2}\\
+a_kb_k=-1\\
+b_{k}^2+a_{k+1}^2=2
+\end{array}\right.$$
+for $k=1,\dots,n-1$.
+
+Now we solve the recurrence. Substituting the second equation into the third one:
+$$\frac{1}{a_k^2}+a_{k+1}^2=2.$$
+Let $c_k=a_k^2$:
+$$\frac{1}{c_k}+c_{k+1}=2.$$
+Consider the fixing point of this recurrence: $\frac{1}{x}+x=2\Longrightarrow(x-1)^2=0$ has the double root $x=1$ which hints us to consider $\frac{1}{c_k-1}$. In fact, the recurrence is equivalent to
+$$\frac{1}{c_{k+1}-1}=\frac{1}{c_k-1}+1.$$
+Recalling that $c_1=2$, we know that $\frac{1}{c_k-1}=k$. As a result, $c_k=(k+1)/k$, $a_k=\sqrt{(k+1)/k}$ and $b_k=-\sqrt{k/(k+1)}$, hence we know $L_n$.
+
+We can apply the same process to $U_n$, but this is a special case since flipping $\Delta_n$ horizontally and vertically gives itself: $P\Delta_nP^\top=\Delta_n$ where
+$$
+P=\begin{bmatrix} & & 1 \\ & ⋰ & \\ 1 & & \end{bmatrix}
+$$
+is the permutation that reverses a vector. 
+So we can also flip $L_n$ to get $U_n$:
+$$
+U_n=PL_nP
+$$
+so that $U_n U_n^⊤ = P L_n P P L_n^⊤ P = P Δ_n P = Δ_n$.
+
+Alternatively one can use the procedure from Problem 1.3. That is, write:
+$$
+Δ_n = \begin{bmatrix} Δ_{n-1} & -𝐞_n \\
+                    -𝐞_n^⊤ & 2 \end{bmatrix} = 
+                    \underbrace{\begin{bmatrix} I & {-𝐞_n \over \sqrt{2}} \\
+                                        & \sqrt{2}
+                                        \end{bmatrix}}_{U_1}
+                    \begin{bmatrix} Δ_{n-1} - {𝐞_n 𝐞_n^⊤ \over 2}  & \\
+                     & 1 \end{bmatrix}
+                     \underbrace{\begin{bmatrix} I \\
+                      {𝐯^⊤ \over \sqrt{α}} & \sqrt{α}
+                                        \end{bmatrix}}_{U_1^⊤}
+$$  
+
+## 2. Matrix norms
+
+**Problem 2.1⋆ (B)** Prove the following:
+$$
+\begin{aligned}
+\|A\|_∞ &= \max_k \|A[k,:]\|_1 \\
+\|A\|_{1 → ∞} &= \|\hbox{vec}(A)\|_∞ = \max_{kj} |a_{kj}|
+\end{aligned}
+$$
+
+**SOLUTION**
+
+**Step 1. upper bounds**
+
+$$\|A\mathbf{x}\|_\infty=\max_k\left|\sum_ja_{kj}x_j\right|\le\max_k\sum_j|a_{kj}x_j|\le
+\begin{cases}
+\max\limits_j|x_j|\max\limits_k\sum\limits_j|a_{kj}|=\|\mathbf{x}\|_\infty\max\limits_k\|A[k,:]\|_1\\
+\max\limits_{kj}|a_{kj}|\sum\limits_j|x_j|=\|\mathbf{x}\|_1\|\text{vec}(A)\|_\infty
+\end{cases}
+$$
+
+**Step 2.1. meeting the upper bound ($\|A\|_{1 → ∞}$)**
+
+Let $a_{lm}$ be the entry of $A$ with maximum absolute value. Let $\mathbf{x}=\mathbf{e}_m$, then
+$$\|A\mathbf{x}\|_\infty=\max_k\left|\sum_ja_{kj}x_j\right|=\max_k|a_{km}|=|a_{lm}|$$
+and
+$$\|\mathbf{x}\|_1\|\text{vec}(A)\|_\infty=1\cdot|a_{lm}|.$$
+
+
+**Step 2.2. meeting the upper bound ($\|A\|_∞$)**
+
+Let $A[n,:]$ be the row of $A$ with maximum 1-norm. Let $\mathbf{x}=\left(\text{sign}.(A[n,:])\right)^\top$, then $\left|\sum_ja_{kj}x_j\right|\begin{cases} =\sum_j|a_{kj}|=\|A[k,:]\|_1 & k=n \\ \le\sum_j|a_{kj}|=\|A[k,:]\|_1 & k\ne n \end{cases}$, so
+$$\|A\mathbf{x}\|_\infty=\max_k\left|\sum_ja_{kj}x_j\right|=\max\limits_k\|A[k,:]\|_1$$
+while
+$$\|\mathbf{x}\|_\infty\max\limits_k\|A[k,:]\|_1=1\cdot\max\limits_k\|A[k,:]\|_1.$$
+
+
+**Conclusion**
+
+In both cases, equality can hold, so the upper bounds are actually maxima.
+
+**END**
+
+
+**Problem 2.2⋆ (B)** For a rank-1 matrix $A = 𝐱 𝐲^⊤$ prove that
+$$
+\|A \|_2 = \|𝐱\|_2 \|𝐲\|_2.
+$$
+Hint: use the Cauchy–Schwartz inequality.
+
+**SOLUTION**
+
+$$\|A\mathbf{z}\|_2=\|\mathbf{x}\mathbf{y}^\top\mathbf{z}\|_2=|\mathbf{y}^\top\mathbf{z}|\|\mathbf{x}\|_2,$$
+so it remains to prove that $\|\mathbf{y}\|_2=\sup_{\mathbf{z}}\frac{|\mathbf{y}^\top\mathbf{z}|}{\|\mathbf{z}\|_2}$.
+
+By Cauchy-Schwartz inequality,
+$$|\mathbf{y}^\top\mathbf{z}|=|(\mathbf{y},\mathbf{z})|\le\|\mathbf{y}\|_2\|\mathbf{z}\|_2$$
+with the two sides being equal when $\mathbf{y}$ and $\mathbf{z}$ are linearly dependent, in which case the bound is tight.
+
+**END**
+
+**Problem 2.3⋆ (B)** Show for any orthogonal matrix $Q ∈ ℝ^m$ and
+matrix $A ∈ ℝ^{m × n}$ that
+$$
+\|Q A\|_F = \|A\|_F
+$$
+by first showing that $\|A \|_F = \sqrt{\hbox{tr}(A^⊤ A)}$ using the
+_trace_ of an $m × m$ matrix:
+$$
+\hbox{tr}(A) = a_{11} + a_{22} + ⋯ + a_{mm}.
+$$
+
+**SOLUTION**
+
+$$\text{tr}(A^\top A)=\sum_k(A^\top A)[k,k]=\sum_k\sum_jA^\top[k,j]A[j,k]=\sum_k\sum_jA[j,k]^2=\|A\|_F^2.$$
+
+On the other hand,
+$$\text{tr}(A^\top A)=\text{tr}(A^\top Q^\top QA)=\text{tr}((QA)^\top (QA))=\|QA\|_F^2,$$
+so $\|Q A\|_F = \|A\|_F$.
+
+**END**
+
+## 3. Singular value decomposition
+
+**Problem 3.1⋆ (B)** Show that $\|A \|_2 ≤ \|A\|_F ≤ \sqrt{r} \|A \|_2$ where
+$r$ is the rank of $A$.
+
+**SOLUTION**
+
+From Problem 2.3 use the fact that $\|A \|_F = \sqrt{\hbox{tr}(A^⊤ A)}$, where $A\in \mathbb{R}^{m\times n}$.
+
+Hence,
+
+$$\|A \|_F^2 = \hbox{tr}(A^⊤ A) = \sigma_1^2 +...+\sigma_m^2$$
+
+where $\sigma_1\ge...\ge \sigma_n \ge 0$ are the singular values of $A$ and $\sigma_i^2$ are the eigenvalues of $A^⊤ A$
+
+Knowing that $\|A\|_2^2 = \sigma_1^2$ we have $\|A \|_2^2 ≤ \|A\|_F^2$
+
+Moreover, since if the rank of $A$ is $r$ we have that $\sigma_{r+1}=...=\sigma_m=0$ and we also know $\sigma_1\ge...\ge \sigma_n \ge 0$, we have that
+
+$\|A\|_F^2 = \sigma_1^2 +...+\sigma_m^2 =\sigma_1^2 +...+\sigma_r^2 \le r \sigma_1^2 =r \|A \|_2^2$
+
+Hence,
+$$
+\|A \|_2 ≤ \|A\|_F ≤ \sqrt{r} \|A \|_2.
+$$
+
+**END**  
+
+**Problem 3.3⋆ (B)** For $A ∈ ℝ^{m × n}$ define the _pseudo-inverse_:
+$$
+A^+ := V Σ^{-1} U^⊤.
+$$
+Show that it satisfies the _Moore-Penrose conditions_:
+1. $A A^+ A = A$
+2. $A^+ A A^+ = A^+$
+3. $(A A^+)^⊤  = A A^+$ and $(A^+ A)^⊤ = A^+ A$
+
+**SOLUTION**
+
+Let $A=UΣ V^⊤$ and $A^+ := V Σ^{-1} U^⊤$, where $U ∈ ℝ^{m × r}$ and $V ∈ ℝ^{n × r}$. Note that $U^⊤U = I_m$ and $V^⊤V = I_r$. 
+
+1. We have
+$$
+A A^+ A = U Σ V^⊤ V Σ^{-1} U^⊤ U Σ V^⊤ = U Σ Σ^{-1} Σ V^⊤ = UΣ V^⊤ = A
+$$
+2. Moreover,
+$$
+A^+ A A^+ = V Σ^{-1}U^⊤ U Σ V^⊤ V Σ^{-1} U^⊤ = V Σ^{-1}Σ Σ^{-1} U^⊤ = V Σ^{-1} U^⊤ = A^+
+$$
+3. 
+$$
+\begin{aligned}
+(A A^+)^⊤ = (A^+)^⊤ A^⊤ = U Σ^{-1} V^⊤ V Σ U^⊤ = U U^⊤ = U Σ V^⊤ V Σ^{-1} U^⊤ = A A^+ \\
+(A^+ A)^⊤ = A^⊤ (A^+)^⊤ =  V Σ U^⊤ U Σ^{-1} V^⊤ = V V^⊤ = V Σ^{-1} U^⊤ U Σ V^⊤  = A^+ A
+\end{aligned}
+$$
+
+
+**END**
+
+**Problem 3.4⋆ (A)** Show for $A ∈ ℝ^{m × n}$ with $m ≥ n$ and ⊤ rank
+that $𝐱 =  A^+ 𝐛$ is the least squares solution, i.e., minimises $\| A 𝐱 - 𝐛 \|_2$.
+Hint: extend $U$ in the SVD to be a square orthogonal matrix.
+
+**SOLUTION**
+
+The proof mimics that of the QR decomposition. Write $A =  U Σ V^⊤$ and let
+$$
+Ũ = \begin{bmatrix}U & K \end{bmatrix}
+$$
+so that $Ũ$ is orthogonal. We use the fact orthogonal matrices do not change norms:
+$$
+\begin{aligned}
+\|A 𝐱 - 𝐛 \|_2^2 &= \|U Σ V^⊤ 𝐱 - 𝐛 \|_2^2 = \|Ũ^⊤ U Σ V^⊤ 𝐱 - Ũ^⊤ 𝐛 \|_2^2 = \|\underbrace{\begin{bmatrix}I_m \\ O \end{bmatrix}}_{∈ ℝ^{m × n}} Σ V^⊤ 𝐱 - \begin{bmatrix} U^⊤ \\ K^⊤ \end{bmatrix} 𝐛 \|_2^2 \\
+&= \|Σ V^⊤ 𝐱 - U^⊤ 𝐛 \|_2^2 + \|K^⊤ 𝐛\|^2
+\end{aligned}
+$$
+The second term is independent of $𝐱$. The first term is minimised when zero:
+$$
+ \|Σ V^⊤ 𝐱 - U^⊤ 𝐛 \|_2 =\|Σ V^⊤ V Σ^{-1} U^⊤ 𝐛  - U^⊤ 𝐛 \|_2 = 0
+$$
+
+**END**
+
+**Problem 3.5⋆ (A)**
+If $A ∈ ℝ^{m × n}$ has a non-empty kernel there are multiple solutions to the least
+squares problem as 
+we can add any element of the kernel. Show that $𝐱 = A^+ 𝐛$ gives the least squares solution
+such that $\| 𝐱 \|_2$ is minimised.
+
+**SOLUTION**
+
+Let $𝐱     =A^+b$ and let $𝐱 + 𝐤$ to be another solution i.e.
+$$
+\|A𝐱 - b \| = \|A (𝐱 +𝐤) - b \|
+$$
+Following the previous part we deduce:
+$$
+Σ V^⊤ (𝐱 +𝐤) = U^⊤ 𝐛 \Rightarrow V^⊤ 𝐤 = 0
+$$
+As $𝐱 = V 𝐜$ lies in the span of the columns of $V$ we have
+$𝐱^⊤ 𝐤 = 0$. Thus
+$$
+\| 𝐱 + 𝐤 \|^2 = \| 𝐱 \|^2 + \| 𝐤 \|^2
+$$
+which is minimised when $𝐤 = 0$.
+
+**END**  
+
+
+# Week 6  
+
+## 1. Condition numbers
+
+**Problem 1.1⋆ (B)** Prove that, if $|ϵ_i| ≤ ϵ$ and $n ϵ < 1$, then
+$$
+\prod_{k=1}^n (1+ϵ_i) = 1+θ_n
+$$
+for some constant $θ_n$ satisfying $|θ_n| ≤ {n ϵ \over 1-nϵ}$.
+
+**SOLUTION**
+
+$$\prod_{k=1}^n(1+\epsilon_i)\le(1+\epsilon)^n=\sum_{k=0}^n {n \choose k} \epsilon^k\le 1+\sum_{k=1}^n n^k\epsilon^k\le 1+\sum_{k=1}^∞ n^k\epsilon^k=1+\frac{n\epsilon}{1-n\epsilon}.$$
+$$\prod_{k=1}^n(1+\epsilon_i)\ge(1-\epsilon)^n=\sum_{k=0}^n {n \choose k} (-\epsilon)^k\ge 1-\sum_{k=1}^n n^k\epsilon^k\ge  1-\sum_{k=1}^∞ n^k\epsilon^k=1-\frac{n\epsilon}{1-n\epsilon}.$$
+
+**Problem 1.2⋆ (B)** Let $A,B ∈ ℝ^{m × n}$. Prove that if the columns satisfy $\|𝐚_j\|_2 ≤ \| 𝐛_j\|_2$ then
+$\|A\|_F ≤ \|B\|_F$ and $\|A \|_2 ≤ \sqrt{\hbox{rank}(B)} \|B\|_2$.
+
+**SOLUTION**
+
+Recalling from _[Problem Sheet 5](https://github.com/Imperial-MATH50003/MATH50003NumericalAnalysis/blob/main/sheets/week5s.ipynb/) - Problem 2.3* - SOLUTION_, we know that
+$$\|A\|_F=\sqrt{\sum_{k,j}A[k,j]^2}=\sqrt{\sum_j\|\mathbf{a}_j\|_2^2}\qquad\text{and}\qquad\|B\|_F=\sqrt{\sum_j\|\mathbf{b}_j\|_2^2}.$$
+Since $\|𝐚_j\|_2 ≤ \| 𝐛_j\|_2$, we have $\|A\|_F ≤ \|B\|_F$.
+
+Recalling from _[Problem Sheet 5](https://github.com/Imperial-MATH50003/MATH50003NumericalAnalysis/blob/main/sheets/week5s.ipynb/) - Problem 3.1*_, we have
+$$\|A\|_2\le\|A\|_F\le\|B\|_F\le\sqrt{\hbox{rank}(B)} \|B\|_2.$$
+
+**Problem 1.3⋆ (C)** Compute the 1-norm, 2-norm, and ∞-norm condition numbers for the following matrices:
+$$
+\begin{bmatrix}
+1 & 2 \\ 3 & 4
+\end{bmatrix}, \begin{bmatrix}
+1/3 & 1/5 \\ 0 & 1/7
+\end{bmatrix}, \begin{bmatrix} 1 \\ & 1/2 \\ && ⋯ \\ &&& 1/2^n \end{bmatrix}
+$$
+(Hint: recall that the singular values of a matrix $A$ are the square roots of the eigenvalues of the Gram matrix
+$A^⊤A$.)
+
+**SOLUTION**
+
+$$
+A=\begin{bmatrix}
+1 & 2 \\ 3 & 4
+\end{bmatrix},\qquad
+A^{-1}=-\frac{1}{2}\begin{bmatrix}
+4 & -2 \\ -3 & 1
+\end{bmatrix}
+$$
+
+$$
+B=\begin{bmatrix}
+1/3 & 1/5 \\ 0 & 1/7
+\end{bmatrix},\qquad
+B^{-1}=21\begin{bmatrix}
+1/7 & -1/5 \\ 0 & 1/3
+\end{bmatrix}
+$$
+
+$\|A\|_1=6$, $\|A^{-1}\|_1=7/2$, so $\kappa_1(A)=21$.
+
+$\|A\|_∞=7$, $\|A^{-1}\|_∞=3$, so $\kappa_∞(A)=21$.
+
+$\|B\|_1=12/35$, $\|B^{-1}\|_1=21\times 8/15=56/5$, so $\kappa_1(B)=96/25$.
+
+$\|B\|_∞=8/15$, $\|B^{-1}\|_∞=21\times 12/35$, so $\kappa_∞(B)=96/25$
+
+Finally, for the $2$-norms:
+$\kappa_2(A)$:
+For $A = \left[\begin{matrix}
+1 & 2 \\
+3 & 4
+\end{matrix}\right]$, we have that the singular values are the $\sigma_1 = \sqrt{\lambda_1}, \sigma_2 = \sqrt{\lambda_2}$, where $\lambda_1$ and $\lambda_2$ are the eigenvalues of $A^TA$.
+$$
+A^TA = \left[\begin{matrix}
+10 & 14 \\
+14 & 20
+\end{matrix}\right],
+$$
+so an eigenvalue $\lambda$ of $A^TA$ must satisfy,
+$$
+\begin{aligned}
+(10 - \lambda)(20-\lambda) - 196 = 0 \\
+\Leftrightarrow \lambda = 15 \pm\sqrt{221}.
+\end{aligned}
+$$
+The larger eigenvalue corresponds to $\sigma_1$, so $\sigma_1 = \sqrt{15  + \sqrt{221}}$, and the smaller corresponds to $\sigma_2$, so $\sigma_2 = \sqrt{15  - \sqrt{221}}$. Finally, we have $\|A\|_2 = \sigma_1, \|A^{-1}\|_2 = 1/\sigma_2$, and so $\kappa_2(A) = \sqrt{\frac{15  + \sqrt{221}}{15  - \sqrt{221}}}$.
+
+ $\kappa_2(B)$:
+For 
+$$
+B = \left[\begin{matrix}
+1/3 & 1/5 \\
+0 & 1/7
+\end{matrix}\right],
+$$
+we have that the singular values are the $\sigma_1 = \sqrt{\lambda_1}, \sigma_2 = \sqrt{\lambda_2}$, where $\lambda_1$ and $\lambda_2$ are the eigenvalues of $A^TA$.
+$$
+A^TA = \left[\begin{matrix}
+1/9 & 1/15 \\
+1/15 & \frac{74}{5^27^2}
+\end{matrix}\right].
+$$
+An eigenvalue $\lambda$ must satisfy:
+$$
+\begin{aligned}
+(1/9 - \lambda)\left(\frac{74}{5^27^2}-\lambda\right) - \frac{1}{225} = 0 \\
+\Leftrightarrow \lambda = \frac{1891 \pm29\sqrt{2941}}{22050}.
+\end{aligned}
+$$  
+
+With the same logic as above, we can then deduce that $$\|B\|_2 = \sqrt{\frac{1891 +29\sqrt{2941}}{22050}}$$ and $$\|B^{-1}\|_2 \sqrt{\frac{22050}{1891 -29\sqrt{2941}}}$$ so that,
+$$
+\kappa_2(B) = \sqrt{\frac{1891 +29\sqrt{2941}}{1891 -29\sqrt{2941}}}
+$$
+
+For,
+$$
+A_n = \left[\begin{matrix}1 \\ &1/2 \\&&\ddots \\&&&1/2^n \end{matrix}\right],\hspace{5mm}
+A_n^{-1} = \left[\begin{matrix}1 \\ &2 \\&&\ddots \\&&&2^n \end{matrix}\right]
+$$ 
+It is clear that $$\|A_n\|_1 = \|A_n\|_∞ = 1,$$ and $$\|A_n^{-1}\|_1 = \|A_n^{-1}\|_∞ = 2^n,$$ so $\kappa_1(A_n) = \kappa_∞(A) = 2^n$.
+Moreover, we can clearly see the singular values $\sigma_1 = 1, \sigma_2 = 1/2, \dots, \sigma_{n+1} = 1/2^n$. So $\|A_n\|_2 = 1, \|A_n^{-1}\|_2 = 2^n$, $\kappa_2(A_n) = 2^n$
+
+**Problem 1.4 (B)**
+State a bound on the relative error on $A 𝐯$ for $\|𝐯\|_2 = 1$ for the following matrices:
+$$
+\begin{bmatrix}
+1/3 & 1/5 \\ 0 & 1/10^3
+\end{bmatrix},
+ \begin{bmatrix} 1 \\ & 1/2 \\ && ⋯ \\ &&& 1/2^{10} \end{bmatrix}
+$$
+Compute the relative error in computing $A 𝐯$ (using `big` for a high-precision version to compare against)
+where $𝐯$ is the last column of $V$ in the SVD $A = U Σ V^⊤$, computed using the `svd` command with
+`Float64` inputs. How does the error compare to the predicted error bound?
+
+**SOLUTION**
+
+The Theorem (relative-error for matrix vector) tells us that,
+$$\frac{\|\delta A \mathbf{x}\|}{\|A \mathbf{x}\|} \leq \kappa(A)\epsilon,$$
+if the relative pertubation error $\|\delta A\| = \|A\| \epsilon$. For the $2-$norm, we have,
+$$\|\delta A \|_2 \leq \underbrace{\frac{\sqrt{\min(m, n)} n\epsilon_m}{2 - n\epsilon_m}}_\epsilon\|A\|_2.$$
+The condition number of the first matrix is 453.33 (see code below to compute that), and $\epsilon$ defined above is $\frac{2\sqrt{2}\epsilon_m}{2-2\epsilon_m} = 3.14 \cdot10^{-16},$ so the bound on the relative error is:
+$$1.42 \cdot 10^{-13}.$$
+The condition number of the second matrix is $2^{10}$ by the question above, and $\epsilon$ defined above is $\frac{10\sqrt{10}\epsilon_m}{2-10\epsilon_m} = 7.02\cdot 10^{-16},$ the bound on the relative error in this case is then:
+$$
+7.19\cdot 10^{-13}
+$$  
+
+## 3. Euler Methods  
+
+**Problem 3.2⋆ (B)** For an evenly spaced grid $t_1, …, t_n$, use the approximation
+$$
+{u'(t_{k+1}) + u'(t_k) \over 2} ≈ {u_{k+1} - u_k \over h}
+$$
+to recast
+$$
+\begin{aligned}
+u(0) &= c \\
+u'(t) &= a(t) u(t) + f(t)
+\end{aligned}
+$$
+as a lower bidiagonal linear system. Use forward-substitution to extend this to vector linear problems:
+$$
+\begin{aligned}
+𝐮(0) &= 𝐜 \\
+𝐮'(t) &= A(t) 𝐮(t) + 𝐟(t)
+\end{aligned}
+$$
+
+**SOLUTION**
+
+We have,  
+
+$$
+\begin{aligned}
+\frac{u_{k+1} - u_k}{h} \approx \frac{u'(t_{k+1}) + u'(t_k)}{2} = \frac{a(t_{k+1})u_{k+1} + a(t_{k})u_{k}}{2} + \frac{1}{2}(f(t_{k+1}) + f(t_k)),
+\end{aligned}
+$$  
+
+so we can write,  
+
+$$
+\begin{aligned}
+\left(\frac{1}{h} - \frac{a(t_{k+1})}{2}\right)u_{k+1} + \left(-\frac{1}{h} - \frac{a(t_{k})}{2}\right)u_k = \frac{1}{2}(f(t_{k+1}) + f(t_k)).
+\end{aligned}
+$$  
+
+With the initial condition $u(0) = c$, we can write the whole system as,
+$$
+\left[\begin{matrix}
+1 \\
+-\frac{1}{h} - \frac{a(t_1)}{2} && \frac{1}{h} - \frac{a(t_2)}{2} \\
+& \ddots && \ddots \\
+ & & -\frac{1}{h} - \frac{a(t_{n-1})}{2} && \frac{1}{h} - \frac{a(t_n)}{2}
+\end{matrix}\right]\mathbf{u} =  \left[\begin{matrix} 
+c \\
+\frac{1}{2}\left(f(t_1) + f(t_2)\right) \\
+\vdots \\
+\frac{1}{2}\left(f(t_{n-1}) + f(t_n)\right)
+\end{matrix}\right],
+$$
+which is lower bidiagonal.
+
+Now if we wish to use forward substitution in a vector linear problem, we can derive in much the same way as above:
+$$
+\left(\frac{1}{h}I - \frac{A(t_{k+1})}{2}\right)\mathbf{u}_{k+1} + \left(-\frac{1}{h}I - \frac{A(t_{k})}{2}\right)\mathbf{u}_k = \frac{1}{2}(\mathbf{f}(t_{k+1}) + \mathbf{f}(t_k)),
+$$
+to make the update equation,
+$$
+\mathbf{u}_{k+1} = \left(I - \frac{h}{2}A(t_{k+1})\right)^{-1}\left(\left(I + \frac{h}{2}A(t_{k})\right)\mathbf{u}_k + \frac{h}{2}(\mathbf{f}(t_{k+1}) + \mathbf{f}(t_k)) \right),
+$$
+with initial value,
+$$
+\mathbf{u}_1 = \mathbf{c}.
+$$    
+
+# Week 7  
+
+## 1. Two-Point Boundary Value Problem  
+
+**Problem 1.3⋆ (A)** Consider Helmholtz with Neumann conditions:
+$$
+u'(0) = c_0 \\
+u'(1) = c_1 \\
+u_{xx} + k^2 u = f(x)
+$$
+Write down the finite difference approximation approximating
+$u(x_k) ≈ u_k$ on
+ an evenly spaced grid $x_k = (k-1)/(n-1)$ for $k=1,…,n$
+using the first order derivative approximation conditions:
+$$
+\begin{aligned}
+u'(0) &≈ (u_2-u_1)/h = c_0 \\
+u'(1) &≈ (u_n-u_{n-1})/h  = c_1
+\end{aligned}
+$$
+Use pivoting to reduce the equation to one involving a
+symmetric tridiagonal matrix.
+
+**SOLUTION**
+
+We have, with $u(x_k) = u_k$ (and using $\kappa$ instead of $k$ in the equation $u_{xx} + k^2u = f(x)$ so as to avoid confusion with the indices):  
+$$
+\begin{aligned}
+\frac{u_2 - u_1}{h} &= c_0, \\
+\frac{u_{k-1} - 2u_k + u_{k+1}}{h^2} + \kappa^2u_k &= f(x_k), \hspace{5mm} \textrm{ for } k=2:n-1\\
+\frac{u_n - u_{n-1}}{h} &= c_1, 
+\end{aligned}
+$$  
+
+which we write in matrix form as:
+
+$$
+\left[\begin{matrix}
+-\frac{1}{h} & \frac{1}{h} \\
+\frac{1}{h^2} & \kappa^2 - \frac{2}{h^2} & \frac{1}{h^2} \\
+&\ddots & \ddots & \ddots \\
+&&\frac{1}{h^2} & \kappa^2 - \frac{2}{h^2} & \frac{1}{h^2} \\
+&&& -\frac{1}{h} & \frac{1}{h}
+\end{matrix}
+\right] \mathbf{u} = \left[\begin{matrix}
+c_0 \\ f(x_2)\\ \vdots \\f(x_{n-1}) \\ c_1
+\end{matrix}\right],
+$$
+which we can make symmetric tridiagonal by multiplying the first row by $1/h$ and the final row by $-1/h$:
+$$
+\left[\begin{matrix}
+-\frac{1}{h^2} & \frac{1}{h^2} \\
+\frac{1}{h^2} & \kappa^2 - \frac{2}{h^2} & \frac{1}{h^2} \\
+&\ddots & \ddots & \ddots \\
+&&\frac{1}{h^2} & \kappa^2 - \frac{2}{h^2} & \frac{1}{h^2} \\
+&&& \frac{1}{h^2} & -\frac{1}{h^2}
+\end{matrix}
+\right] \mathbf{u} = \left[\begin{matrix}
+\frac{c_0}{h} \\ f(x_2)\\ \vdots \\f(x_{n-1}) \\ -\frac{c_1}{h}
+\end{matrix}\right],
+$$
+
+
+
+## 2. Convergence
+
+**Problem 2.1⋆ (B)** For the equation
+$$
+\begin{aligned}
+u(0) &= c_0 \\
+u' + au &= f(x)
+\end{aligned}
+$$
+where $a ∈ ℝ$ and $0 ≤ x ≤ 1$,
+prove convergence as $n → ∞$ for the method constructed in PS6 using the approximation
+where we take the average of the two grid points:
+$$
+{u'(x_{k+1}) + u'(x_k) \over 2} ≈ {u_{k+1} - u_k \over h}.
+$$
+
+**SOLUTION**
+Using the approximation from PS6 we obtain
+
+$${f(x_{k+1}) + f(x_k)\over 2} = { u'(x_{k+1}) + u'(x_k) \over 2} + {a(u(x_{k+1}) +  u(x_k)) \over 2}≈ {(u_{k+1} - u_k ) \over h} + {a u_{k+1}\over 2} + {a u_k \over 2}$$
+
+So we get
+
+$$\left(\frac{a}{2}-\frac{1}{h}\right)u_k + \left(\frac{a}{2}+\frac{1}{h}\right)u_{k+1} = \frac{f(x_{k+1})+f(x_k)}{2}$$
+
+We want to prove that $\sup_{k=1,...,n-1}|u(x_k) - u_{k}|$ converges to 0 as $n\to \infty$.
+
+Take $\hat u = [u_0,...,u_{n-1}]^T$ and rewrite the system as
+
+$$\hat L \hat u = \begin{bmatrix} c_0 \\ \hat fᶠ \end{bmatrix}$$
+
+where $f_k = {f(x_{k})+f(x_{k-1}) \over 2}$, $k=1,...,n-1$ and 
+
+$$\hat L =  
+\begin{bmatrix} 
+1 \\
+{a\over 2} - {1 \over h} & {a\over 2} + {1 \over h} \\
+& {a\over 2} - {1 \over h} & {a\over 2} + {1 \over h}\\
+&& \ddots & \ddots \\
+&&& {a\over 2} - {1 \over h} & {a\over 2} + {1 \over h}
+\end{bmatrix}$$
+
+Note that $\hat L$ is lower bidiagonal.
+
+Now, similarly to Euler's methods convergence theorem, we study consistency and stability.
+
+##### Consistency:
+Our discretisation approximates the true equation.
+
+$$
+\begin{aligned}
+L̂ u &= \begin{bmatrix} c_0 \\
+{u(x_1) - u(x_0) \over h} + {a\over2}(u(x_1) + u(x_0)) \\
+⋮ \\
+{u(x_{n-1}) - u(x_{n-2}) \over h}  + {a\over2}(u(x_{n-1}) + u(x_{n-2}))\end{bmatrix}
+= \begin{bmatrix} c_0 \\
+\frac{1}{2}\left({u(x_1) - u(x_0) \over h} +{u(x_1) - u(x_0) \over h} + {a}(u(x_1) + u(x_0))\right) \\
+⋮ \\
+\frac{1}{2}\left({u(x_{n-1}) - u(x_{n-2}) \over h} + {u(x_1) - u(x_0) \over h} + {a}(u(x_{n-1}) + u(x_{n-2}))\right)\end{bmatrix} \\
+&= \begin{bmatrix} c_0 \\
+\frac{1}{2}\left(u'(x_0) + a u(x_0) + u''(τ_0) h + u'(x_1) + a u(x_1) + u''(σ_1) h \right)\\
+⋮ \\
+\frac{1}{2}\left(u'(x_{n-2}) + a u(x_{n-2}) + u''(τ_{n-2}) h + u'(x_{n-1}) + a u(x_{n-1}) + u''(σ_{n-1}) h \right) \end{bmatrix} = 
+\begin{bmatrix} c_0 \\
+{f(x_0)+f(x_1)\over 2} + {u''(τ_0)+u''(σ_1)\over 2} h \\
+⋮ \\
+{f(x_{n-2})+f(x_{n-1})\over 2} + {u''(τ_{n-2})+u''(σ_{n-1})\over 2} h \end{bmatrix} \\
+&= 
+\begin{bmatrix} c_0 \\ \hat fᶠ \end{bmatrix} + \begin{bmatrix} 0 \\ δ \end{bmatrix}
+\end{aligned}
+$$
+
+where $x_k ≤ τ_k, σ_k ≤ x_{k+1}$, and uniform boundedness implies that $\|δ\|_∞ = O(h)$
+
+##### Stability:
+The inverse does not blow up the error.
+
+$$
+\hat L = \underbrace{\begin{bmatrix} 1 \\ & \left({a\over 2} + {1 \over h}\right) \\ && ⋱ \\ &&& \left({a\over 2} + {1 \over h}\right)  \end{bmatrix}}_D 
+\underbrace{\begin{bmatrix} 1 \\ \left({a\over 2} + {1 \over h}\right)^{-1}\left({a\over 2} - {1 \over h}\right)  & 1 \\ & ⋱ & ⋱ \\ && \left({a\over 2} + {1 \over h}\right)^{-1}\left({a\over 2} - {1 \over h}\right) &1 \end{bmatrix}}_{ L}
+$$
+
+Thus, we have 
+$$
+\| L^{-1}\|_{1 → ∞} ≤ \left|
+ \left({a\over 2} + {1 \over h}\right)^{-1}\left({a\over 2} - {1 \over h}\right)
+\right|^{n-1} = O(1)
+$$
+as $n → ∞$, where one can take logarithms and use L'Hopitals rule to show that it actually tends to a limit.
+Note that 
+$$
+\left|{a\over 2} + {1 \over h}\right|^{-1} = \left|{h \over {ah \over 2} + 1}\right|\le 2h
+$$
+for sufficiently small $h$ (or large $n$).
+Combining stability and consistency we have, for sufficently small $h$,
+$$
+\|𝐮ᶠ - 𝐮\|_∞  = \|\hat L^{-1} (\hat L𝐮ᶠ - \hat L𝐮)\|_∞  = \| L^{-1} D^{-1} \begin{bmatrix} 0 \\ δ \end{bmatrix} \|_∞ ≤ 2h \| L^{-1}\|_{1 → ∞} \|δ\|_1 = O(h).
+$$
+
+**Problem 2.2⋆ (A)** Consider the matrices
+$$
+L = \begin{bmatrix} 1 \\
+    -a_1 & 1 \\
+        & -a_2 & 1\\
+        && ⋱ & ⋱ \\
+        &&& -a_{n-1} & 1
+\end{bmatrix}, \qquad T = \begin{bmatrix} 1 \\
+    -a & 1 \\
+        & -a & 1\\
+        && ⋱ & ⋱ \\
+        &&& -a & 1
+\end{bmatrix}.
+$$
+By writing down the inverse explicitly prove that if $|a_k| ≤ a$ then
+$$
+\|L^{-1}\|_{1 → ∞} ≤ \|T^{-1}\|_{1 → ∞}.
+$$
+Use this to prove convergence as $n → ∞$ of forward Euler for
+$$
+\begin{aligned}
+u(0) &= c_0 \\
+u'(x) - a(x)u(x) &= f(x)
+\end{aligned}
+$$
+
+**SOLUTION**
+
+
+Since
+
+$$L^{-1}=
+\begin{bmatrix}
+1 & 0 & 0 & 0 & 0 &... & 0\\
+a_1 & 1 & 0 & 0 & 0 &... & 0\\
+a_1a_2 & a_2 & 1 & 0 & 0 &... & 0\\
+a_1a_2a_3 & a_2a_3 & a_3 & 1 & 0 & ... & 0\\
+\vdots & \vdots & \ddots & \ddots & \ddots & \ddots & \vdots \\
+\vdots & \vdots & & \ddots & \ddots & 1 & 0 \\
+\prod_{i=1}^{n-1}a_i & \prod_{i=2}^{n-1}a_i & ... & ... & a_{n-2}a_{n-1} & a_{n-1} & 1 
+\end{bmatrix}$$
+
+and
+
+$$T^{-1}=
+\begin{bmatrix}
+1 & 0 & 0 & 0 & 0 &... & 0\\
+a & 1 & 0 & 0 & 0 &... & 0\\
+a^2 & a & 1 & 0 & 0 &... & 0\\
+a^3 & a^2 & a & 1 & 0 & ... & 0\\
+\vdots & \vdots & \ddots & \ddots & \ddots & \ddots & \vdots \\
+\vdots & \vdots & & \ddots & \ddots & 1 & 0 \\
+a^{n-1} & a^{n-2} & ... & ... & a^2 & a & 1 
+\end{bmatrix}$$
+
+Then, $\forall x$
+
+$$\|T^{-1}x\|_{\infty}=\max_i|(T^{-1}x)_i|= \max_i \left|x_i +\sum_{j=1}^{i-1}a^{i-j}x_j \right| = \begin{cases} 
+1 & if \ a\in[0,1] \\
+a^{n-1} & if \ a\ge 1
+\end{cases}$$
+
+since, given $b=\max\{1,a\}$,
+
+$$\max_i \left|x_i +\sum_{j=1}^{i-1}a^{i-j}x_j \right|\le \max_i \left(|x_i| +\sum_{j=1}^{i-1}\left|a^{i-j}x_j \right| \right) \le b^n\sum_{j=1}^n |x_j| = b^n\|x\|_1$$
+
+thus,
+
+$\|T^{-1}\|_{1\to\infty} = \sup_{x\ne 0} \frac{\|T^{-1}x\|_\infty}{\|x\|_1}\le b^n$ and, in particular,
+$$\|T^{-1}\|_{1\to\infty}= b^n$$
+
+since $$\frac{\|T^{-1}x\|_\infty}{\|x\|_1}=b^n$$ it is obtained using 
+$$x=\begin{cases}e_1 & b=1 \\ e_n & b=a \end{cases}$$
+
+Moreover, $|a_j|\le b$, $\forall j=1,...,n$, thus,
+
+$$\|L^{-1}x\|_{\infty}=\max_i|(L^{-1}x)_i|= \max_i \left|x_i +\sum_{j=1}^{i-1}a_{j}...a_{i-1}x_j \right| \le \max_i |x_i| +\sum_{j=1}^{i-1}|a_{j}...a_{i-1}x_j | \le b^n\|x\|_1$$
+
+Hence,
+
+$$\|L^{-1}\|_{1\to \infty}=\sup_{x} \frac{\|L^{-1}x\|_{\infty}}{\|x\|_{1}} \le b^n = \|T^{-1}\|_{1 \to \infty}$$
+
+
+Now we prove convergence for the forward Euler method as $n → ∞$ for
+
+$$
+\begin{aligned}
+u(0) &= c_0 \\
+u'(x) &= a(x)u(x) + f(x)
+\end{aligned}
+$$
+
+Using equidistanced (with step $h$) points $x_0,...,x_{n-1}$, we use the approximations $u(x_k) \approx u_k$, where $u_0 = c_0$ and
+$$u_{k+1} = u_k + h\left(a(x_k)u_k + f(x_k)\right)$$
+
+In order to study convergence we consider the limit as $n\to\infty$ of
+$$\sup_{i=1,...,n-1} |u_i - u(x_i)|$$
+
+Similarly to Euler's methods convergence theorem, we study consistency and stability.
+
+In order to apply the theorem we note that we can define $a_k=a(x_k)$, $k=1,...n-1$ and we have that for every $k$, $|a_k|\le a:= max_{i=1,n-1}|a_i|$.
+
+##### Consistency:
+Our discretisation approximates the true equation.
+
+$$\hat Lu = \begin{bmatrix} c_0 \\
+{u(x_1) - u(x_0) \over h} - a_1 u(x_0) \\
+\vdots \\
+{u(x_{n-1}) - u(x_{n-2}) \over h} - a_{n-1} u(x_{n-2})\end{bmatrix} = 
+\begin{bmatrix} c_0 \\
+u'(x_0) - a_1 u(x_0) + u''(τ_0) h \\
+\vdots \\
+u'(x_{n-2}) - a_{n-1} u(x_{n-2}) + u''(τ_{n-2}) h\end{bmatrix} = 
+\begin{bmatrix} c_0 \\
+f(x_0) + u''(τ_0) h \\
+\vdots \\
+f(x_{n-2}) + u''(τ_{n-2}) h \end{bmatrix} = 
+\begin{bmatrix} c_0 \\ 𝐟ᶠ \end{bmatrix} + \begin{bmatrix} 0 \\ δ \end{bmatrix}$$
+
+where $x_k ≤ τ_k ≤ x_{k+1}$, and uniform boundedness implies that $\|δ\|_∞ = O(h)$
+
+##### Stability:
+The inverse does not blow up the error.
+First write, for $l_k = 1-a_k$
+
+$$\hat L = \underbrace{\begin{bmatrix} 1 \\ & h^{-1} \\ && ⋱ \\ &&& h^{-1} \end{bmatrix}}_D \underbrace{\begin{bmatrix} 1 \\ -l_1 & 1 \\ & ⋱ & ⋱ \\ && -l_{n-1} &1 \end{bmatrix}}_{ L}$$
+
+Thus, we have $\| L^{-1}\|_{1 → ∞} ≤ \|T^{-1}\|_{1 → ∞} = O(1)$
+
+Combining stability and consistency we have
+$$\|𝐮ᶠ - 𝐮\|_∞  = \|\hat L^{-1} (\hat L𝐮ᶠ - \hat L𝐮)\|_∞  = \| L^{-1} D^{-1} \begin{bmatrix} 0 \\ δ \end{bmatrix} \|_∞ ≤ h \| L^{-1}\|_{1 → ∞} \|δ\|_1 = O(h)$$
+
+
+
+
+
+## 3. Fourier series
+
+**Problem 3.1⋆ (C)** Give explicit formulae for $f̂_k$ and $f̂_k^n$ for the following functions:
+$$
+\cos θ, \cos 4θ, \sin^4θ, {3 \over 3 - {\rm e}^{\rm i θ}}, {1 \over 1 - 2{\rm e}^{\rm i θ}}
+$$
+Hint: You may wish to try the change of variables $z = {\rm e}^{-{\rm i}θ}$.
+
+**SOLUTION**
+
+1. Just expand in complex exponentials to find that
+$$
+\cos θ = {\exp({\rm i} θ) + \exp(-{\rm i} θ) \over 2}
+$$
+that is $f̂_1 = f̂_{-1} = 1/2$, $f̂_k = 0$ otherwise.
+Therefore for $p∈ ℤ$ we have
+$$
+\begin{aligned}
+f̂_k^1 &= f̂_1 + f̂_{-1} = 1 \\
+f̂_{2p}^2 &= 0, f̂_{2p+1}^2 = f̂_1 + f̂_{-1} = 1 \\
+f̂_{1+np}^n &= f̂_{-1+np}^n = 1/2, f̂_k^n = 0 \hbox{otherwise} \\
+\end{aligned}
+$$
+2. Similarly
+$$
+\cos 4 θ = {\exp(4{\rm i} θ) + \exp(-4{\rm i} θ) \over 2}
+$$
+that is $f̂_4 = f̂_{-4} = 1/2$, $f̂_k = 0$ otherwise.
+Therefore for $p∈ ℤ$ we have
+$$
+\begin{aligned}
+f̂_p^1 &= f̂_4 + f̂_{-4} = 1 \\
+f̂_{2p}^2 &= f̂_4 + f̂_{-4} = 1, f̂_{2p+1}^2 = 0 \\
+f̂_{3p}^3 &= 0, f̂_{3p±1}^3 = f̂_{±4} =1/2 \\
+f̂_{4p}^4 &= f̂_{-4} + f̂_4 = 1, f̂_{4p±1}^4 = 0,  f̂_{4p+2}^4 = 0 \\
+f̂_{5p}^5 &= 0, f̂_{5p+1}^5 = f̂_{-4} = 1/2, f̂_{5p-1}^5 = f̂_{4} = 1/2,  f̂_{5p±2}^5 =0  \\
+f̂_{6p}^6 &=0, f̂_{6p±1}^6 = 0,  f̂_{6p+2}^6 = f̂_{-4} = 1/2,  f̂_{6p-2}^6 = f̂_{4} = 1/2, f̂_{6p+3}^6 =0  \\
+f̂_{7p}^7 &= 0, f̂_{7p±1}^7 = 0,  f̂_{7p±2}^7 = 0, f̂_{7p±3}^7 = f̂_{∓4} = 1/2 \\
+f̂_{8p}^8 &= f̂_{8p±1}^8 = f̂_{8p±2}^8 =  f̂_{8p±3}^8 = 0, f̂_{8p+4}^8 = f̂_4 + f̂_{-4} = 1 \\
+f̂_{k+pn}^n &= f̂_k \hbox{ for $-4 ≤ k ≤ 4$, 0 otherwise}.
+\end{aligned}
+$$
+3. Here we have:
+$$
+(\sin θ)^4= \left({\exp({\rm i} θ) - \exp(-{\rm i} θ) \over 2 {\rm i}}\right)^4
+= \left({\exp(2{\rm i} θ) -2 + \exp(-2{\rm i} θ) \over -4}\right)^2
+= {\exp(4{\rm i} θ) -4\exp(2{\rm i} θ) +6 -4 \exp(-2{\rm i} θ)+\exp(-2{\rm i} θ) \over 16}
+$$
+that is $f̂_{-4} = f̂_4 = 1/16$, $f̂_{-2} = f̂_2 = -1/4$, $f_0 = 3/8$, $f̂_k = 0$ otherwise.
+Therefore for $p∈ ℤ$ we have
+$$
+\begin{aligned}
+f̂_p^1 &=f̂_{-4} + f̂_{-2} + f̂_0 + f̂_2 +  f̂_4 = 0 \\
+f̂_k^2 &= 0 \\
+f̂_{3p}^3 &= f̂_0 = 3/8, f̂_{3p+1}^3 = f̂_{-2} + f̂_4 =-3/16,  f̂_{3p-1}^3 = f̂_{2} + f̂_{-4} =-3/16 \\
+f̂_{4p}^4 &= f̂_0 + f̂_{-4} + f̂_4 = 1/2, f̂_{4p±1}^4 = 0,  f̂_{4p+2}^4 = f̂_{2} + f̂_{-2} =-1/2 \\
+f̂_{5p}^5 &= f̂_0 = 3/8, f̂_{5p+1}^5 = f̂_{-4} = 1/16, f̂_{5p-1}^5 = f̂_{4} = 1/16,  f̂_{5p+2}^5 = f̂_2 = -1/4, f̂_{5p-2}^5 = f̂_{-2} = -1/4  \\
+f̂_{6p}^6 &= f̂_0 = 3/8, f̂_{6p±1}^6 = 0,  f̂_{6p+2}^6 = f̂_2 + f̂_{-4} = -3/16,  f̂_{6p-2}^6 = f̂_{-2} + f̂_{4} = -3/16, f̂_{6p+3}^6 =0  \\
+f̂_{7p}^7 &= f̂_0 = 3/8, f̂_{7p±1}^7 = 0,  f̂_{7p±2}^7 = f̂_{±2} = -1/4, f̂_{7p±3}^7 = f̂_{∓4} = 1/16 \\
+f̂_{8p}^8 &= f̂_0 = 3/8, f̂_{8p±1}^8 = 0,  f̂_{8p±2}^8 = f̂_{±2} = -1/4, f̂_{8p±3}^8 = 0, f̂_{8p+4}^8 = f̂_4 + f̂_{-4} = 1/8 \\
+f̂_{k+pn}^n &= f̂_k \hbox{ for $-4 ≤ k ≤ 4$, 0 otherwise}.
+\end{aligned}
+$$
+4. Under the change of variables $z = {\rm e}^{{\rm i}θ}$ we can use Geoemtric series to determine
+$$
+{3 \over 3 - z} = {1 \over 1- z/3} = ∑_{k=0}^∞ {z^k \over 3^k}
+$$
+That is $f̂_k = 1/3^k$ for $k ≥ 0$, and $f̂_k = 0$ otherwise.
+We then have for $0 ≤ k ≤ n-1$
+$$
+f̂_{k+pn}^n = ∑_{ℓ=0}^∞ {1 \over 3^{k+ℓn}} = {1 \over 3^k} {1 \over 1 - 1/3^n} = {3^n \over 3^{n+k} - 3^k}
+$$
+5. Now make the change of variables $z = {\rm e}^{-{\rm i} θ}$ to get:
+$$
+{1 \over 1 - 2/z} = {1 \over -2/z} {1 \over 1 - z/2} = {1 \over -2/z} ∑_{k=0}^∞ {z^k \over 2^k}
+= - ∑_{k=1}^∞ {{\rm e}^{-{\rm i} k θ} \over 2^k}
+$$
+That is $f̂_k = -1/2^{-k}$ for $k ≤ -1$ and 0 otherwise.
+We then have for $-n ≤ k ≤ -1$
+$$
+f̂_{k+pn}^n =- ∑_{ℓ=0}^∞ {1 \over 2^{-k+ℓn}} = -{1 \over 2^{-k}} {1 \over 1 - 1/2^n} = -{2^{n+k} \over 2^n - 1}
+$$
+
+**Problem 3.2⋆ (B)** Prove that if the first $λ-1$ derivatives $f(θ), f'(θ), …, f^{(λ-1)}(θ)$ 
+are 2π-periodic and $f^{(λ)}$ is uniformly bounded  that
+$$
+|f̂_k| = O(|k|^{-λ})\qquad \hbox{as $|k| → ∞$}
+$$
+Use this to show for the Taylor case ($0 = f̂_{-1} = f̂_{-2} = ⋯$) that
+$$
+|f(θ) - ∑_{k=0}^{n-1} f̂_k {\rm e}^{{\rm i}kθ}| = O(n^{1-λ})
+$$
+
+**SOLUTION**
+A straightforward application of integration by parts yields the result
+
+$$f̂ₖ = \frac{1}{2π} \int^{2π}_{0} f(θ) {\rm e}^{-ikθ} dθ = \frac{(-i)^λ}{2π k^{λ}} \int^{2π}_{0} f^{(λ)}(θ) {\rm e}^{-ikθ} dθ  $$
+given that $f^{(λ)}$ is uniformly bounded, the second part follows directly from this result
+
+$$
+|∑_{k=n}^{\infty} f̂_k {\rm e}^{{\rm i}kθ}| \leq ∑_{k=n}^{\infty} |f̂_k | \leq C ∑_{k=n}^{\infty} k^{-λ} 
+$$
+
+for some constant $C$.
+
+
+**Problem 3.3⋆ (C)**
+If $f$ is a trigonometric polynomial  ($f̂_k = 0$ for $|k| > m$) show
+for $n ≥ 2m+1$ we can exactly recover $f$:
+$$
+f(θ) = \sum_{k=-m}^m f̂_k^n {\rm e}^{{\rm i} k θ}
+$$
+
+**SOLUTION**
+This proof is nearly identical to the proof of "Theorem (Taylor series converges)" in the lecture notes. Only now one has to also subtract the negative coefficients from the negative approximate coefficients in the chain of arguments.
+
+**Problem 3.4⋆ (B)** For the general (non-Taylor) case and $n = 2m+1$, prove convergence for
+$$
+f_{-m:m}(θ) := ∑_{k=-m}^m f̂_k^n {\rm e}^{{\rm i} k θ}
+$$
+to $f(θ)$ as $n \rightarrow ∞$.
+What is the rate of convergence if the first $λ-1$ derivatives $f(θ), f'(θ), …, f^{(λ-1)}(θ)$ 
+are 2π-periodic and $f^{(λ)}$ is uniformly bounded?
+
+**SOLUTION**
+
+Observe that by aliasing (see corollary in lecture notes) and triangle inequality we have the following 
+
+$$ |f̂_k^n - f̂_k|  \leq \sum_{p=1}^{\infty} (|f̂_{k+pn}|+|f̂_{k-pn}|) $$
+
+Using the result from Problem 3.2 yields
+
+$$ |f̂_k^n - f̂_k| \leq \frac{C}{n^\lambda} \sum_{p=1}^{\infty} \frac{1}{\left(p + \frac{k}{n}\right)^\lambda} + \frac{1}{\left(p - \frac{k}{n}\right)^\lambda} $$
+
+now we pick $|q| < \frac{1}{2}$ (such that the estimate below will hold for both summands above) and construct an integral with convex and monotonocally decreasing integrand such that
+
+$$ \left( p + q \right)^{-\lambda} < \int_{p-\frac{1}{2}}^{p+\frac{1}{2}} (x + q)^{-\lambda} dx $$
+
+more over summing over the left-hand side from $1$ to $\infty$ yields a bound by the integral:
+
+$$ \int^{\infty}_{\frac{1}{2}} (x + q)^{-\lambda} dx = \frac{1}{\lambda}(\frac{1}{2} + q)^{- \lambda + 1}$$
+
+Finally let $q = \pm \frac{k}{n}$ to achieve the rate of convergence
+
+$$ |f̂_k^n - f̂_k| \leq \frac{C_{\lambda}}{ n^{\lambda}} \left(  \left( \frac{1}{2} + k/n \right)^{ - \lambda + 1} + \left( \left( \frac{1}{2} - k/n \right) \right)^{- \lambda +1} \right)$$
+
+where $C_{\lambda}$ is a constant depending on $\lambda$. Note that it is indeed important to split the $n$ coefficients equally over the negative and positive coefficients as stated in the notes, due to the estatime we used above.
+
+Finally, we have (thanks to Anonymous on ed):
+$$
+\begin{aligned}
+|f(\theta) - f_{-m:m}(\theta)|
+&= |\sum_{k=-m}^m {(f̂_k - f̂_k^n)z^k} + \sum_{k=m+1}^\infty {f̂_k z^k}  + \sum_{k=-\infty}^{-m-1} {f̂_k z^k} | \\
+&\le \sum_{k=-m}^m | f̂_k - f̂_k^n | + \sum_{k=m+1}^\infty |f̂_k| +  \sum_{k=-\infty}^{-m-1} |f̂_k| \\
+&\le \sum_{k=-m}^m {\frac{C_{\lambda}}{ n^{\lambda}} \left( \left( \frac{1}{2} + k/n \right)^{ - \lambda + 1} + \left( \left( \frac{1}{2} - k/n \right) \right)^{- \lambda +1} \right)} + \sum_{k=m+1}^\infty |f̂_k| +  \sum_{k=-\infty}^{-m-1} |f̂_k| \\
+&= \frac{C_{\lambda}}{n^{\lambda}} 2^{\lambda} + \sum_{k=m+1}^\infty |f̂_k| +  \sum_{k=-\infty}^{-m-1} |f̂_k|  \\
+&= O(n^{-\lambda}) + O(n^{1-\lambda} ) + O(n^{1-\lambda} ) \\
+&= O(n^{1-\lambda}) 
+\end{aligned}
+$$   
+
+# Week 8  
+
+## 1. DFT
+
+**Problem 1.1⋆ (C)** Show that the DFT $Q_n$ is symmetric ($Q_n = Q_n^⊤$) but not Hermitian ($Q_n ≠ Q_n^⋆$).
+
+**SOLUTION**
+
+First we remember the definitions we introduced. The DFT is
+
+$$
+\begin{aligned}
+Q_n &:= {1 \over \sqrt{n}} \begin{bmatrix} 1 & 1 & 1&  ⋯ & 1 \\
+                                    1 & {\rm e}^{-{\rm i} θ_1} & {\rm e}^{-{\rm i} θ_2} & ⋯ & {\rm e}^{-{\rm i} θ_{n-1}} \\
+                                    1 & {\rm e}^{-{\rm i} 2 θ_1} & {\rm e}^{-{\rm i} 2 θ_2} & ⋯ & {\rm e}^{-{\rm i} 2θ_{n-1}} \\
+                                    ⋮ & ⋮ & ⋮ & ⋱ & ⋮ \\
+                                    1 & {\rm e}^{-{\rm i} (n-1) θ_1} & {\rm e}^{-{\rm i} (n-1) θ_2} & ⋯ & {\rm e}^{-{\rm i} (n-1) θ_{n-1}}
+\end{bmatrix}
+\end{aligned}
+$$
+
+where $θ_j = 2πj/n$ for $j = 0,1,…,n$ and $ω := {\rm e}^{{\rm i} θ_1} = {\rm e}^{2 π {\rm i} \over n}$ are $n$ th roots of unity in the sense that $ω^n = 1$. So ${\rm e}^{{\rm i} θ_j} ={\rm e}^{2 π {\rm i} j \over n}= ω^j$. Note that $θ_j = 2π(j-1)/n+2π/n = θ_{j-1} + θ_1$. By completing this recurrence we find that $θ_j = jθ_1$, from which the following symmetric version follows immediately
+$$
+\begin{aligned}
+Q_n 
+&= {1 \over √n} \begin{bmatrix} 1 & 1 & 1&  ⋯ & 1 \\
+                                    1 & ω^{-1} & ω^{-2} & ⋯ & ω^{-(n-1)}\\
+                                    1 & ω^{-2} & ω^{-4} & ⋯ & ω^{-2(n-1)}\\
+                                    ⋮ & ⋮ & ⋮ & ⋱ & ⋮ \\
+                                    1 & ω^{-(n-1)} & ω^{-2(n-1)} & ⋯ & ω^{-(n-1)^2}
+\end{bmatrix}.
+\end{aligned}
+$$
+Now $Q_n^⋆$ is found to be
+$$
+\begin{aligned}
+Q_n^⋆ &= {1 \over √n} \begin{bmatrix}
+1 & 1 & 1&  ⋯ & 1 \\
+1 & {\rm e}^{{\rm i} θ_1} & {\rm e}^{{\rm i} 2 θ_1} & ⋯ & {\rm e}^{{\rm i} (n-1) θ_1} \\
+1 &  {\rm e}^{{\rm i} θ_2}  & {\rm e}^{{\rm i} 2 θ_2} & ⋯ & {\rm e}^{{\rm i} (n-1)θ_2} \\
+⋮ & ⋮ & ⋮ & ⋱ & ⋮ \\
+1 & {\rm e}^{{\rm i} θ_{n-1}} & {\rm e}^{{\rm i} 2 θ_{n-1}} & ⋯ & {\rm e}^{{\rm i} (n-1) θ_{n-1}}
+\end{bmatrix}
+= {1 \over √n} \begin{bmatrix}
+1 & 1 & 1&  ⋯ & 1 \\
+1 & ω^{1} & ω^{2} & ⋯ & ω^{(n-1)}\\
+1 & ω^{2} & ω^{4} & ⋯ & ω^{2(n-1)}\\
+⋮ & ⋮ & ⋮ & ⋱ & ⋮ \\
+1 & ω^{(n-1)} & ω^{2(n-1)} & ⋯ & ω^{(n-1)^2}
+\end{bmatrix}
+\end{aligned}
+$$
+using the above arguments. Evidently, $Q_n^⋆ \neq Q_n$ since $ω \neq ω^{-1}$.
+
+**END**
+
+
+**Problem 1.2⋆ (A)** Show for $0 ≤ k,ℓ ≤ n-1$
+$$
+{1 \over n} \sum_{j=1}^n \cos k θ_j \cos ℓ θ_j = \begin{cases} 1 & k = ℓ = 0 \\
+                                                  1/2 & k = ℓ \\
+                                                  0 & \hbox{otherwise}
+                                                  \end{cases}
+$$
+for $θ_j = π(j-1/2)/n$. Hint: Be careful as the $\theta_j$ differ from before, 
+and only cover half the period, $[0,\pi]$. Using symmetry may help.
+You may also consider replacing $\cos$ with 
+complex exponentials:
+$$
+\cos θ = {{\rm e}^{{\rm i}θ} + {\rm e}^{-{\rm i}θ} \over 2}.
+$$
+
+
+**SOLUTION**
+We have,
+
+$$
+\begin{aligned}
+\frac{1}{n}\sum_{j=1}^n \cos(k\theta_j)\cos(l\theta_j) &= \frac{1}{4n}\sum_{j=1}^ne^{i(k+l)\theta_j} + e^{-i(k+l)\theta_j} + e^{i(k-l)\theta_j} + e^{-i(k-l)\theta_j} \\
+&=	\frac{1}{4n}\sum_{j=1}^ne^{ia_{kl}\theta_j} + e^{-ia_{kl}\theta_j} + e^{ib_{kl}\theta_j} + e^{-ib_{kl}\theta_j},
+\end{aligned}
+$$
+where we have defined $a_{kl} = k+l$ and $b_{kl} = k-l$. Now consider, for $a \in \mathbb{Z}$, a $\neq 2kn$ for some $k \in \mathbb{Z}$,
+$$
+\begin{aligned}
+	\sum_{j=1}^n e^{ia\theta_j} &=\sum_{j=1}^n e^{ia\pi(j-\frac{1}{2})/n} \\
+	&=e^{-ia\pi/2n}\sum_{j=1}^n e^{iaj\pi/n} \\
+	&=e^{-ia\pi/2n}\sum_{j=1}^n (e^{ia\pi/n})^j \\
+	&=e^{-ia\pi/2n} e^{ia\pi/n}\frac{(e^{ia\pi /n})^n - 1}{e^{ia\pi/n} - 1} \\
+	&= e^{ia\pi/2n} \frac{e^{ia\pi} - 1 }{e^{ia\pi / n} - 1},
+\end{aligned}
+$$
+where our assumptions on $a$ ensure that we are not dividing by $0$. Then we have, for $a$ as above,
+$$
+\begin{aligned}
+	\sum_{j=1}^n e^{ia\theta_j} + e^{-ia\theta_j} &= e^{ia\pi/2n} \frac{e^{ia\pi} - 1 }{e^{ia\pi / n} - 1} + e^{-ia\pi/2n} \frac{e^{-ia\pi} - 1 }{e^{-ia\pi / n} - 1} \\
+	&= e^{ia\pi/2n} \frac{e^{ia\pi} - 1 }{e^{ia\pi / n} - 1} + e^{-ia\pi/2n} \cdot\frac{e^{ia\pi/n}}{e^{ia\pi/n}}\cdot \frac{e^{-ia\pi} - 1 }{e^{-ia\pi / n} - 1} \\
+	&= e^{ia\pi/2n} \frac{e^{ia\pi} - 1 }{e^{ia\pi / n} - 1} + e^{ia\pi/2n}\frac{e^{-ia\pi} - 1}{1 - e^{ia\pi/n}} \\
+	&=e^{ia\pi/2n} \frac{e^{ia\pi} - 1 }{e^{ia\pi / n} - 1} - e^{ia\pi/2n}\frac{e^{-ia\pi} - 1}{e^{ia\pi/n} - 1} \\
+	&= \frac{e^{ia\pi/2n}}{e^{ia\pi/n-1}}\left(e^{ia\pi} - 1 - e^{-ia\pi} + 1 \right) \\
+	&= \frac{e^{ia\pi/2n}}{e^{ia\pi/n-1}}\frac{1}{2i}\sin(a\pi),
+\end{aligned}
+$$
+which is $0$ for $a$ an integer.
+
+Now, when $k = l = 0$, we have $a_{kl} = b_{kl} = 0$, and,
+$$
+\frac{1}{n}\sum_{j=1}^n \cos(k\theta_j)\cos(l\theta_j) = \frac{1}{4n}\sum_{j=1}^n (1 + 1 + 1 + 1) = 1.
+$$
+When $k = l \neq 0$, we have $0 < a_{kl} = 2k < 2n$, and $b_{kl} = 0$. Hence,
+$$
+\begin{aligned}
+	\frac{1}{n}\sum_{j=1}^n \cos(k\theta_j)\cos(l\theta_j) &= \frac{1}{4n}\sum_{j=1}^n (e^{ia_{kl}\theta_j} + e^{-ia_{kl}\theta_j} + 1 + 1) \\
+	&= \frac{1}{4n}\left[ \left(\sum_{j=1}^n e^{ia_{kl}\theta_j} + e^{-ia_{kl}\theta_j}\right) +2n\right] \\
+	&= \frac{1}{2},
+\end{aligned}
+$$
+since $a_{kl}$ meets the conditions for the sum considered above.
+
+When $k \neq l$, we have, $-2n < a_{kl}, b_{kl} <  2n$ and $a_{kl}, b_{kl} \neq 0$, hence,
+$$
+\begin{aligned}
+	\frac{1}{n}\sum_{j=1}^n \cos(k\theta_j)\cos(l\theta_j) &= \frac{1}{4n}\sum_{j=1}^n (e^{ia_{kl}\theta_j} + e^{-ia_{kl}\theta_j} + e^{ib_{kl}\theta_j} + e^{-ib_{kl}\theta_j}) \\
+	&= \frac{1}{4n} \left[\sum_{j=1}^n (e^{ia_{kl}\theta_j} + e^{-ia_{kl}\theta_j})  + \sum_{j=1}^n (e^{ib_{kl}\theta_j} + e^{-ib_{kl}\theta_j} )\right] \\
+	&= 0.
+\end{aligned}
+$$
+
+
+
+**Problem 1.3⋆ (B)** Consider the Discrete Cosine Transform (DCT)
+$$
+C_n := \begin{bmatrix}
+\sqrt{1/n} \\
+ & \sqrt{2/n} \\ 
+ && ⋱ \\
+ &&& \sqrt{2/n}
+ \end{bmatrix}
+\begin{bmatrix}
+    1 & ⋯ & 1\\
+    \cos θ_1 & ⋯ & \cos θ_n \\
+    ⋮ & ⋱ & ⋮ \\
+    \cos (n-1)θ_1 & ⋯ & \cos (n-1)θ_n
+\end{bmatrix}
+$$
+for $θ_j = π(j-1/2)/n$. Prove that $C_n$ is orthogonal: $C_n^⊤ C_n = C_n C_n^⊤ = I$.
+Hint: $C_n C_n^⊤ = I$ might be easier to show than $C_n^⊤ C_n = I$ using the previous problem.
+
+**SOLUTION**
+
+The components of $C$ without the diagonal matrix, which we may call $\hat{C}$ are
+$$
+\hat{C}_{ij} = \cos((j-1)θ_{i-1}),
+$$
+where $θ_j = π(j-1/2)/n$. Recalling that the elements of matrix multiplication are given by
+$$
+(ab)_{ij} := \sum_{k=1}^n a_{ik} b_{kj}
+$$
+we find that
+$$
+(\hat{C}_n \hat{C}_n^⊤)_{ij} = \sum_{k=1}^n \cos((i-1)θ_{k-1}) \cos((k-1)θ_{j-1}).
+$$
+
+By using the previous problem and the terms on the diagonal matrices which ensure that the $1/2$ terms become $1$ we know how to compute all of these entries and find that it is the identity.   
+
+## 2. FFT 
+
+**Problem 2.1⋆ (B)** Show that $Q_{2n}$ can also be reduced to $Q_n$ applied
+to two vectors.
+
+**SOLUTION**
+We saw in the lecture notes how this works for $Q_{2n}^⋆$:
+
+$$
+\begin{aligned}
+Q_{2n}^⋆ &= {1 \over \sqrt{2n}} \begin{bmatrix} 𝟏_{2n} | \vec{ω}_{2n} | \vec{ω}_{2n}^2 | ⋯ | \vec{ω}_{2n}^{2n-1} \end{bmatrix}
+= {1 \over \sqrt{2n}} P_σ^⊤ \begin{bmatrix} 𝟏_{n} &   \vec{ω}_n        & \vec{ω}_n^2          & ⋯ & \vec{ω}_n^{n-1}          & \vec{ω}_n^n  & ⋯ & \vec{ω}_n^{2n-1}  \\
+                        𝟏_{n} & ω_{2n} \vec{ω}_n & ω_{2n}^2 \vec{ω}_n^2 & ⋯ & ω_{2n}^{n-1} \vec{ω}_n^{n-1} & ω_{2n}^n \vec{ω}_n^n  & ⋯ & ω_{2n}^{2n-1} \vec{ω}_n^{2n-1}
+\end{bmatrix} \\
+&= {1 \over \sqrt{2}} P_σ^⊤ \begin{bmatrix} Q_n^⋆ & Q_n^⋆ \\
+                                     Q_n^⋆ D_n & -Q_n^⋆ D_n
+                                     \end{bmatrix} =
+                                     {1 \over \sqrt{2}}P_σ^⊤ \begin{bmatrix} Q_n^⋆ \\ &Q_n^⋆ \end{bmatrix} \begin{bmatrix} I_n & I_n \\ D_n & -D_n \end{bmatrix}
+\end{aligned}
+$$
+
+A very similar chain of arguments can be made for $Q_{2n}$ but we can also infer it directly from the above, since $(Q_{2n}^⋆)^⋆ = Q_{2n}$, we find that
+
+$$
+Q_{2n} = \left({1 \over \sqrt{2}}P_σ^⊤ \begin{bmatrix} Q_n^⋆ \\ &Q_n^⋆ \end{bmatrix} \begin{bmatrix} I_n & I_n \\ D_n & -D_n \end{bmatrix}\right)^⋆ 
+= {1 \over \sqrt{2}} \begin{bmatrix} I_n & D̄_n \\ I_n & -D̄_n \end{bmatrix} \begin{bmatrix} Q_n \\ &Q_n \end{bmatrix}  P_σ
+$$  
+
+## 3. Orthogonal polynomials
+
+**Problem 3.1⋆  (B)** Construct  $p_0(x),p_1(x),p_2(x),p_3(x)$, monic OPs
+for the weight $\sqrt{1-x^2}$ on $[-1,1]$.
+Hint: first compute $\int_{-1}^1 x^k \sqrt{1-x^2} {\rm d} x$ for $0 ≤ k ≤ 2$
+using a change-of-variables.
+
+Following the hint, we first calculate $\int_{-1}^1 x^k\sqrt{1-x^2}{\rm d}x$. By symmetry, it's zero when $k$ is odd and double the integral on $[0,1]$ when $k$ is even. 
+
+$$
+\underbrace{\int_0^1 x^k\sqrt{1-x^2}{\rm d}x}_{I_k}=_{x=\sin t}\underbrace{\int_0^{\pi/2}\sin^k(t)\cos^2(t){\rm d}t}_{I_k}=\underbrace{\int_0^{\pi/2}\sin^k t{\rm d}t}_{J_k}-\underbrace{\int_0^{\pi/2}\sin^{k+2}t{\rm d}t}_{J_{k+2}}.
+$$
+
+Meanwhile, 
+$$J_k=-\int_0^{\pi/2}\sin^{k-1}t{\rm d}(\cos t)=_{\text{integral by part}}(k-1)I_{k-2}.$$
+
+Putting the above 2 equations together, we have $I_k=(k-1)I_{k-2}-(k+1)I_k$, so $I_k=\frac{k-1}{k+2}I_{k-2}$. Since $I_0=\pi/4$, we have $I_k=\frac{(k-1)!!}{(k+2)!!}\frac{\pi}{2}$ for positive even $k$. (Note that the denominator multiplies to 4, not to 2.) Keep in mind that the integral we want is double this value when $k$ is even.
+
+【Remark】Check the [beta function](https://en.wikipedia.org/wiki/Beta_function).
+
+Let $p_0(x)=1$, then $\|p_0\|^2=2I_0=\pi/2$. We know from the 3-term recurrence that
+$$xp_0(x)=a_0p_0(x)+p_1(x)$$
+where
+$$
+a_0=\frac{⟨ p_0,xp_0⟩}{\|p_0\|^2}=0.$$
+Thus $p_1(x)=x$ and $\|p_1\|^2=2I_2=\pi/8$.
+From
+$$xp_1(x)=c_0p_0(x)+a_1p_1(x)+p_2(x)$$
+we have
+$$c_0=\frac{⟨ p_0,xp_1⟩}{\|p_0\|^2}=2I_2/2I_0=1/4$$
+$$a_1=\frac{⟨ p_1,xp_1⟩}{\|p_1\|^2}=0$$
+$$p_2(x)=xp_1(x)-c_0-a_1p_1(x)=x^2-1/4$$
+$$\|p_2\|^2=2I_4-I_2+1/8I_0=\pi/32$$
+Finally, from
+$$xp_2(x)=c_1p_1(x)+a_2p_2(x)+p_3(x)$$
+we have
+$$c_1=\frac{⟨ p_1,xp_2⟩}{\|p_1\|^2}=(2I_4-1/2I_2)/(\pi/8)=1/4$$
+$$a_2=\frac{⟨ p_2,xp_2⟩}{\|p_2\|^2}=0$$
+$$p_3(x)=xp_2(x)-c_1p_1(x)-a_2p_2(x)=x^3-1/2x$$
+
+**Problem 3.2⋆  (C, 3-term recurrence, 1st form)**
+Show that if $\{p_n\}$ are OPs then there exist real constants $A_n ≠ 0$, $B_n$, and $C_n$
+such that
+$$
+\begin{aligned}
+p_1(x) &= (A_0 x + B_0) p_0(x) \\
+p_{n+1}(x) &= (A_n x + B_n) p_n(x) - C_n p_{n-1}(x)
+\end{aligned}
+$$
+Write this as a lower triangular linear system, given $p_0(x) = \mu \in \mathbb{R}$:
+$$
+L_x \begin{bmatrix} p_0(x) \\ \vdots \\ p_{n+1}(x) \end{bmatrix} = \begin{bmatrix} \mu \\ 0 \\ \vdots \\ 0 \end{bmatrix}
+$$
+
+**SOLUTION**
+
+The 2nd form of 3-term recurrence is
+$$xp_0(x)=a_0p_0(x)+b_0p_1(x)$$
+and
+$$xp_n(x)=c_{n-1}p_{n-1}(x)+a_np_n(x)+b_np_{n+1}(x)$$
+which is equivalent to
+$$p_1(x)=\left(\frac{1}{b_0}x-\frac{a_0}{b_0}\right)p_0(x),$$
+$$p_{n+1}(x)=\left(\frac{1}{b_n}x-\frac{a_n}{b_n}\right)p_n(x)-\frac{c_{n-1}}{b_n}p_{n-1}(x).$$
+So we have $A_n=1/b_n$, $B_n=-\frac{a_n}{b_n}$ and $C_n=\frac{c_{n-1}}{b_n}$.
+
+Writing down the recurrence for every $n$, we have a lower tridiagonal linear system
+$$
+\underbrace{\begin{bmatrix}
+1 &&&&\\
+-A_0x-B_0 & 1 &&&\\
+C_1 & -A_1x-B_1 & 1 &&\\
+& \ddots &\ddots&\ddots&\\
+&&C_{n}&-A_nx-B_n&1
+\end{bmatrix}}_{L_x}
+\underbrace{\begin{bmatrix} p_0(x) \\ \vdots \\ p_{n+1}(x) \end{bmatrix}}_{\mathbf{P}(x)} = \underbrace{\begin{bmatrix} μ \\ 0 \\ \vdots \\ 0 \end{bmatrix}}_{\mu\mathbf{e}_1}
+$$
+
+
+**Problem 3.3⋆  (B)** Show that if $f(x)$ is a degree $n-1$ polynomial
+$$
+f(x) = [p_0(x) | ⋯ | p_{n-1}(x)] \underbrace{\begin{bmatrix} c_0 \\ \vdots \\ c_{n-1} \end{bmatrix}}_{\bf c}
+$$
+then evaluation at a point can be recast as inverting an upper triangular system
+(_Clenshaw's algorithm_):
+$$
+f(x) = μ𝐞_1^⊤ U_x^{-1} {\bf c}.
+$$
+
+**SOLUTION**
+
+Using the same notation as the previous part we have:
+$$
+f,(x) = \mathbf{P}(x)^⊤ 𝐜 = (μ L_x^{-1} 𝐞_1)^⊤ 𝐜 = μ  𝐞_1^⊤ (L_x^⊤)^{-1} 𝐜
+$$
+that is $U_x = L_x^⊤$.
+
+
+**Problem 3.4⋆  (B)** If $w(-x) = w(x)$ for a weight supported on $[-b,b]$ show that $a_n = 0$.
+Hint: first show that the (monic) polynomials $p_{2n}(x)$ are even and $p_{2n+1}(x)$ are odd.
+
+**SOLUTION**
+
+An integral is zero if its integrand is odd. 
+Moreover an even function times an odd function is odd and
+an odd function times an odd fuction is even.
+Note that $p_0(x)$ and $w(x)$ are even and $x$ is odd. 
+
+We see that $a_0$ is zero:
+$$
+⟨p_0,x p_0(x)⟩ = \int_{-b}^b x w(x) {\rm d} x = 0
+$$
+since $xw(x)$ is odd,
+which shows that
+$$
+p_1(x) = xp_0(x)
+$$
+is odd. We now proceed by induction. Assume that $p_{2n}$ is even and $p_{2n-1}$ is odd.
+We have:
+$$
+⟨p_{2n},x p_{2n}(x)⟩ = \int_{-b}^b x w(x) p_{2n}(x)^2 {\rm d} x = 0
+$$
+since $x w(x) p_{2n}(x)^2$ is odd, therefore $a_{2n} = 0$.
+Thus from
+$$
+p_{2n+1}(x) = (x p_{2n}(x)- c_{2n-1} p_{2n-1}(x)) / b_{2n} 
+$$
+we see that $p_{2n+1}$ is odd. Then
+$$
+⟨p_{2n+1},x p_{2n+1}(x)⟩ = \int_{-b}^b x w(x) p_{2n+1}(x)^2 {\rm d} x = 0
+$$
+since $x w(x) p_{2n+1}(x)^2$ is odd, therefore $a_{2n+1} = 0$.
+and hence
+$$
+p_{2n+2}(x) = (x p_{2n+1}(x)- c_{2n} p_{2n}(x)) / b_{2n+1} 
+$$
+is even.  
+
+**END**  
+
+# Week 9  
+
+## 1. Jacobi matrices  
+
+
+**Problem 1.1 (C)** What are the upper 3x3 sub-block of the Jacobi matrix for the 
+monic and orthonormal polynomials with respect to the following weights on
+$[-1,1]$:
+$$
+1-x, \sqrt{1-x^2}, 1-x^2
+$$
+
+**SOLUTION**
+
+##### Monic
+
+We know that for monic ($b_n=1$) orthogonal polynomials we can write the upper 3x3 block in the form
+
+$$X = \begin{bmatrix} a_0 & c_0 & 0 \\ 1 & a_1 & c_1 \\ 0 & 1 & a_2 \end{bmatrix}$$
+
+Note that for non-orthonormal polynomials the Jacobi matrix is technically the tranpose, i.e. $X^T$.
+
+1. $w(x) = 1-x$
+
+Take $p_0(x) = k_0 = 1$ (monic), then $p_1(x) = x + k_1^{(0)}$
+
+For the recurrence formula
+
+$$xp_0(x) = a_0p_0(x) + p_1(x)$$
+
+i.e. $x = a_0 + x + k_1^{(0)}$, that gives $k_1^{(0)}=-a_0$
+
+and for orthogonality, using recurrence formula and multiplying it by $p_0$ (inner product), we have
+
+$$a_0= \frac{\langle p_0, xp_0\rangle}{\|p_0\|^2}= \frac{\int_{-1}^1 x(1-x) dx}{2}=-\frac{1}{3}$$
+
+and $k_1^{(0)}=\frac{1}{3}$
+
+For $p_2(x) = x^2 + k_2^{(1)}x+k_2^{(0)}$ we obtain
+
+$$xp_1(x)= c_0p_0(x)+a_1p_1(x)+p_2(x)$$
+
+i.e. $x^2 +\frac{1}{3}x= c_0 + a_1x+ \frac{1}{3}a_1 + x^2 + k_2^{(1)}x+k_2^{(0)}$, that gives $a_1+k_2^{(1)} = \frac{1}{3}$ and $c_0+\frac{1}{3}a_1+k_2^{(0)}=0$
+
+As before we then find
+
+$$c_0=\frac{\langle p_0, xp_1\rangle}{\|p_0\|^2} = \frac{\int_{-1}^1 (x+\frac{1}{3}) x(1-x) dx}{2}= \frac{2}{9}$$
+
+and
+
+$$a_1 = \frac{\langle p_1, xp_1\rangle}{\|p_1\|^2} = \frac{\int_{-1}^1 (x+\frac{1}{3})^2 x(1-x) dx}{\int_{-1}^1 (x+\frac{1}{3})^2 (1-x) dx}= -\frac{1}{15}$$
+
+Thus, $k_2^{(0)}= -\frac{1}{5}$ and $k_2^{(1)}=\frac{2}{5}$.
+
+Now
+
+$$xp_2(x)= c_1p_1(x)+a_2p_2(x)+p_3(x)$$
+
+And once again as before:
+
+$$c_1=\frac{\langle p_1, xp_2\rangle}{\|p_1\|^2}= \frac{\int_{-1}^1 (x+\frac{1}{3})(x^2+\frac{1}{9}x- \frac{1}{5}) x(1-x) dx}{\int_{-1}^1 (x+\frac{1}{3})^2 (1-x) dx}= \frac{16}{45}$$
+
+and
+
+$$a_2 = \frac{\langle p_2, xp_2\rangle}{\|p_2\|^2} = \frac{\int_{-1}^1 (x^2+\frac{1}{9}x- \frac{1}{5})^2 x(1-x) dx}{\int_{-1}^1 (x^2+\frac{1}{9}x- \frac{1}{5})^2 (1-x) dx}= \frac{2085}{3451}$$
+
+
+2. $w(x)=\sqrt{1-x^2}$
+
+Take $p_0(x) = k_0 = 1$ (monic), then $p_1(x) = x + k_1^{(0)}$
+
+From the recurrence we have
+
+$$xp_0(x) = a_0p_0(x) + p_1(x)$$
+
+i.e. $x = a_0 + x + k_1^{(0)}$, which gives $k_1^{(0)}=-a_0$.
+
+We then proceed as before to obtain
+
+$$a_0= \frac{\langle p_0, xp_0\rangle}{\|p_0\|^2}= \frac{\int_{-1}^1 x\sqrt{1-x^2} dx}{\pi/2}=0$$
+
+and $k_1^{(0)}=0$
+
+Likewise for $p_2(x) = x^2 + k_2^{(1)}x+k_2^{(0)}$:
+
+$$xp_1(x)= c_0p_0(x)+a_1p_1(x)+p_2(x)$$
+
+i.e. $x^2 = c_0 + a_1x + x^2 + k_2^{(1)}x+k_2^{(0)}$, which gives $a_1+k_2^{(1)} = 0$ and $c_0+k_2^{(0)}=0$
+
+Proceeding as before once again we obtain:
+
+$$c_0=\frac{\langle p_0, xp_1\rangle}{\|p_0\|^2} \frac{\int_{-1}^1 x^2\sqrt{1-x^2} dx}{\pi/2}=\frac{\pi/8}{\pi/2}= \frac{1}{4}$$
+
+and
+
+$$a_1 = \frac{\langle p_1, xp_1\rangle}{\|p_1\|^2} = \frac{\int_{-1}^1 x^3\sqrt{1-x^2} dx}{\int_{-1}^1 x^2 \sqrt{1-x^2} dx}= 0$$
+
+Thus, $k_2^{(0)}= -\frac{1}{4}$ and $k_2^{(1)}=0$.
+
+Finally:
+
+$$xp_2(x)= c_1p_1(x)+a_2p_2(x)+p_3(x)$$
+
+and thus
+
+$$c_1=\frac{\langle p_1, xp_2\rangle}{\|p_1\|^2}= \frac{\int_{-1}^1 (x^2- \frac{1}{4}) x^2\sqrt{1-x^2} dx}{\int_{-1}^1 x^2 \sqrt{1-x^2} dx}= \frac{\pi/32}{\pi/8}=\frac{1}{4}$$
+
+and
+
+$$a_2 = \frac{\langle p_2, xp_2\rangle}{\|p_2\|^2} = \frac{\int_{-1}^1 (x^2- \frac{1}{4})^2 x\sqrt{1-x^2} dx}{\int_{-1}^1 (x^2- \frac{1}{4})^2 \sqrt{1-x^2} dx}= 0$$.
+
+
+
+
+3. $w(x)=1-x^2$
+
+Take $p_0(x) = k_0 = 1$ (monic), then $p_1(x) = x + k_1^{(0)}$
+
+From recurrence we have
+
+$$xp_0(x) = a_0p_0(x) + p_1(x)$$
+
+i.e. $x = a_0 + x + k_1^{(0)}$, which gives $k_1^{(0)}=-a_0$
+
+The rest works as before:
+
+$$a_0= \frac{\langle p_0, xp_0\rangle}{\|p_0\|^2}= \frac{\int_{-1}^1 x(1-x^2) dx}{4/3}=0$$
+
+and $k_1^{(0)}=0$
+
+Then from
+
+$$xp_1(x)= c_0p_0(x)+a_1p_1(x)+p_2(x)$$
+
+i.e. $x^2 = c_0 + a_1x + x^2 + k_2^{(1)}x+k_2^{(0)}$, which gives $a_1+k_2^{(1)} = 0$ and $c_0+k_2^{(0)}=0$
+
+we find
+
+$$c_0=\frac{\langle p_0, xp_1\rangle}{\|p_0\|^2} \frac{\int_{-1}^1 x^2(1-x^2) dx}{4/15}=\frac{4/15}{4/3}= \frac{1}{5}$$
+
+and
+
+$$a_1 = \frac{\langle p_1, xp_1\rangle}{\|p_1\|^2} = \frac{\int_{-1}^1 x^3(1-x^2) dx}{\int_{-1}^1 x^2 (1-x^2) dx}= 0$$
+
+i.e. $k_2^{(0)}= -\frac{1}{5}$ and $k_2^{(1)}=0$.
+
+Finally,
+
+$$xp_2(x)= c_1p_1(x)+a_2p_2(x)+p_3(x)$$
+
+and thus
+
+$$c_1=\frac{\langle p_1, xp_2\rangle}{\|p_1\|^2}= \frac{\int_{-1}^1 (x^2- \frac{1}{5}) x^2(1-x^2) dx}{\int_{-1}^1 x^2 (1-x^2) dx}= \frac{32/525}{4/15}=\frac{8}{35}$$
+
+and
+
+$$a_2 = \frac{\langle p_2, xp_2\rangle}{\|p_2\|^2} = \frac{\int_{-1}^1 (x^2- \frac{1}{4})^2 x(1-x^2) dx}{\int_{-1}^1 (x^2- \frac{1}{4})^2 (1-x^2) dx}= 0$$
+
+
+
+
+
+##### Orthonormal
+
+We know that for orthonormal ($b_n=c_n$) polynomials we can write the upper 3x3 block of the Jacobi matrix in the form
+
+$$X = \begin{bmatrix} a_0 & b_0 & 0 \\ b_0 & a_1 & b_1 \\ 0 & b_1 & a_2 \end{bmatrix}$$
+
+We could proceed step by step as above to find the entries of the recurrences but we may also take a short-cut since we already know the monic recurrence. Given any recurrence relationship coefficients $a_n, b_n, c_n$ for orthogonal polynomials for a given weight, the(symmetric) Jacobi matrix corresponding to the orthogonal polynomials for the same weight has entries $\hat
+{b}_n = \sqrt{c_n b_n}$ and $\hat{a} _n = a_n$. Using this the $3 \times 3$ blocks of the Jacobi matrices belonging to the orthonormal polynomials are straightforwardly computed from the above.
+
+**Problem 1.2 (B)** Consider the _truncated Jacobi matrix_ associated
+with orthonormal polynomials $q_n(x)$:
+$$
+X_n := \begin{bmatrix} a_0 & b_0 \\
+                         b_0 & ⋱ & ⋱ \\
+                         & ⋱ & a_{n-2} & b_{n-2} \\
+                         && b_{n-2} & a_{n-1} \end{bmatrix} ∈ ℝ^{n × n}
+$$
+Show that
+$$
+x [q_0(x) | ⋯ | q_{n-1}(x)] = [q_0(x) | ⋯ | q_{n-1}(x)] X_n + b_{n-1} q_n(x) 𝐞_n^⊤.
+$$
+
+**SOLUTION**
+
+We have that in the infinite form of $X$:
+$$x[q_0,...,q_{n-1},...] = [q_0,...,q_{n-1},...]X$$
+
+Thus, selecting just the first $n$ terms, we have
+$$x[q_0,...,q_{n-1}] = \left[[q_0,...,q_{n-1} ,q_n]X\right]_{1,...,n}=\left[[q_0,...,q_{n-1},...]X_{n+1}\right]_{1,...,n}$$
+considering that we don't need the terms after the $n+1$ since the relevant terms in the matrix $X$ would be 0s.
+
+Writing the $n^{th}$ term explicitly we obtain
+$$xq_{n-1} = [q_{n-2},q_{n-1},q_n]\{X_{n+1}\}_{n,n-1:n+1}= b_{n-2}q_{n-2} + a_{n-1} q_{n-1} + b_{n-1}q_n$$
+
+While
+$$[q_{n-2},q_{n-1},q_n]\{X_{n}\}_{n,n-1:n+1} = b_{n-2}q_{n-2} + a_{n-1} q_{n-1}$$
+
+Thus, the only extra term that this form is missing is $b_{n-1}q_n$ in the $n^{th}$ term which can be added using the vector $e_n^T$, hence
+
+
+$$
+x [q_0(x) | ⋯ | q_{n-1}(x)] = [q_0(x) | ⋯ | q_{n-1}(x)] X_n + b_{n-1} q_n(x) 𝐞_n^⊤
+$$
+
+**Problem 1.3 (A)** Prove the _Christoffel-Darboux Formula_:
+$$
+∑_{k = 0}^n q_k(x) q_k(y) =  b_n {q_{n+1}(x) q_n(y) - q_n(x) q_{n+1}(y) \over x-y}
+$$
+Hint: Consider
+$$
+(x-y) [q_0(x) | ⋯ | q_n(x)] \begin{bmatrix} q_0(y) \\ ⋮ \\ q_n(y) \end{bmatrix}.
+$$
+
+**SOLUTION**
+
+We have to prove that
+$$
+(x-y) [q_0(x) | ⋯ | q_n(x)] \begin{bmatrix} q_0(y) \\ ⋮ \\ q_n(y) \end{bmatrix} = (x-y)∑_{k = 0}^n q_k(x) q_k(y) = b_n ({q_{n+1}(x) q_n(y) - q_n(x) q_{n+1}(y))}
+$$
+
+Using 1.2 we have
+
+$x[q_0(x) | ⋯ | q_n(x)] = [q_0(x) | ⋯ | q_n(x)] X_{n+1} + b_n q_{n+1}(x)e_{n+1}^T$
+
+$y[q_0(y) | ⋯ | q_n(y)] = [q_0(y) | ⋯ | q_n(y)] Y_{n+1} + b_n q_{n+1}(y)e_{n+1}^T$
+
+
+Right-multiplying these formulas respectively by $[q_0(y) | ⋯ | q_n(y)]^T$ and $[q_0(x) | ⋯ | q_n(x)]^T$ we obtain
+
+$x[q_0(x) | ⋯ | q_n(x)][q_0(y) | ⋯ | q_n(y)]^T = [q_0(x) | ⋯ | q_n(x)] X_{n+1}[q_0(y) | ⋯ | q_n(y)]^T + b_n q_{n+1}(x)q_n(y)$
+
+$y[q_0(y) | ⋯ | q_n(y)][q_0(x) | ⋯ | q_n(x)]^T = [q_0(y) | ⋯ | q_n(y)] Y_{n+1}[q_0(x) | ⋯ | q_n(x)]^T + b_n q_{n+1}(y)q_n(x)$
+
+which (transposed of a number) corresponds to
+
+$y[q_0(x) | ⋯ | q_n(x)][q_0(y) | ⋯ | q_n(y)]^T = [q_0(x) | ⋯ | q_n(x)] Y_{n+1}^T[q_0(y) | ⋯ | q_n(y)]^T + b_n q_n(x)q_{n+1}(y)$
+
+Subtracting from the first equation the second (transposed) we get
+
+$(x-y)[q_0(x) | ⋯ | q_n(x)]\begin{bmatrix} q_0(y) \\ ⋮ \\ q_n(y) \end{bmatrix} = [q_0(x) | ⋯ | q_n(x)] (X_{n+1}-Y_{n+1}^T)\begin{bmatrix} q_0(y) \\ ⋮ \\ q_n(y) \end{bmatrix} + b_n (q_{n+1}(x)q_n(y)-q_n(x)q_{n+1}(y))$
+
+But since the matrices $X_{n+1}$ and $Y_{n+1}$ do not depend on the values of $x$ and $y$, but on the polynomials, then they are the same matrix.
+
+In particular, they are symmetric matrices since the $q_k$s are orthonormal. Thus,
+$X_{n+1}-Y_{n+1}^T=0$
+
+Hence, 
+$[q_0(x) | ⋯ | q_n(x)] (X_{n+1}-Y_{n+1}^T)\begin{bmatrix} q_0(y) \\ ⋮ \\ q_n(y) \end{bmatrix}=0$, thus
+
+$$∑_{k = 0}^n q_k(x) q_k(y) = [q_0(x) | ⋯ | q_n(x)]\begin{bmatrix} q_0(y) \\ ⋮ \\ q_n(y) \end{bmatrix} = { b_n (q_{n+1}(x)q_n(y)-q_n(x)q_{n+1}(y))\over x-y}$$  
+
+## 2. Chebyshev polynomials
+
+**Problem 2.1 (C)** What is the Jacobi matrix for $T_n(x)$? What scaling
+$q_n(x) = D_n T_n(x)$ gives us orthonormal polynomials?
+
+**SOLUTION**
+
+Let $w(x)=1/\sqrt{1-x^2}$ on $[-1,1]$ and $q_n(x)=D_nT_n(x)$. 
+
+We know $T_0(x)=1$ and we want $\|q_0\|=1$
+
+Thus,
+$$1=\int_{-1}^1 D_0^2 w(x)dx = D_0^2\pi$$
+
+Hence,
+$D_0= \sqrt{\frac{1}{\pi}}$
+
+Now let $\|q_1\|=1$
+
+$$1=\int_{-1}^1 D_1^2 (\cos(acos(x)))^2 w(x)dx = D_1^2 \int_{-1}^1 \frac{x^2}{\sqrt{1-x^2}}dx = D_1^2\frac{\pi}{2}$$
+
+Hence,
+$D_1= \sqrt{\frac{2}{\pi}}$
+
+In general we want $\|q_n\|=1$, thus
+
+$$1=\int_{-1}^1 D_n^2 (\cos(n \times acos(x)))^2 w(x)dx = D_n^2\frac{\pi}{2}$$
+
+Hence, $\forall n\ge 1$,
+$$D_n= \sqrt{\frac{2}{\pi}}$$
+
+**Problem 2.2 (B)** Consider the function
+$$
+f(x) = \sum_{k=0}^\infty {T_k(x) \over k!}
+$$
+For what coefficients $c_k$ does
+$$
+(x^2+1) f(x) = \sum_{k=0}^\infty c_k T_k(x)?
+$$
+
+**SOLUTION**
+
+We need 
+
+$$(x^2+1)\sum_{k=0}^\infty {T_k(x) \over k!} = \sum_{k=0}^\infty c_k T_k(x)$$
+
+We can use the following to rewrite the LHS
+$$xT_0(x)=T_1(x)$$
+
+$$xT_n(x)=\frac{T_{n-1}(x)+T_{n+1}(x)}{2}$$
+
+Indeed,
+
+$$(x^2+1)\sum_{k=0}^\infty {T_k(x) \over k!} = \sum_{k=0}^\infty {x^2T_k(x) \over k!} + \sum_{k=0}^\infty {T_k(x) \over k!} = xT_1(x)+\sum_{k=1}^\infty {x\frac{T_{k-1}(x)+T_{k+1}(x)}{2 k!}} + \sum_{k=0}^\infty {T_k(x) \over k!} = $$
+
+Using
+$$x\frac{T_{0}(x)+T_{2}(x)}{2* 1!}= \frac{T_1(x)}{2} + \frac{T_{1}(x)+T_{3}(x)}{4}$$
+and
+$$\sum_{k=2}^\infty {x\frac{T_{k-1}(x)+T_{k+1}(x)}{2 k!}}= \sum_{k=2}^\infty \left(\frac{T_{k-2}(x)+T_{k}(x)}{4k!} + \frac{T_{k}(x)+T_{k+2}(x)}{4k!}\right)$$
+
+
+we obtain
+
+$$= \frac{T_{0}(x)+T_{2}(x)}{2} + \frac{T_1(x)}{2} + \frac{T_{1}(x)+T_{3}(x)}{4}+\sum_{k=2}^\infty \left(\frac{T_{k-2}(x)+T_{k}(x)}{4k!} + \frac{T_{k}(x)+T_{k+2}(x)}{4k!}\right) + \sum_{k=0}^\infty {T_k(x) \over k!}$$
+
+So, we have 
+
+$$c_0=\frac{1}{2}+\frac{1}{4*2!}+1= \frac{13}{8}$$
+
+$$c_1=\frac{1}{2}+\frac{1}{4*1!}+\frac{1}{4*3!}+1=\frac{43}{24}$$
+
+$$c_2=\frac{1}{2}+\frac{2}{4*2!}+\frac{1}{4*4!}+1$$
+
+$$c_3=\frac{1}{4}+\frac{2}{4*3!}+\frac{1}{4*5!}+1$$
+
+$$c_4=\frac{1}{4*2!}+\frac{2}{4*4!}+\frac{1}{4*6!}+1$$
+
+For $n\ge3$ we have 
+$$c_n=\frac{1}{4*(n-2)!}+\frac{1}{2*n!}+\frac{1}{4*(n+2)!}+1$$
+
+**Problem 2.3 (B)**
+Consider orthogonal polynomials with respect to $\sqrt{1-x^2}$ on $[0,1]$ with the
+normalisation
+$$
+U_n(x) = 2^n x^n + O(x^{n-1})
+$$
+Prove that
+$$
+U_n(\cos θ) = {\sin(n+1) θ \over \sin θ}
+$$
+
+**SOLUTION**
+
+We need to verify:
+1. graded polynomials
+2. orthogonal w.r.t. $\sqrt{1-x^2}$ on $[-1,1]$, and
+3. have the leading coefficient $2^n$.
+
+(2) follows under a change of variables
+$$\int_{-1}^1U_n(x)U_m(x)\sqrt{1-x^2}{\rm d}x=\int_0^{\pi}U_n(\cos\theta)U_m(\cos\theta)\sin^2\theta{\rm d}\theta=\int_0^{\pi}\sin(n+1)\theta\sin(m+1)\theta{\rm d}\theta=\frac{\pi}{2}\delta_{mn}$$
+where the last step is a result from Fourier theories.
+
+To see that they are graded we use the fact that
+$$xU_n(x)=\frac{\cos\theta\sin(n+1)\theta}{\sin\theta}=\frac{\sin (n+2)\theta+\sin n\theta}{2\sin\theta}$$
+In other words $2xU_n(x)=U_{n+1}(x)+U_{n-1}(x)$. Since each time we multiply by $2x$ and $U_0(x)=1$ we have
+$$U_n(x) = 2^n x^n + O(x^{n-1})$$
+which also proves (3).
+
+
+**Problem 2.4 (B)** Show that
+$$
+\begin{aligned}
+x U_0(x) &= U_1(x)/2 \\
+x U_n(x) &= {U_{n-1}(x) \over 2} + {U_{n+1}(x) \over 2}.
+\end{aligned}
+$$
+
+**SOLUTION**
+
+**SOLUTION**
+
+The first result is trivial.
+
+To get the second result, recall that
+$$U_n(\cos\theta)=\cos\theta U_{n-1}(\cos\theta)+\cos n\theta$$
+and
+$$\cos n\theta=\cos\theta\cos(n-1)\theta-(1-\cos^2\theta)U_{n-2}(\cos\theta).$$
+
+The first equation gives $\cos n\theta$ in terms of $U_n$ and $U_{n-1}$. Substitute the result into the second equation to get
+$$U_n(x)-xU_{n-1}(x)=x(U_{n-1}(x)-xU_{n-2}(x))-(1-x^2)U_{n-2}(x)$$
+which reduces to the desired recurrence.
+
+**Problem 2.5 (C)** What is the Jacobi matrix for $U_n(x)$? What scaling
+$q_n(x) = D_n U_n(x)$ gives us orthonormal polynomials?
+
+**Solution**
+
+Problem 2.4 gives the Jacobi matrix
+$$\begin{bmatrix}
+0 & 1/2 & \\
+1/2 & \ddots & \ddots \\
+ & \ddots &
+\end{bmatrix}$$
+
+Problem 2.3 - Claim 3 gives the norms $\|U_n\|=\sqrt{\pi/2}$, so $D_n=\sqrt{2}{\pi}$.
+
+
+## 3. Hermite polynomials
+
+**Problem 3.1 (B)** Consider Hermite polynomials orthogonal with respect to the weight $\exp(-x^2)$ on $ℝ$
+with the normalisation
+$$
+H_n(x) = 2^n x^n + O(x^{n-1}).
+$$
+Prove the Rodrigues formula
+$$
+H_n(x) = (-1)^n {{\rm d}^n \over {\rm d}x^n} \exp(-x^2)
+$$
+
+**SOLUTION**
+
+We need to verify:
+1. graded polynomials
+2. orthogonal to all lower degree polynomials on $\mathbb{R}$, and
+3. have the right leading coefficient $2^n$.
+
+Comparing the Rodrigues formula for $n$ and $n-1$, we find that 
+$$(-1)^n\exp(-x^2)H_n(x)={{\rm d} \over {\rm d}x}\left((-1)^{n-1}\exp(-x^2)H_{n-1}(x)\right)$$
+which reduces to
+$$H_n(x)=2xH_{n-1}(x)-H_{n-1}'(x).$$
+
+(1) and (3) then follows from induction since $H_0(x)=1$.
+
+(2) follows by integration by parts. If $r_m$ is a degree $m<n$ polynomial we have:
+$$\int_{-\infty}^\infty H_n(x)r_m(x)\exp(-x^2){\rm d}x=\int_{-\infty}^\infty{{\rm d}^n \over {\rm d}x^n} \exp(-x^2)\exp(-x^2){\rm d}x=\cdots\text{integration by parts}\dots=(-1)^n\int_{-\infty}^\infty \exp(-x^2)r_m^{(n)}(x)=0$$
+
+**Problem 3.2 (C)** What are $k_n^{(1)}$ and $k_n^{(2)}$ such that
+$$
+H_n(x) = 2^n x^n + k_n^{(1)} x^{n-1} + k_n^{(2)} x^{n-2} + O(x^{n-3})
+$$
+
+**SOLUTION**
+
+From Problem 3.1,
+$$H_n(x)=2xH_{n-1}(x)-H_{n-1}'(x).$$
+Thus we have
+$$k_n^{(1)}=2k_{n-1}^{(1)}$$
+$$k_n^{(2)}=2k_{n-1}^{(2)}-(n-1)2^{n-1}$$
+
+Since $k_0^{(1)}=0$, we have $k_n^{(1)}=0$. For the second recurrence, divide both sides by $2^n$:
+$$2^{-n}k_n^{(2)}=2^{-(n-1)}k_{n-1}^{(2)}-\frac{n-1}{2}$$
+Since $k_0^{(2)}=0$, we have $2^{-n}k_n^{(2)}=-\frac{1+\cdots+(n-1)}{2}=-\frac{n(n-1)}{4}$, so $k_n^{(2)}=n(n-1)2^{n-2}$.
+
+**Problem 3.3 (B)** Deduce the 3-term recurrence relationship for $H_n(x)$.
+
+**SOLUTION**
+
+Our goal is to find $a_n$, $b_n$ and $c_n$ such that
+$$xH_n(x)=c_{n-1}H_{n-1}(x)+a_nH_n(x)+b_nH_{n+1}(x).$$
+Compare the 3 leading coefficients on both sides and use the results from Problem 3.1 and Problem 3.2:
+$$2^n=0+0+b_n2^{n+1}$$
+$$0=0+a_n2^n+0$$
+$$n(n-1)2^{n-2}=c_{n-1}2^{n-1}+0+b_n(n+1)n2^{n-1}$$
+Thus we have $b_n=1/2$, $a_n=0$ and $c_{n-1}=-n$.
+
+
+
+## 4. Interpolation
+
+**Problem 4.1 (C)** Use Lagrange interpolation to
+interpolate the function $\cos x$ by a polynomial at the points
+$[0,2,3,4]$ and evaluate at $x = 1$. 
+
+**SOLUTION**
+
+- $l_0(x)=\frac{(x-2)(x-3)(x-4)}{(0-2)(0-3)(0-4)}=-\frac{1}{24}(x-2)(x-3)(x-4)$
+- $l_2(x)=\frac{(x-0)(x-3)(x-4)}{(2-0)(2-3)(2-4)}=\frac{1}{4}x(x-3)(x-4)$
+- $l_3(x)=\frac{(x-0)(x-2)(x-4)}{(3-0)(3-2)(3-4)}=-\frac{1}{3}x(x-2)(x-4)$
+- $l_4(x)=\frac{(x-0)(x-2)(x-3)}{(4-0)(4-2)(4-3)}=\frac{1}{8}x(x-2)(x-3)$
+
+$p(x)=\cos(0)l_0(x)+\cos(2)l_2(x)+\cos(3)l_3(x)+\cos(4)l_4(x)$
+
+$l_0(1)=1/4$, $l_2(1)=3/2$, $l_3(1)=-1$, $l_4(1)=1/4$, so $p(1)=1/4\cos(0)+3/2\cos(2)-\cos(3)+1/4\cos(4)$.  
+
+**Problem 4.2 (A)** Consider the re-expanding the Lagrange basis in
+monomials. Use this to construct an explicit formula for the inverse of the
+Vandermonde matrix.
+
+**SOLUTION**
+
+We use two methods to interpolate $f(x)$
+
+**Vandermonde matrix**
+
+$$p(x)=\sum_{k=1}^nc_kx^{k-1}=
+\underbrace{\begin{bmatrix}
+1&x&\cdots&x^{n-1}
+\end{bmatrix}}_{\mathbf{M}(x)}
+\underbrace{\begin{bmatrix}
+c_1\\
+\vdots\\
+c_n
+\end{bmatrix}}_{\mathbf{c}}$$
+where
+$$
+V\mathbf{c}=
+\underbrace{\begin{bmatrix}
+f(x_1)\\
+\vdots\\
+f(x_n)
+\end{bmatrix}}_{\mathbf{f}}
+$$
+
+**Lagrange interpolation**
+
+$$p(x)=\sum_{k=1}^nf(x_k)l_k(x)=
+\underbrace{\begin{bmatrix}
+l_1(x)&\cdots&l_n(x)
+\end{bmatrix}}_{\mathbf{L}(x)}\mathbf{f}$$
+
+Comparing the two results, we have
+$$\mathbf{M}(x)V^{-1}\mathbf{f}=\mathbf{L}(x)\mathbf{f},$$
+so
+$$\mathbf{M}(x)V^{-1}=\mathbf{L}(x)$$
+which means that the $(i,j)$-entry of $V^{-1}$ is the coefficient of $x^{i-1}$ in $l_j(x)$.
+
+See [here](https://proofwiki.org/wiki/Inverse_of_Vandermonde_Matrix#Theorem) for the complete explicit expression.  
+
+
+# Week 10  
+
+## 1. Orthogonal Polynomial Roots
+
+**Problem 1.1 (C)** Compute the roots of $P_3(x)$, orthogonal with respect
+to $w(x) = 1$ on $[-1,1]$, by computing the eigenvalues of a $3 × 3$ truncation
+of the Jacobi matrix.
+
+**SOLUTION**
+
+We have, $P_0(x) = 1$. Though recall that in order to use Lemma (zeros), the Jacobi matrix must be symmetric and hence the polynomials orthonormal. So Take $Q_0(x) = 1/||P_0(x)|| = \frac{1}{\sqrt{2}}$. Then we have, by the three term recurrence relationship,
+$$
+xQ_0(x) = a_0Q_0(x) + b_0Q_1(x),
+$$
+and taking the inner product of both sides with $Q_0(x)$ we get, 
+$$a_0 = \langle xQ_0(x), Q_0(x) \rangle = \int_{-1}^1 x/2 dx = 0.$$
+Next recall that $P_1(x) =  x$ and so $Q_1(x) = x/||P_1(x)||=\sqrt{\frac{3}{2}} x$. We then have, taking the innner product of the first equation above with $Q_ 1(x)$,
+$$
+b_0 = \langle xQ_0(x), Q_1(x)\rangle = \int_{-1}^1 \frac{\sqrt{3}}{2}x^2 dx = \frac{1}{\sqrt{3}},
+$$
+and also $b_0 = c_0$ by the Corollary (orthonormal 3-term recurrence). We have,
+$$
+a_1 = \langle xQ_1(x), Q_1(x)\rangle = \int_{-1}^1 \frac{3}{2}x^3 dx = 0.
+$$
+Recall that $P_2(x) = \frac{1}{2}(3x^2 - 1)$, so that $Q_2(x) = P_2(x)/||P_2(x)|| = \sqrt{\frac{5}{8}}(3x^2 - 1)$, and that,
+$$
+xQ_1(x) = c_0Q_0(x) + a_1Q_1(x) + b_1Q_2(x).
+$$
+Taking inner the inner product of both sides with $Q_2(x)$, we see that,
+$$
+c_1 = b_1 = \langle xQ_1(x), Q_2(x)\rangle = \int_{-1}^1 \sqrt{\frac{5}{8}} \cdot \sqrt{\frac{3}{2}}(3x^2 - 1)\cdot x \cdot xdx =\frac{2}{\sqrt{15}}.
+$$
+Finally,
+$$
+a_2 = \langle Q_2(x), xQ_2(x) \rangle = \frac{5}{8}\int_{-1}^1 (3x^2 - 1)^2 x dx = 0.
+$$
+This gives us the truncated Jacobi matrix,
+$$
+X_3 = \left[\begin{matrix}
+a_0 & b_0	& 0 \\
+b_0 & a_1 & b_1 \\
+0&b_1 & a_2
+\end{matrix}
+ \right] = \left[\begin{matrix}
+0 & \frac{1}{\sqrt{3}}	& 0 \\
+\frac{1}{\sqrt{3}} & 0 & \frac{2}{\sqrt{15}} \\
+0& \frac{2}{\sqrt{15}} & 0
+\end{matrix}
+ \right],
+$$
+whose eigenvalues are the zeros of $Q_3(x)$, and hence the zeros of $P_3(x)$ since they are the same up to a constant. To work out the eigenvalues, we have,
+$$
+\begin{aligned}
+	|X_3 - \lambda I| = \left| \begin{matrix}
+		-\lambda & \frac{1}{\sqrt{3}} & 0\\ 
+		\frac{1}{\sqrt{3}} & -\lambda & \frac{2}{\sqrt{15}}\\
+		0 & \frac{2}{\sqrt{15}} & -\lambda 
+	\end{matrix}\right| &= 0 \\
+	\Leftrightarrow -\lambda(\lambda^2 - \frac{4}{15}) - \frac{1}{\sqrt{3}}\cdot \frac{-\lambda}{\sqrt{3}} &=0 \\
+	\Leftrightarrow -\lambda^3 + \frac{3}{5}\lambda &= 0,
+\end{aligned}
+$$
+which has solutions $\lambda = 0, \pm \sqrt{\frac{3}{5}}$
+
+**END**
+
+**Problem 1.2 (B)** Give an explicit diagonalisation of
+$$
+X_n = \begin{bmatrix} 0 & 1/2 \\ 
+                1/2 & 0 & ⋱  \\
+                & ⋱ & ⋱ & 1/2 \\
+                && 1/2 & 0
+                \end{bmatrix} ∈ ℝ^{n × n}
+$$
+for all $n$ by relating it to the Jacobi matrix for $U_n(x)$.
+
+**SOLUTION**
+
+Recall the three term recurrence for the Chebyshev Polynomials $U_n$,
+$$
+\begin{aligned}
+	xU_0(x) &= \frac{1}{2} U_1(x), \\
+	xU_n(x) &= \frac{U_{n-1}(x)}{2} + \frac{U_{n+1}(x)}{2},
+\end{aligned}
+$$
+and hence, we can see that,
+$$
+X_n = \left[\begin{matrix}
+	0 & 1/2 \\
+	1/2 & 0 & \ddots \\
+	&\ddots & \ddots & 1/2 \\ 
+	&&1/2 & 0
+\end{matrix} \right],
+$$
+is the $n \times n$ truncation of the Jacobi matrix. If $x_1,\dots, x_n$ are the zeros of $U_n(x)$, by Lemma (zeros) we have that,
+$$
+X_nQ_n = Q_n \left[\begin{matrix}
+x_1 \\
+&x_2 \\
+&&\ddots \\
+&&&x_n	
+\end{matrix}
+ \right],
+$$
+for,
+$$
+Q_n = \left[\begin{matrix}
+	U_0(x_1) & \cdots & U_0(x_n) \\
+	\vdots & \ddots & \vdots \\
+	U_{n-1}(x_1) & \cdots & U_{n-1}(x_n)
+\end{matrix} \right] D̃ = Q̃_n D̃
+$$
+where
+$$
+D̃ = \begin{bmatrix} 1/\sqrt{U_0(x_1) + ⋯ + U_{n-1}(x_1)} \\ &⋱ \\ 1/\sqrt{U_0(x_n) + ⋯ + U_{n-1}(x_n)}
+\end{bmatrix}
+$$
+guarantess that $Q_n$ is orthogonal.
+Recall that if $x = \cos θ$ then $U_n(x) = \frac{\sin(n+1)θ}{\sin θ}$, 
+so in particular the roots of $U_n(x)$ are 
+$x_k = \cos\left(\frac{k\pi}{n+1} \right)$ for $k = 1,\dots,n$, 
+(where $\sin \left(\frac{k\pi}{n+1}\right) \neq 0$). Hence, we have,
+$$
+\begin{aligned}
+	X_n &= Q_n\left[\begin{matrix}
+x_1 \\
+&x_2 \\
+&&\ddots \\
+&&&x_n	
+\end{matrix}
+ \right]Q_n^⊤ \\
+ &= Q̃_n D̃ \left[\begin{matrix}
+x_1 \\
+&x_2 \\
+&&\ddots \\
+&&&x_n	
+\end{matrix}
+ \right] D̃^{-1}Q̃_n^{-1} \\
+ &= Q̃_n\left[\begin{matrix}
+x_1 \\
+&x_2 \\
+&&\ddots \\
+&&&x_n	
+\end{matrix}
+ \right] D̃ D̃^{-1}Q̃_n^{-1} \\
+ &=Q̃_n\left[\begin{matrix}
+\cos\left(\frac{\pi}{n+1}\right) \\
+&\cos\left(\frac{2\pi}{n+1}\right) \\
+&&\ddots \\
+&&&\cos\left(\frac{n\pi}{n+1}\right)
+\end{matrix}
+ \right]Q̃_n^{-1} \\
+ &= Q̃_nΛ_nQ̃_n^{-1},
+\end{aligned} 
+$$
+where, 
+$$
+Q̃_n = \left[\begin{matrix}
+	1 & \cdots & 1\\
+	\frac{\sin\left(2\cdot \frac{2\pi}{n+1} \right)}{\sin\left(\frac{2\pi}{n+1}\right)} & \cdots & \frac{\sin\left(2\cdot \frac{n\pi}{n+1} \right)}{\sin\left(\frac{n\pi}{n+1}\right)} \\
+	\vdots & & \vdots \\
+	\frac{\sin\left(n\cdot \frac{2\pi}{n+1} \right)}{\sin\left(\frac{2\pi}{n+1}\right)} & \cdots & \frac{\sin\left( n\cdot \frac{n\pi}{n+1} \right)}{\sin\left(\frac{n\pi}{n+1}\right)}
+\end{matrix} \right],
+$$
+and,
+$$
+Λ_n = \left[\begin{matrix}
+\cos\left(\frac{\pi}{n+1}\right) \\
+&\cos\left(\frac{2\pi}{n+1}\right) \\
+&&\ddots \\
+&&&\cos\left(\frac{n\pi}{n+1}\right)
+\end{matrix}
+ \right]
+$$
+
+**END**
+
+**Problem 1.3 (A)** Give an explicit solution to heat on a graph
+$$
+\begin{aligned}
+𝐮(0) &= 𝐮_0 ∈ ℝ^n \\
+𝐮_t &= Δ 𝐮
+\end{aligned}
+$$
+where
+$$
+Δ := \begin{bmatrix} -2 & 1 \\ 
+            1 & -2 & ⋱ \\ 
+            & 1 & ⋱ & 1 \\
+            && ⋱ & -2 & 1 \\
+                &&& 1 & -2
+                \end{bmatrix} ∈ ℝ^{n \times n}
+$$
+(which corresponds to Dirichlet conditions.) Hint: use Problem 1.2 to diagonalise the problem.
+
+**SOLUTION**
+
+
+We have,
+$$
+\begin{aligned}
+\mathbf{u}_t &= \Delta \mathbf{u} \\	
+&= 2(X_n - I),
+\end{aligned}
+$$
+with $X_n$ defined as above. Observe, for $Q_n$ and $Λ_n$ defined as above
+$$
+\begin{aligned}
+	2(X_n - I) &= 2(Q_nΛQ_n^⊤ - I) \\
+	&=Q_n (2(Λ - I))Q_n^⊤ 
+\end{aligned}
+$$
+We then have 
+$$
+𝐯(t) := Q_n^⊤ 𝐮(t)
+$$
+satisfies
+$$
+𝐯'(t) = Q_n^⊤ 𝐮'(t) = Q_n^⊤ Δ 𝐮(t) = Q_n^⊤ Δ Q_n 𝐯(t) = Λ 𝐯(t)
+$$
+This is a diagonal problem so we know that
+$$
+𝐯(t) = \exp(Λt) 𝐯(0) =   \exp(Λt) Q_n^⊤ 𝐮_0
+$$
+I.e.
+$$
+𝐮(t) = Q_n\exp(Λt) Q_n^⊤ 𝐮_0 =  Q_n\begin{bmatrix}
+	 e^{2\left(\cos(\frac{\pi}{n+1}) - 1\right)t} \\
+	 &e^{2\left(\cos(\frac{2\pi}{n+1}) - 1\right)t} \\
+	&&⋱ \\
+	&&& e^{2\left(\cos(\frac{n\pi}{n+1}) - 1\right)t}
+	\end{bmatrix} Q_n^⊤ 𝐮_0.
+$$
+
+
+**END**
+
+
+## 2. Interpolatory quadrature
+
+
+**Problem 2.1 (C)** Compute the interpolatory quadrature rule for
+$w(x) = \sqrt{1-x^2}$ with the points $[-1,1/2,1]$.
+
+**SOLUTION**
+
+For the points $\mathbf{x} = \{-1, 1/2, 1\}$ we have the Lagrange polynomials:
+$$
+ℓ_1(x) = \left(\frac{x - 1/2}{-1 - 1/2}\right)\cdot\left(\frac{x - 1}{-1 - 1}\right) = \frac{1}{3}\left(x^2 - \frac{3}{2}x + \frac{1}{2}\right),
+$$
+and
+$$
+ℓ_2(x) = -\frac{4}{3}x^2 + \frac{4}{3}, ℓ_3(x) =x^2 + \frac{1}{2}x - \frac{1}{2},
+$$
+similarly. We can then compute the weights,
+$$
+w_j = \int_{-1}^1 ℓ_j(x)w(x)dx,
+$$
+using,
+$$
+\int_{-1}^1 x^k \sqrt{1-x^2}dx = \begin{cases}
+ \frac{\pi}{2} &	k=0 \\
+ 0 & k=1 \\
+\frac{\pi}{8} & k=2
+ \end{cases}
+$$
+to find,
+$$
+w_j = \begin{cases}
+ 	\frac{\pi}{8} & j = 1 \\
+ 	\frac{\pi}{2} & j = 2 \\
+ 	-\frac{\pi}{8} & j = 3,
+ \end{cases}
+$$
+so that the interpolatory quadrature rule is:
+$$
+\Sigma_3^{w,\mathbf{x}}(f) = \frac{\pi}{2}\left(\frac{1}{4}f(-1) + f(1/2) -\frac{1}{4}f(1) \right)
+$$
+
+**END**
+
+**Problem 2.2 (C)** Compute the 2-point 
+interpolatory quadrature rule associated with roots of orthogonal polynomials for the weights $\sqrt{1-x^2}$, $1$, 
+and $1-x$ on $[-1,1]$ by integrating the Lagrange bases.
+
+**SOLUTION**
+For $w(x) = \sqrt{1-x}^2$ the orthogonal polynomial of degree 2 is $U_2(x) = 4x^2 -1$, with roots $\mathbf{x} = \{x = \pm \frac{1}{2}\}$. The Lagrange polynomials corresponding to these roots are,
+$$
+\begin{aligned}
+ℓ_1(x) &= \frac{x - 1/2}{-1/2 - 1/2} = \frac{1}{2} - x, \\
+ℓ_2(x) &= \frac{x + 1/2}{1/2 + 1/2} = x + \frac{1}{2}
+\end{aligned}
+$$  
+
+We again work out the weights
+$$
+w_j = \int_{-1}^1 ℓ_j(x)w(x)dx,
+$$
+to find,
+$$
+w_1 = w_2 = {\pi \over 4},
+$$
+and thus the interpolatory quadrature rule is,
+$$
+\Sigma_2^{w,\mathbf{x}}(f) = \frac{\pi}{4}(f(-1/2) + f(1/2)).
+$$
+
+For $w(x) = 1$, the orthogonal polynomial of degree 2 is, using Legendre Rodriguez formula:
+$$
+P_2(x) = \frac{1}{(-2)^22!} \frac{d^2}{dx^2}\left(1 - x^2\right)^2 = -\frac{1}{2} + \frac{3}{2}x^2.
+$$
+This has roots $\mathbf{x} = \left\{\pm \frac{1}{\sqrt{3}}\right\}$. We then have,  
+
+$$
+\begin{aligned}
+	ℓ_1(x) &= -\frac{\sqrt{3}}{2}x + \frac{1}{2} \\
+	ℓ_2(x) &= \frac{3}{2}x + \frac{1}{2},
+\end{aligned}
+$$  
+from which we can compute the weights,
+$$
+w_1 = w_2 = 1,
+$$
+which give the quadrature rule:
+$$
+\Sigma_2^{w,\mathbf{x}}(f) = \left[f\left(-\frac{1}{\sqrt{3}}\right) + f\left(\frac{1}{\sqrt{3}}\right)\right]
+$$
+
+Finally, with $w(x) = 1 - x$ we use the solution to PS9 Problem 1.1, which states that
+$$
+p_2(x) = x^2 + 2x/5 - 1/5
+$$
+which has roots, $\mathbf{x} = \left\{-\frac{1}{5} \pm \frac{\sqrt{6}}{5} \right\}$. The Lagrange polynomials are then,
+$$
+\begin{aligned}
+	ℓ_1(x) &= \frac{x - (-\frac{1}{5} + \frac{\sqrt{6}}{5} )}{-\frac{1}{5} - \frac{\sqrt{6}}{5} - (-\frac{1}{5} + \frac{\sqrt{6}}{5}) } \\
+	&= \frac{x - (-\frac{1}{5} + \frac{\sqrt{6}}{5} )}{-\frac{2\sqrt{6}}{5}} \\
+	&=-\frac{5}{2\sqrt{6}}x - \frac{1}{2\sqrt{6}} + \frac{1}{2} \\
+	ℓ_2(x) &= \frac{x - (-\frac{1}{5} - \frac{\sqrt{6}}{5} )}{\frac{2\sqrt{6}}{5}} \\
+	&= \frac{5}{2\sqrt{6}}x + \frac{1}{2\sqrt{6}} + \frac{1}{2}
+\end{aligned}
+$$  
+
+From which we can compute the weights,  
+
+$$
+\begin{aligned}
+	w_1 &= 1 + \frac{\sqrt{6}}{9}, \\
+	w_2 &= 1 - \frac{\sqrt{6}}{9},
+\end{aligned}
+$$  
+giving the quadrature rule,
+$$
+\Sigma_2^{w,\mathbf{x}}(f) = \left[\left(1 + \frac{\sqrt{6}}{9} \right)f\left(-\frac{1}{5} - \frac{\sqrt{6}}{5} \right) + \left(1 - \frac{\sqrt{6}}{9} \right)f\left(-\frac{1}{5} + \frac{\sqrt{6}}{5} \right) \right]
+$$
+**END**
+
+## 3. Gaussian quadrature
+
+
+**Problem 3.1 (C)** Compute the 2-point and 3-point Gaussian quadrature rules associated with $w(x) = 1$ on $[-1,1]$. 
+
+**SOLUTION**
+
+For the weights $w(x) = 1$, the orthogonal polynomials of degree $\leq 3$ are the Legendre polynomials,  
+
+$$
+\begin{aligned}
+	q_0(x) = 1, \\
+	q_1(x) = x, \\
+	q_2(x) = \frac{1}{2}(3x^2  - 1), \\
+	q_3(x) = \frac{1}{2}(5x^3 - 3x).
+\end{aligned}
+$$  
+We can normalise each to get $q'_j(x) = q_j(x)/||q_j||$, with $||q_j||^2 = \int_{-1}^1 q_j^2 dx$. This gives,  
+
+$$
+\begin{aligned}
+	q'_0(x) = \frac{1}{\sqrt{2}}, \\
+	q'_1(x) = \sqrt{\frac{3}{2}}x, \\
+	q'_2(x) = \sqrt{\frac{5}{8}}(3x^2  - 1), \\
+	q'_3(x) = \sqrt{\frac{7}{8}}(5x^3 - 3x).
+\end{aligned}
+$$  
+For the first part we use the roots of $q_2(x)$ which are $\mathbf{x} = \left\{\pm \frac{1}{\sqrt{3}}\right\}$. The weights are,
+$$
+w_j = \frac{1}{\alpha_j^2} = \frac{1}{q'_0(x_j)^2 + q'_1(x_j)^2} = \frac{1}{\frac{1}{2}+\frac{3}{2}x_j^2},
+$$
+so that,
+$$
+w_1 = w_2 = 1,
+$$
+and the Gaussian Quadrature rule is,
+$$
+\Sigma_2^w[f] = f\left(-\frac{1}{\sqrt{3}}\right) + f\left(\frac{1}{\sqrt{3}}\right)
+$$
+For the second part, we use the roots of $q_3(x)$ which are $\mathbf{x} = \left\{0, \pm \sqrt{\frac{3}{5}} \right\}$. The weights are then,
+$$
+w_j = \frac{1}{\alpha_j^2} = \frac{1}{q'_0(x_j)^2 + q'_1(x_j)^2 + q'_2(x_j)^2} = \frac{1}{\frac{9}{8} -\frac{9}{4}x_j^2 + \frac{45}{8}x_j^4 }
+$$
+Giving us,
+$$
+\begin{aligned}
+	w_1 = w_3 = \frac{1}{\frac{9}{8} - \frac{9}{4}\frac{3}{5} + \frac{45}{8}\frac{9}{25}} &= \frac{5}{9} \\
+	w_2 &= \frac{8}{9}
+\end{aligned}
+$$
+Then the Gaussian Quadrature rule is,
+$$
+\Sigma_3^w[f] = \frac{1}{9} \left[5f\left(-\sqrt\frac{3}{5}\right) +8f(0) + 5f\left(\sqrt\frac{3}{5}\right) \right]
+$$
+
+**END**
+
+**Problem 3.2 (A)** Show for $w(x) = 1/\sqrt{1-x^2}$ that the Gaussian quadrature rule is
+$$
+{π \over n} \sum_{j=1}^n f(x_j)
+$$
+where $x_j = (j-1/2)π/n$ for all $n$.
+
+**SOLUTION**
+
+For $w(x) = \frac{1}{\sqrt{1-x^2}}$, the orthogonal polynomials are the Chebyshev polynomials $T_n(x) = \cos(n\arccos(x))$. To make them orthonormal, we have,
+$$
+\begin{aligned}
+	T'_0(x) &= \frac{1}{\sqrt{\pi}}, \\
+	T'_n(x) &= \frac{2}{\pi}\cos(n\arccos(x)), \hspace{5mm} (n > 0)
+\end{aligned}
+$$  
+
+We have,  
+$$
+\begin{aligned}
+	T'_n(x) = 0 &\Leftrightarrow \cos(n\arccos(x)) = 0 \\
+	&\Leftrightarrow n\arccos(x) = j\pi - \frac{\pi}{2}, \hspace{5mm} (j \in \mathbb{Z}) \\
+	&\Leftrightarrow x = \cos\left(\frac{(j-\frac{1}{2})\pi}{n} \right), \hspace{5mm} (j \in \mathbb{Z}),
+\end{aligned}
+$$  
+
+which has unique solutions $\{x_j = \cos ((j-\frac{1}{2})\pi/n) : j = 1, \dots, n \}$.   
+
+We then have,  
+
+$$
+w_j = \frac{1}{\alpha_j^2} = \frac{1}{T'_0(x_j)^2 + T'_1(x_j)^2 + \dots T'_{n-1}(x_j)^2}
+$$
+Consider, writing $\theta_j = (j-\frac{1}{2})\pi/n$  
+
+$$
+\begin{aligned}
+	\alpha_j^2 &= \sum_{k=0}^{n-1}T'_k(x_j)^2 \\
+	&= \frac{1}{\pi} + \frac{2}{\pi}\sum_{k=1}^{n-1}\cos^2(k\theta_j) \\
+	&= \frac{1}{\pi} + \frac{1}{2\pi}\sum_{k=1}^{n-1}(e^{ik\theta_j} + e^{-ik\theta_j})^2 \\
+	&= \frac{1}{\pi} + \frac{1}{2\pi} \sum_{k=1}^{n-1}( e^{2ik\theta_j} + e^{-2ik\theta_j} + 2) \\
+	&= \frac{n}{\pi} + \frac{1}{2\pi} \sum_{k=1}^{n-1}(e^{2ik\theta_j} + e^{-2ik\theta_j})
+\end{aligned}
+$$  
+
+Using a geometric sum (in essentially the same way as the solution of Problem 1.2 in Problem Sheet 8) we can show that the second term is 0 and thus $w_j = \frac{1}{\alpha_j^2} = \frac{\pi}{n}$.
+
+**END**
+
+**Problem 3.3 (B)** Solve Problem 1.2 from PS8 using **Lemma (discrete orthogonality)** with
+$w(x) = 1/\sqrt{1-x^2}$ on $[-1,1]$.
+
+**SOLUTION**
+
+
+By the Lemma (Discrete Orthogonality), we have,  
+$$
+\begin{aligned}
+	\Sigma_{n}^w[q_lq_m] = \frac{\pi}{n}\sum_{j=1}^n q_l(x_j)q_m(x_j) = \delta_{lm}, \\
+	\sum_{j=1}^n q_l(x_j)q_m(x_j) = \frac{n}{\pi}\delta_{lm},
+\end{aligned}
+$$  
+
+By the previous question, for the weight $w(x) = \frac{1}{\sqrt{1-x^2}}$ we have $q_0(x_j) = \frac{1}{\sqrt{\pi}}$, $q_k(x_j) = \sqrt{\frac{2}{\pi}}\cos(k\theta_j).$
+For $l = m = 0$ then we have,
+$$
+\begin{aligned}
+	\frac{1}{\pi}\sum_{j=1}^n \cos(l\theta_j)\cos(m\theta_j) =\sum_{j=1}^nq_l(x_j)q_m(x_j) =  \frac{n}{\pi}\delta_{lm} = \frac{n}{\pi} \\
+	\Rightarrow \frac{1}{n}\sum_{j=1}^n \cos(l\theta_j)\cos(m\theta_j) = 1\
+\end{aligned}
+$$  
+Now, for $l = m \neq 0$, we have,  
+$$
+\begin{aligned}
+	\frac{2}{\pi}\sum_{j=1}^n \cos(l\theta_j)\cos(m\theta_j) =\sum_{j=1}^nq_l(x_j)q_m(x_j) =  \frac{n}{\pi}\delta_{lm} = \frac{n}{\pi} \\
+	\Rightarrow \frac{1}{n}\sum_{j=1}^n \cos(l\theta_j)\cos(m\theta_j) = \frac{1}{2}\
+\end{aligned}
+$$  
+Finally, for $l \neq m$, we have,
+$$
+C_{lm}\sum_{j=1}^n\cos(l\theta_j)\cos(m\theta_j) = \sum_{j=1}^nq_l(x_j )q_m(x_j) = \frac{n}{\pi}\delta_{lm} = 0,
+$$
+for some constant $C_{lm} \neq 0$ which is $\frac{1}{\pi}$ if $l = 0$ or $m = 0$ and $\frac{2}{\pi}$ otherwise (it doesn't matter what it is so long as it is not 0). Therefore, for $l \neq m$ we have,
+$$
+\frac{1}{n}\sum_{j=1}^n \cos(l\theta_j)\cos(m\theta_j) = 0
+$$
+
+**END**  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
