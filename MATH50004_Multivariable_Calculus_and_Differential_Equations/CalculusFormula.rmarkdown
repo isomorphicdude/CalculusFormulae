@@ -227,7 +227,17 @@ $$
 $$  
 
 
-# Curvilinear Coordinates
+# Curvilinear Coordinates  
+
+## Basics  
+
+For transformation $u_i=u_i(x_1,x_2,x_3)$  
+
+$$
+h_i \mathbf{e}_i = \frac{\partial \mathbf{r}}{\partial u_i}
+$$  
+Scale factor is the norm of $\frac{\partial \mathbf{r}}{\partial u_i}$.  
+
 
 ## Cylindrical  
 
@@ -236,7 +246,7 @@ The Jacobian determinant is $r$.
 $$
 x = r cos \phi \qquad y = rsin \phi \qquad z=z
 $$  
-The scale factors:  
+The **scale factors**:  
 
 $$
 \begin{aligned}
@@ -245,17 +255,17 @@ $$
     h_3 &= 1 \\
 \end{aligned}
 $$  
-The graident  
+The **graident**  
 
 $$
 \nabla = \hat{r} \frac{\partial}{\partial r} + \frac{\hat{\phi}}{r} \frac{\partial}{\partial \phi} + \hat{k} \frac{\partial}{\partial z}
 $$ 
-The divergence:  
+The **divergence**:  
 $$
 \text{div} \mathbf{A} = \frac{\partial A_1}{\partial r} + \frac{A_1}{r} + \frac{1}{r} \frac{\partial A_2}{\partial \phi} + \frac{\partial A_3}{\partial z}
 $$  
 
-The curl: 
+The **curl**: 
 $$
 curl \mathbf{A} =\frac{1}{r} \begin{vmatrix}
         \mathbf{\hat{r}} & r \hat{\phi} & \mathbf{\hat{k}} \\ 
@@ -264,13 +274,13 @@ curl \mathbf{A} =\frac{1}{r} \begin{vmatrix}
         \end{vmatrix}
 $$  
 
-The Laplacian:  
+The **Laplacian**:  
 
 $$
 \nabla^2 \Phi = \frac{\partial^2 \Phi}{\partial r^2} + \frac{1}{r} \frac{\partial \Phi}{\partial r} + \frac{1}{r^2} \frac{\partial^2 \Phi}{\partial \phi^2} + \frac{1}{r} \frac{\partial^2 \Phi}{\partial z^2}
 $$  
 
-## Spherical  
+## **Spherical**  
 
 The Jacobian determinant is $r^2 sin \theta$.  
 
@@ -278,7 +288,7 @@ $$
 x = r sin \theta cos \phi \qquad y = rsin \theta sin \phi \qquad z=r cos\theta
 $$
 
-The scale factors:  
+The **scale factors**:  
 
 $$
 \begin{aligned}
@@ -287,17 +297,17 @@ h_2 &= r \\
 h_3 &= rsin\theta \\
 \end{aligned}
 $$  
-The graident  
+The **graident**  
 
 $$
 \nabla = \hat{r} \frac{\partial}{\partial r} + \frac{\hat{\theta}}{r} \frac{\partial}{\partial \theta} + \frac{\hat{\phi}}{rsin \ \theta} \frac{\partial}{\partial \phi}
 $$ 
-The divergence:  
+The **divergence**:  
 $$
 \text{div} \mathbf{A} = \frac{1}{r^2 \ sin \ \theta} \left \{\frac{\partial}{\partial r} (r^2 \ sin \ \theta \  A_1)+ \frac{\partial}{\partial \theta}(r \ sin \theta \ A_2) + \frac{\partial}{\partial \phi}(r \ A_3)\right \}
 $$  
 
-The curl: 
+The **curl**: 
 $$
 curl \mathbf{A} =\frac{1}{r^2 \ sin \ \theta} \begin{vmatrix}
         \mathbf{\hat{r}} & r \hat{\theta} & r \ sin \theta \ \hat{\phi} \\ 
@@ -306,7 +316,7 @@ curl \mathbf{A} =\frac{1}{r^2 \ sin \ \theta} \begin{vmatrix}
         \end{vmatrix}
 $$  
 
-The Laplacian:  
+The **Laplacian**:  
 
 $$
 \nabla^2 \Phi = \frac{\partial^2 \Phi}{\partial r^2} + \frac{2}{r} \frac{\partial \Phi}{\partial r} + \frac{cot \ \theta}{r^2} \frac{\partial \Phi}{\partial \theta}+ \frac{1}{r^2} \frac{\partial^2 \Phi}{\partial \theta^2} + \frac{1}{r^2 sin^2 \ \theta} \frac{\partial^2 \Phi}{\partial \phi^2}
@@ -314,17 +324,17 @@ $$
 
 ## General  
 
-The graident  
+The **graident**:    
 
 $$
 \nabla = \frac{\hat{e_1}}{h_1} \frac{\partial}{\partial u_1} + \frac{\hat{e_2}}{h_2} \frac{\partial}{\partial u_2} + \frac{\hat{e_3}}{h_3} \frac{\partial}{\partial u_3}
 $$ 
-The divergence:  
+The **divergence**:  
 $$
 \text{div} \mathbf{A} = \frac{1}{h_1h_2h_3} \left \{\frac{\partial}{\partial u_1} (A_1 \  h_2 \ h_3)+\frac{\partial}{\partial u_2} (A_2 \ h_3 \ h_1)+\frac{\partial}{\partial u_3} (A_3 \ h_1 \  h_2)\right \}
 $$  
 
-The curl: 
+The **curl**: 
 $$
 curl \mathbf{A} =\frac{1}{h_1h_2h_3} \begin{vmatrix}
         h_1 \mathbf{\hat{e_1}} & h_2 \mathbf{\hat{e_2}} &  h_3 \mathbf{\hat{e_3}} \\ 
@@ -333,7 +343,7 @@ curl \mathbf{A} =\frac{1}{h_1h_2h_3} \begin{vmatrix}
         \end{vmatrix}
 $$  
 
-The Laplacian:  
+The **Laplacian**:  
 
 $$
 \nabla^2 \Phi = \frac{1}{h_1h_2h_3} \left \{\frac{\partial}{\partial u_1} (\frac{h_2 \ h_3}{h_1} \ \frac{\partial \Phi}{\partial u_1})+\frac{\partial}{\partial u_2} (\frac{h_1 \ h_3}{h_2} \ \frac{\partial \Phi}{\partial u_2})+\frac{\partial}{\partial u_3} (\frac{h_2 \ h_1}{h_3} \ \frac{\partial \Phi}{\partial u_3})\right \}
@@ -345,7 +355,9 @@ $S$ parametrised by $u_1$, $u_2$.
 $$x=x(u_1,u_2) \qquad y=y(u_1,u_2) \qquad z=z(u_1,u_2)$$
 
 $$dS \ = \ |\mathbf{J}| \ du_1du_2$$  
-where $\mathbf{J}$ is $\frac{\partial \mathbf{r}}{\partial u_1} \times \frac{\partial \mathbf{r}}{\partial u_2}$, $\mathbf{r}=x \ \hat{i} + y \ \hat{j}+z \ \hat{k}$
+where $\mathbf{J}$ is $\frac{\partial \mathbf{r}}{\partial u_1} \times \frac{\partial \mathbf{r}}{\partial u_2}$, $\mathbf{r}=x \ \hat{i} + y \ \hat{j}+z \ \hat{k}$  
+
+e.g. Parametrising a sphere's surface with $\theta$, $\phi$, and $|\det J|=r^2 \sin \theta$
 
 
 # Calculus of variations  
@@ -424,10 +436,10 @@ $$
 
 ## Trace and Det. Rule  
 
-- $tr<0, \ det>0 \implies Re \lambda <0, stable$
-- $tr^2-4det <0 \implies Non-real$  
-- $tr>0, \ det>0 \implies Re \lambda >0, unstable$
-- $det<0 \implies saddle$ (opposite signs)   
+- $tr<0, \ \det>0 \implies Re \lambda <0, stable$
+- $tr^2-4 \det <0 \implies Non-real$  
+- $tr>0, \ \det>0 \implies Re \lambda >0, unstable$
+- $\det<0 \implies saddle$ (opposite signs)   
 
 ## Solution to Linear Systems  
 

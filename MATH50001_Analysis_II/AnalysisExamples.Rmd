@@ -1,12 +1,25 @@
 ---
 title: "Analysis Examples and Counter-examples"
-date: 2022/01/10
+date: '`r format(Sys.time(), "%d %B, %Y")`'
 output:
   pdf_document:
     number_sections: true
 ---
 
-# Connectedness  
+# Baiscs  
+
+- Infinite intersection of open sets not open
+$$
+\cap_{i} (-2^{-i},2^{-i})
+$$
+- 
+
+# Differentiation  
+
+
+# Connectedness   
+
+
 
 
 

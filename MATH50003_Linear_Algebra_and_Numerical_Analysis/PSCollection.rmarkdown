@@ -1,6 +1,6 @@
 ---
 title: "MATH50003 Problem Sheets and Solutions"
-date: "03/04/2022"
+date: '`r format(Sys.time(), "%d %B, %Y")`'
 output: 
   pdf_document:
     latex_engine: xelatex
@@ -1760,10 +1760,13 @@ $$
 
 **Problem 1.3⋆ (A)** Consider Helmholtz with Neumann conditions:
 $$
-u'(0) = c_0 \\
-u'(1) = c_1 \\
-u_{xx} + k^2 u = f(x)
-$$
+\begin{aligned}
+u'(0) &= c_0 \\
+u'(1) &= c_1 \\
+u_{xx} + k^2 u &= f(x)
+\end{aligned}
+$$  
+
 Write down the finite difference approximation approximating
 $u(x_k) ≈ u_k$ on
  an evenly spaced grid $x_k = (k-1)/(n-1)$ for $k=1,…,n$
@@ -3182,7 +3185,7 @@ Q_n = \left[\begin{matrix}
 $$
 where
 $$
-\tilde{D} = \begin{bmatrix} 1/\sqrt{U_0(x_1) + ⋯ + U_{n-1}(x_1)} \\ &⋱ \\ 1/\sqrt{U_0(x_n) + ⋯ + U_{n-1}(x_n)}
+\tilde{D} = \begin{bmatrix} 1/\sqrt{U_0(x_1)^2 + ⋯ + U_{n-1}(x_1)^2} \\ &⋱ \\ 1/\sqrt{U_0(x_n)^2 + ⋯ + U_{n-1}(x_n)^2}
 \end{bmatrix}
 $$
 guarantess that $Q_n$ is orthogonal.
@@ -3436,20 +3439,20 @@ For the weights $w(x) = 1$, the orthogonal polynomials of degree $\leq 3$ are th
 
 $$
 \begin{aligned}
-	q_0(x) = 1, \\
-	q_1(x) = x, \\
-	q_2(x) = \frac{1}{2}(3x^2  - 1), \\
-	q_3(x) = \frac{1}{2}(5x^3 - 3x).
+	q_0(x) &= 1 \\
+	q_1(x) &= x \\
+	q_2(x) &= \frac{1}{2}(3x^2  - 1) \\
+	q_3(x) &= \frac{1}{2}(5x^3 - 3x)
 \end{aligned}
 $$  
 We can normalise each to get $q'_j(x) = q_j(x)/||q_j||$, with $||q_j||^2 = \int_{-1}^1 q_j^2 dx$. This gives,  
 
 $$
 \begin{aligned}
-	q'_0(x) = \frac{1}{\sqrt{2}}, \\
-	q'_1(x) = \sqrt{\frac{3}{2}}x, \\
-	q'_2(x) = \sqrt{\frac{5}{8}}(3x^2  - 1), \\
-	q'_3(x) = \sqrt{\frac{7}{8}}(5x^3 - 3x).
+	q'_0(x) &= \frac{1}{\sqrt{2}} \\
+	q'_1(x) &= \sqrt{\frac{3}{2}}x \\
+	q'_2(x) &= \sqrt{\frac{5}{8}}(3x^2  - 1) \\
+	q'_3(x) &= \sqrt{\frac{7}{8}}(5x^3 - 3x)
 \end{aligned}
 $$  
 For the first part we use the roots of $q_2(x)$ which are $\mathbf{x} = \left\{\pm \frac{1}{\sqrt{3}}\right\}$. The weights are,
