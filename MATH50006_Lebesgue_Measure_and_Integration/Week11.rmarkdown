@@ -1,0 +1,30 @@
+---
+title: "Week 11 MATH50006 Mock"
+date: 2022/03/27
+output:
+  pdf_document
+---
+
+## Q1  
+
+Let $f: \mathbb{R}^d \to \mathbb{R}$ in , and let $\mathbb{R}^d = A \cup B$.   
+Show that $f$ is measurable if and only if $f|_A$ and $f|_B$ are both measurable.  
+
+## Q2  
+Prove the following statements or give a counter example:  
+
+1. There is no such $f$, s.t. $f$ is not measurable but $f^2$ is measurable.  
+   
+2. If $f$ is measurable, then $f^2$ is measurable. 
+   
+3. If on some $(X,\mathcal{B}(X), \lambda)$, $\ \int_X f d\lambda < \infty$, then $\int_X f^2 d\lambda < \infty$  
+
+
+## Q3  
+
+Evaluate the following expression and show your work 
+
+$$
+\lim_{n\to \infty} \int_0^n (1+\frac{x}{n})^n e^{-2x} dx
+$$
+
