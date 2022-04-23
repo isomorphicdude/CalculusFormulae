@@ -14,29 +14,29 @@ The $sinh$ related:
 
 $$
 \begin{aligned}
-  \int sinh(ax) dx &= \frac{1}{a} cosh \ ax + C \\
-  \int sinh^2(ax) dx &= \frac{1}{4a} sinh \ 2ax - \frac{x}{2} + C \\
-  \int x \ sinh(ax) dx &= \frac{1}{a} x \ cosh \ ax - \frac{1}{a^2} sinh \ ax + C \\
-   \int sinh^n(ax) dx &= \frac{1}{na} (sinh^{n-1} \ 2ax)(cosh ax) - \frac{n-1}{n} \int sinh^{n-2}(ax) dx \\
+  \int \sinh(ax) dx &= \frac{1}{a} \cosh \ ax + C \\
+  \int \sinh^2(ax) dx &= \frac{1}{4a} \sinh \ 2ax - \frac{x}{2} + C \\
+  \int x  \sinh(ax) dx &= \frac{1}{a} x \ \cosh \ ax - \frac{1}{a^2} \sinh \ ax + C \\
+   \int \sinh^n(ax) dx &= \frac{1}{na} (\sinh^{n-1} \ 2ax)(\cosh ax) - \frac{n-1}{n} \int \sinh^{n-2}(ax) dx \\
 \end{aligned}
 $$
 
-The $cosh$ related:  
+The $\cosh$ related:  
 
 $$
 \begin{aligned}
-  \int cosh(ax) dx &= \frac{1}{a}sinh \ ax + C \\
-  \int cosh^2(ax) dx &= \frac{1}{4a} sinh \ 2ax - \frac{x}{2} + C \\
-  \int x \ cosh(ax) dx &= \frac{1}{a} x \ sinh \ ax - \frac{1}{a^2} cosh \ ax + C \\
-  \int cosh^n(ax) dx &= \frac{1}{na} (cosh^{n-1} \ 2ax)(sinh ax) + \frac{n-1}{n} \int cosh^{n-2}(ax) dx
+  \int \cosh(ax) dx &= \frac{1}{a}\sinh \ ax + C \\
+  \int \cosh^2(ax) dx &= \frac{1}{4a} \sinh \ 2ax - \frac{x}{2} + C \\
+  \int x \ \cosh(ax) dx &= \frac{1}{a} x \ \sinh \ ax - \frac{1}{a^2} \cosh \ ax + C \\
+  \int \cosh^n(ax) dx &= \frac{1}{na} (\cosh^{n-1} \ 2ax)(\sinh ax) + \frac{n-1}{n} \int \cosh^{n-2}(ax) dx
 \end{aligned}
 $$ 
 Others:  
 
 $$
 \begin{aligned}
-  \int tanh(ax) dx &= \frac{1}{a} ln(cosh \ ax) + C \\
-  \int coth(ax) dx &= \frac{1}{a} ln(sinh \ ax) + C \\
+  \int \tanh(ax) dx &= \frac{1}{a} \ln(\cosh \ ax) + C \\
+  \int \coth(ax) dx &= \frac{1}{a} \ln(\sinh \ ax) + C \\
 \end{aligned}
 $$
 
@@ -55,28 +55,28 @@ $$
 
 ## Integrating Trigs  
 
-The $sin$ related:  
+The $\sin$ related:  
 
 $$
 \begin{aligned}
-    \int sin^2(ax) dx &= \frac{x}{2} - \frac{1}{4a} sin \ 2ax + C \\
-    \int x \ sin(ax) dx &= \frac{sin \ ax}{a^2} - \frac{x \ cos \ ax}{a}+ C
+    \int \sin^2(ax) dx &= \frac{x}{2} - \frac{1}{4a} \sin  2ax + C \\
+    \int x \ \sin(ax) dx &= \frac{\sin  ax}{a^2} - \frac{x  \cos  ax}{a}+ C
 \end{aligned}
 $$
 
-The  $cos$ related:  
+The  $\cos$ related:  
 
 $$
 \begin{aligned}
-    \int cos^2(ax) dx &= \frac{x}{2} + \frac{1}{4a} sin \ 2ax + C \\
-    \int x \ cos(ax) dx &= \frac{cos \ ax}{a^2} - \frac{x \ sin \ ax}{a}+ C \\
+    \int \cos^2(ax) dx &= \frac{x}{2} + \frac{1}{4a} \sin \ 2ax + C \\
+    \int x \ \cos(ax) dx &= \frac{\cos  ax}{a^2} - \frac{x \ \sin  ax}{a}+ C \\
 \end{aligned}
 $$  
 
 Others:  
 
 $$
-\int tan(x) = ln \ |secx|+C
+\int \tan(x) = \ln \ |\sec x|+C
 $$
 
 ## Integrating to  Trigs
@@ -92,13 +92,13 @@ $$
 ## Weierstrass Sub  
 
 
-Set $t=tan(\frac{x}{2})$, then  
+Set $t=\tan(\frac{x}{2})$, then  
 
 $$
 \begin{aligned}
 dx &= \frac{2}{1+t^2} \ dt \\
-sin(x) &= \frac{2}{1+t^2} \\ 
-cos(x) &= \frac{1-t^2}{1+t^2}
+\sin(x) &= \frac{2}{1+t^2} \\ 
+\cos(x) &= \frac{1-t^2}{1+t^2}
 \end{aligned}
 $$
 
@@ -457,11 +457,18 @@ Defined for nontrivial solutions starting in $E_j$ (cf. Pg.57&PS5)
 $$
 \sigma_{Lyap}(\varphi(\cdot,x))=\lim_{t\to \infty} \frac{\ln||\varphi(t,x)||}{t}
 $$  
+**Variation of Constants**  
+
+General solution to $\dot{x}=Ax+g(t)$, $g$ continuous.  
+
+$$
+\lambda(t,t_0,x)=e^{A(t-t_0)}x_0+\int_{t_0}^t e^{A(t-s)}g(s)ds \qquad \forall t,t_0 \in I, x_0\in \mathbb{R}^d
+$$  
 
 
 ## Complex Jordan Forms  
 
-Eigenvalues $\lambda=a\pm ib$ and evectors $u \pm iv$ resp.  
+Eigenvalues $\lambda=a\pm ib$ and eigenvectors $u \pm iv$ resp.  
 
 $$
 J = \begin{pmatrix}a&b\\-b&a\end{pmatrix}, \  T=\begin{pmatrix}u_1&v_1 \\ u_2&v_2\end{pmatrix}
@@ -529,7 +536,7 @@ $$
 In $\mathbb{R}^2$  
 
 $$
-\exp(t \ \begin{pmatrix}a&b\\-b&a\end{pmatrix})= e^{at}\begin{pmatrix}cos(bt) & sin(bt) \\ -sin(bt) & cos(bt) \end{pmatrix}
+\exp(t \ \begin{pmatrix}a&b\\-b&a\end{pmatrix})= e^{at}\begin{pmatrix}\cos(bt) & \sin(bt) \\ -\sin(bt) & \cos(bt) \end{pmatrix}
 $$
 
 
