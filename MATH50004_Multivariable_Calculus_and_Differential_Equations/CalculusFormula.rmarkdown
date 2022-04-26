@@ -9,7 +9,7 @@ output:
 
 ## Integrating Hyperbolic Functions
 
-The $sinh$ related:  
+The $\sinh$ related:  
 
 
 $$
@@ -125,7 +125,7 @@ $$
 
 - (Gradient) $[\nabla \phi]_i = \frac{\partial \phi}{\partial x_i}$  
 
-- (Curl) $[curl A]_i = \varepsilon_{ijk} \frac{\partial \phi}{\partial x_j} A_k$, *irrotational* if zero. 
+- (Curl) $[curl A]_i = \varepsilon_{ijk} \frac{\partial \phi}{\partial x_j} A_k$, *irrotational* if zero, and has a *potential*  
 
 
 ## Grad,Div,Curl  
@@ -294,32 +294,32 @@ $$
 \begin{aligned}
 h_1 &= 1 \\
 h_2 &= r \\ 
-h_3 &= rsin\theta \\
+h_3 &= r \sin\theta \\
 \end{aligned}
 $$  
 The **graident**  
 
 $$
-\nabla = \hat{r} \frac{\partial}{\partial r} + \frac{\hat{\theta}}{r} \frac{\partial}{\partial \theta} + \frac{\hat{\phi}}{rsin \ \theta} \frac{\partial}{\partial \phi}
+\nabla = \hat{r} \frac{\partial}{\partial r} + \frac{\hat{\theta}}{r} \frac{\partial}{\partial \theta} + \frac{\hat{\phi}}{r \sin \ \theta} \frac{\partial}{\partial \phi}
 $$ 
 The **divergence**:  
 $$
-\text{div} \mathbf{A} = \frac{1}{r^2 \ sin \ \theta} \left \{\frac{\partial}{\partial r} (r^2 \ sin \ \theta \  A_1)+ \frac{\partial}{\partial \theta}(r \ sin \theta \ A_2) + \frac{\partial}{\partial \phi}(r \ A_3)\right \}
+\text{div} \mathbf{A} = \frac{1}{r^2 \ \sin  \theta} \left \{\frac{\partial}{\partial r} (r^2 \ \sin  \theta \  A_1)+ \frac{\partial}{\partial \theta}(r \ \sin \theta \ A_2) + \frac{\partial}{\partial \phi}(r \ A_3)\right \}
 $$  
 
 The **curl**: 
 $$
-curl \mathbf{A} =\frac{1}{r^2 \ sin \ \theta} \begin{vmatrix}
-        \mathbf{\hat{r}} & r \hat{\theta} & r \ sin \theta \ \hat{\phi} \\ 
+curl \mathbf{A} =\frac{1}{r^2 \ \sin  \theta} \begin{vmatrix}
+        \mathbf{\hat{r}} & r \hat{\theta} & r \ \sin \theta \ \hat{\phi} \\ 
         \frac{\partial}{\partial r} & \frac{\partial}{\partial \theta} & \frac{\partial}{\partial \phi} \\ 
-        A_1 & rA_2 & r \ sin \ \theta \ A_3 \\ 
+        A_1 & rA_2 & r \ \sin  \theta \ A_3 \\ 
         \end{vmatrix}
 $$  
 
 The **Laplacian**:  
 
 $$
-\nabla^2 \Phi = \frac{\partial^2 \Phi}{\partial r^2} + \frac{2}{r} \frac{\partial \Phi}{\partial r} + \frac{cot \ \theta}{r^2} \frac{\partial \Phi}{\partial \theta}+ \frac{1}{r^2} \frac{\partial^2 \Phi}{\partial \theta^2} + \frac{1}{r^2 sin^2 \ \theta} \frac{\partial^2 \Phi}{\partial \phi^2}
+\nabla^2 \Phi = \frac{\partial^2 \Phi}{\partial r^2} + \frac{2}{r} \frac{\partial \Phi}{\partial r} + \frac{cot \ \theta}{r^2} \frac{\partial \Phi}{\partial \theta}+ \frac{1}{r^2} \frac{\partial^2 \Phi}{\partial \theta^2} + \frac{1}{r^2 \sin^2 \ \theta} \frac{\partial^2 \Phi}{\partial \phi^2}
 $$  
 
 ## General  
@@ -369,8 +369,8 @@ With *functional* $L:=L(x,y,y')$
 ## One Dimensional  
 
 $$
-\frac{\partial L}{\partial y'} - \frac{d}{dx} (\frac{\partial L}{\partial Y'})=0
-$$
+\frac{\partial L}{\partial y} - \frac{d}{dx} (\frac{\partial L}{\partial y'})=0
+$$  
 
 ## Independent of $y$
 $$
