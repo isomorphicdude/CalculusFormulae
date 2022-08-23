@@ -121,17 +121,17 @@ $$
 
 - $A \cdot B = A_i B_i$  
 
-- (Divergence) $div A = \frac{\partial A_i}{\partial x_i}$, *solenoidal* if zero
+- (Divergence) ${\rm div} A = \frac{\partial A_i}{\partial x_i}$, *solenoidal* if zero
 
 - (Gradient) $[\nabla \phi]_i = \frac{\partial \phi}{\partial x_i}$  
 
-- (Curl) $[curl A]_i = \varepsilon_{ijk} \frac{\partial \phi}{\partial x_j} A_k$, *irrotational* if zero, and has a *potential* (the path integral is independent of the path chosen and integral over closed curve is $0$).    
+- (Curl) $[{\rm curl} A]_i = \varepsilon_{ijk} \frac{\partial \phi}{\partial x_j} A_k$, *irrotational* if zero, and has a *potential* (the path integral is independent of the path chosen and integral over closed curve is $0$).    
 
 
 ## Grad,Div,Curl  
 
 ### Directional Derivative  
-Surface $\phi$ in direction of $\hat{s} := \vec{PQ}$ with length $s=|PQ|$.  
+Surface $\phi$ in direction of $\hat{s} := \vec{PQ}$ with length $s=|PQ|$, $\hat{n}$ the normal to surface at $P$.  
 
 $$
 \begin{aligned}
@@ -142,6 +142,14 @@ $$
 For Cartesian,  
 $$
 \nabla \phi = \frac{\partial \phi}{\partial x} i +\frac{\partial \phi}{\partial y} j + \frac{\partial \phi}{\partial z} k
+$$   
+
+### Tangent Plane  
+
+$(\nabla \phi)_P$ is normal to $\phi$ at $P$.  
+
+$$
+(\frac{\partial \phi}{\partial x})_P (x-x_P)+(\frac{\partial \phi}{\partial y})_P (y-y_P)+(\frac{\partial \phi}{\partial z})_P (z-z_P)=0
 $$  
 
 
@@ -161,9 +169,9 @@ $$
 
 - (**Chain-like** $\nabla$) $\nabla(\phi \psi)=\psi  \ \nabla(\phi)+\phi \  \nabla(\psi)$ 
 
-- (**Chain-like** $div$) $div(\phi \mathbf{A}) =\phi \ div(\mathbf{A}) + \nabla \phi \cdot \mathbf{A}$, with $\mathbf{A}$ being a vector field
+- (**Chain-like** $\rm div$) $div(\phi \mathbf{A}) =\phi \ div(\mathbf{A}) + \nabla \phi \cdot \mathbf{A}$, with $\mathbf{A}$ being a vector field
 
-- (**Chain-like** $curl$) $curl(\phi \mathbf{A}) =\phi curl(\mathbf{A}) + \nabla \phi \times \mathbf{A}$, with $\mathbf{A}$ being a vector field  
+- (**Chain-like** $\rm curl$) $curl(\phi \mathbf{A}) =\phi curl(\mathbf{A}) + \nabla \phi \times \mathbf{A}$, with $\mathbf{A}$ being a vector field  
 
 - $div(curl  \ \mathbf{A})=0$  
 
@@ -452,13 +460,24 @@ $$
 Constraint $J_0 = \int_{x_1}^{x_2}g(x,y,y')dx$ being a fixed constant
 $$
 \frac{\partial}{\partial y} (L+\lambda g)-\frac{d}{dx}\left(\frac{\partial }{\partial y'}(L+\lambda g)\right)=0
-$$
+$$  
+(Note the simplified identities still hold in this case, simply replace $L$ with $L + \lambda g$)  
 
 ## Higher dimensions  
 $$
 \frac{\partial L}{\partial f}- \ \text{div}(\mathbf{\nabla_{\nabla f}} \ L)=0
 $$  
-where $\mathbf{\nabla_{p}} A=i\frac{\partial}{\partial p_1}+j\frac{\partial}{\partial p_2}$  
+where $\mathbf{\nabla_{\nabla f}} A=i\frac{\partial}{\partial f'_x}+j\frac{\partial}{\partial f'_y}$ (w.r.t the partial derivatives).  
+
+## Isoperimetric inequality  
+
+For any simple curve with area $A$ and perimeter $l$,  
+
+$$
+4\pi A \leq l
+$$  
+equality holds iff the curve is a circle.  
+
 
 
 # Differential Equations  
@@ -489,10 +508,10 @@ $$
 
 ## Trace and Det. Rule  
 
-- $tr<0, \ \det>0 \implies Re \lambda <0, stable$
-- $tr^2-4 \det <0 \implies Non-real$  
-- $tr>0, \ \det>0 \implies Re \lambda >0, unstable$
-- $\det<0 \implies saddle$ (opposite signs)   
+- $tr<0, \ \det>0 \implies Re \lambda <0$, **stable**
+- $tr^2-4 \det <0 \implies$ **Non-real**  
+- $tr>0, \ \det>0 \implies Re \lambda >0$, **unstable**
+- $\det<0 \implies$ **saddle** (opposite signs)   
 
 ## Solution to Linear Systems  
 
