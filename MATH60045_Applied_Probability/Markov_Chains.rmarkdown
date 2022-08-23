@@ -1,0 +1,83 @@
+## Chapman-Kolmogorov (CK) equations    
+
+## First passage and hitting times   
+
+### Generating Functions of Markov Chain
+
+## Recurrence and Transience  
+
+### Equivalent conditions for recurrence  
+
+### Properties of recurrent/transient states  
+
+Examples of [transient, irreducible chains](https://math.stackexchange.com/questions/242311/example-of-irreductible-transient-markov-chain)
+
+### Mean recurrence time, null and positive recurrence  
+
+**Theorem** When state space is finite, at least one state is *recurrent* and all *recurrent* states are positive  
+
+**Remark** This combined with later results on stationarity makes a chain with finite state space particularly nice.
+
+### Examples  
+
+## Aperiodicity and Ergodicity  
+
+## Communicating classes   
+
+### Properties preserved  
+- Same period
+- Same transience/recurrence
+- Null recurrence  
+
+
+
+### Decomposition of Chains  
+
+### Finite State Space
+
+### Gambler's Ruin  
+
+## Staionarity  
+
+We are interested in the equilibrium states of a chain
+### Distribution  
+- Distribution is a row vector $\lambda$ with $\Sigma_{j} \lambda_j=1$  
+- If $\lambda P=\lambda$ then it is called *invariant*
+### Stationary distributions of irreducible chains  
+
+**Theorem** Irreducible chain has a stationary distribution $\pi$ if and only if all states are positive recurrent 
+- $\pi$ is unique
+- $\pi=\mu_i^{-1}$ the inverse of mean recurrence time  
+
+**Proof**: (constructive)  
+
+- Let $N_i(j)$ be the number of visits to state i before state j ; the sum of such numbers over i is equal to the hitting time $T_j$  
+- Define $\rho_i(j)$ to be the expected number of visits to the state i between two successive visits to state j  
+$$\rho_i(j) = \mathbb{E}[N_i(j) | X_0=j]$$  
+by time homogeneity  
+- Now the mean hitting time can be computed as   $$\mu_j = \mathbb{E}[ \sum_i  N_i(j) | X_0=j]$$  which can be written as sum of $\rho_i(j)$ by Tonelli and linearity of conditional expectation  
+- Use a lemma to bound $\rho_i(j)$ so it's finite  
+- Write $\rho_i(j)=\sum_n l_{ji} (n)$ and use a recurrence to show     
+$$
+\begin{aligned}
+\rho_i(j)   &=\sum_n l_{ji} (n) \\
+				&= p_{ji} + \sum_{n=2} \sum_{r,r\neq j} p_{ri} l_{jr}(n-1)\\
+				&=p_{ji}\rho_i(j) + \sum_{n=1} \sum_{r,r\neq j} p_{ri} l_{jr}(n)\\
+				&=p_{ji}\rho_i(j) + \sum_{r,r\neq j} p_{ri}\sum_{n=1}  l_{jr}(n)\\
+				&=\sum_r \rho_r(j)p_{ri}
+\end{aligned} 
+$$  
+where we formulated 
+
+$$
+l_{ji}(n)=\Pr(X_n=i, T_j \geq n | X_0 =j)
+$$  
+being the prob that the chain reaches i in n steps without returning to j
+
+### Limiting Distribution  
+
+
+### Ergodic Theorem  
+
+### Summary of properties of irreducible chains  
+
