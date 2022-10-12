@@ -1,63 +1,176 @@
+---
+title: "Discrete Time Markov Chains"
+date: '`r format(Sys.time(), "%d %B, %Y")`'
+output: 
+  pdf_document:
+    number_sections: true
+  
+---
+
+# Basics  
+
 ## Chapman-Kolmogorov (CK) equations    
+
+The **n-step** transition probability is  
+
+$$
+	p_{ij}(n) = \Pr(X_{m+n}=j | X_m=i)
+$$
 
 ## First passage and hitting times   
 
-### Generating Functions of Markov Chain
+The **first passage time** is   
 
-## Recurrence and Transience  
+$$
+	T_j = \min \{n \in \mathbb{N}: X_n=j\}
+$$   
 
-### Equivalent conditions for recurrence  
+The **first passage probability** is   
 
-### Properties of recurrent/transient states  
+$$
+	f_{ij}(n) = \Pr(T_j=n|X_0=i)
+$$
+
+from which the hitting probability follows  
+
+$$
+	f_{ij}=\Pr(T_j < \infty|X_0=i)
+$$  
+
+
+
+## Generating Functions of Markov Chain  
+
+Recall the **probability generating function**  
+
+$$
+	G_X(s) = \sum_{x=0}^{\infty} s^x \Pr(X=x)
+$$  
+
+where this holds on the support
+
+$$
+	\mathcal{S_X} = \bigg \{s\in \mathbb{R}: \sum_{x=0}^{\infty} |s|^x \Pr(X=x) < \infty \bigg\}
+$$  
+
+The generating functions here are  
+
+$$
+	G_{p_{ij}(n)} = \sum_{n=0}^{\infty} p_{ij}(n) s^n \\
+	G_{f_{ij}(n)} = \sum_{n=0}^{\infty} f_{ij}(n) s^n
+$$  
+
+By arguing using equating coefficients and an identity, we have a **theorem**  
+
+$$
+	G_{p_{ij}(n)} = \delta_{ij} + G_{f_{ij}(n)}(s) G_{p_{ij}(n)}
+$$  
+
+The identity used is  
+
+$$
+	p_{ij}(n) = \sum_{l=1}^n f_{ij}(l)p_{jj}(n-l)
+$$  
+
+
+
+# Recurrence and Transience   
+
+proof using generating functions:  
+
+Taking $s\to 1$ and using Abel's theorem, we can deduce  
+
+
+
+## Equivalent conditions for recurrence  
+
+## Properties of recurrent/transient states  
 
 Examples of [transient, irreducible chains](https://math.stackexchange.com/questions/242311/example-of-irreductible-transient-markov-chain)
 
-### Mean recurrence time, null and positive recurrence  
+## Mean recurrence time, null and positive recurrence  
 
 **Theorem** When state space is finite, at least one state is *recurrent* and all *recurrent* states are positive  
 
 **Remark** This combined with later results on stationarity makes a chain with finite state space particularly nice.
 
-### Examples  
+## Examples  
 
-## Aperiodicity and Ergodicity  
+# Aperiodicity and Ergodicity  
 
 ## Communicating classes   
 
-### Properties preserved  
+## Properties preserved  
 - Same period
 - Same transience/recurrence
 - Null recurrence  
 
 
 
-### Decomposition of Chains  
+## Decomposition of Chains  
 
-### Finite State Space
+## Finite State Space
 
-### Gambler's Ruin  
+## Gambler's Ruin  
 
-## Staionarity  
+# Staionarity  
 
-We are interested in the equilibrium states of a chain
-### Distribution  
+We are interested in the equilibrium states of a chain  
+
+## Distribution  
 - Distribution is a row vector $\lambda$ with $\Sigma_{j} \lambda_j=1$  
-- If $\lambda P=\lambda$ then it is called *invariant*
-### Stationary distributions of irreducible chains  
+- If $\lambda P=\lambda$ then it is called *invariant*  
+  
+## Stationary distributions of irreducible chains  
 
-**Theorem** Irreducible chain has a stationary distribution $\pi$ if and only if all states are positive recurrent 
+**Theorem** Every irreducible chain has a **stationary distribution** $\pi$ if and only if all states are **positive recurrent** 
 - $\pi$ is unique
-- $\pi=\mu_i^{-1}$ the inverse of mean recurrence time  
+- $\pi=\mu_i^{-1}$ the inverse of mean recurrence time    
+
+We first have some lemmas:  
+$$  
+\begin{aligned}
+l_{ji}(n)&=\Pr(X_n=i, T_j \geq n | X_0 =j) 
+\end{aligned}
+$$  
+being the probability that the chain reaches $i$ in $n$ steps without returning to $j$    
+**Lemma**
+$$
+	f_{jj}(m+n) = \sum_{i \in E, i\neq j} l_{ji}(m) f_{ij}(n)
+$$  
+from which $f_{jj}(m+n) \geq l_{ji}(m) f_{ij}(n)$ follows    
+
+**Lemma** We also have the following recurrence relation
+
+**Lemma**: A positive recurrent chain has a stationary distribution.
+
 
 **Proof**: (constructive)  
 
-- Let $N_i(j)$ be the number of visits to state i before state j ; the sum of such numbers over i is equal to the hitting time $T_j$  
-- Define $\rho_i(j)$ to be the expected number of visits to the state i between two successive visits to state j  
-$$\rho_i(j) = \mathbb{E}[N_i(j) | X_0=j]$$  
-by time homogeneity  
-- Now the mean hitting time can be computed as   $$\mu_j = \mathbb{E}[ \sum_i  N_i(j) | X_0=j]$$  which can be written as sum of $\rho_i(j)$ by Tonelli and linearity of conditional expectation  
-- Use a lemma to bound $\rho_i(j)$ so it's finite  
-- Write $\rho_i(j)=\sum_n l_{ji} (n)$ and use a recurrence to show     
+- **(Step1 Construction)** Let $N_i(j)$ be the number of visits to state $i$ before state $j$ ; the sum of such numbers over i is equal to the hitting time $T_j$  
+- Define $\rho_i(j)$ to be the expected number of visits to the state $i$ between two successive visits to state $j$   (in this step the **recurrence** of the chain is used, as the $T_j$ is finite with probability $1$)  
+$$
+\begin{aligned}
+	\rho_i(j) &= \mathbb{E}[N_i(j) | X_0=j] \\
+			  &= \sum_n \Pr(X_n=i, T_j\geq n | X_0=j) \\
+			  &= \sum_n l_{ij}(n) 
+\end{aligned}
+$$
+
+- Now the mean hitting time can be computed as 
+$$
+\begin{aligned}
+	\mu_j &= \mathbb{E}\big[ \sum_i  N_i(j) | X_0=j\big] \\
+		  &= \sum_i \rho_i(j)
+\end{aligned}
+$$  
+- which can be written as sum of $\rho_i(j)$ by Tonelli and linearity of conditional expectation 
+
+- **(Step2 	Finiteness)** Use a lemma to bound $\rho_i(j)$ so it's finite  
+  
+- Namely write $\rho_i(j)=\sum_n l_{ji} (n)$ and bound using the fact that the chain is irreducible, so there exists $f_{ij}(n^*)>0$, so $f_{jj}(m+n^*) \geq l_{ji}(m) f_{ij}(n^*)$
+  
+- **(Step3 Stationarity)** Use a recurrence to show     
 $$
 \begin{aligned}
 \rho_i(j)   &=\sum_n l_{ji} (n) \\
@@ -67,17 +180,28 @@ $$
 				&=\sum_r \rho_r(j)p_{ri}
 \end{aligned} 
 $$  
-where we formulated 
 
+- This $\rho_i(j)$ does not necessarily give a probability vector when the chain is not positive recurrent.
+
+- Now if the chain is positive recurrent, we have $\mu_j$ finite for every $j$, we have   
 $$
-l_{ji}(n)=\Pr(X_n=i, T_j \geq n | X_0 =j)
-$$  
-being the prob that the chain reaches i in n steps without returning to j
+	\pi_i = \frac{\rho_i(j)}{\mu_j}
+$$
 
-### Limiting Distribution  
+**Lemma** If a stationary distribution exists, then the chain is positive recurrent and the distribution must be given by $\pi_i = \mu_i^{-1}$  
+
+**proof**:  ...
 
 
-### Ergodic Theorem  
 
-### Summary of properties of irreducible chains  
+
+
+## Limiting Distribution  
+
+
+## Ergodic Theorem  
+
+## Summary of properties of irreducible chains   
+
+# Time reversibility
 
