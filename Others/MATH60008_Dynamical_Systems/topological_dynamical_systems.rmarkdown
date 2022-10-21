@@ -1,0 +1,56 @@
+---
+title: "Topological Dynamical Systems"
+date: '`r format(Sys.time(), "%d %B, %Y")`'
+output: 
+  pdf_document:
+    number_sections: true
+---  
+
+## Continuous Maps  
+
+In this part, only discrete dynamical systems will be considered.  
+
+A **dynamical system** is an iteration of a continuous map $f$ that operates on state space $X$, namely $f: X\to X$.  
+
+We use the notation  
+
+$$
+  f^n = f \circ \cdots \circ f
+$$  
+
+for iterations.  
+
+**Definition** The **forward orbit** is  
+
+$$
+  O^+_f(x) = \{x, f(x), f^2(x), \cdots\} 
+$$  
+
+**Definition** $O^+_f(x)$ has **period** $p$ if 
+
+- $f^p(x)=x$  
+- $O^+_f(x) = \{x, f(x), f^2(x), \cdots\, f^{p-1}(x)\}$  
+
+where $p$ is the least positive integer that satisfies the above two properties.  
+
+
+**Theorem (3-period implies all periods)** *Let $f : I \to I$ be a continuous map of the interval with a periodic orbit of period $3$. Then $f$ has periodic orbits of any period.*
+
+(Sketch of proof)  
+
+In fact, the theorem above is a corollary of the following more powerful theorem.  
+
+![Sharkovskii ordering of integers](img/sharkovskii_ordering.png){width=250px}   
+
+The ordering consists of all positive integers, placing the odd ones first and order others according the power of $2$ they contain. This is a *total-order* but not a *well-order*.  
+
+We write $n \succ m$ if $n$ comes before $m$ in this ordering.  
+
+
+**Theorem (Sharkovskii)** $f: I \to \mathbb{R}$  is a continuous function on an interval $I$. If $f$ has a periodic orbit of period $n$, then $f$ has $m$-periodic points for all $m$, such that $n \succ m$.   
+
+
+
+## Attractors  
+
+## Chaos
