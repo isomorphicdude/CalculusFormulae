@@ -1,0 +1,34 @@
+\usepackage[utf8]{inputenc}
+\usepackage{amsfonts, amsmath, amssymb, 
+            hyperref, float, geometry,
+             amsthm, setspace} % add use svg when needed
+            
+% \newgeometry{vmargin={15mm}, hmargin={12mm,12mm}}
+% \svgpath{{figures/}}
+
+\newcommand{\R}{\mathbb{R}}
+\newcommand{\N}{\mathbb{N}}
+\newcommand{\mf}[1]{\mathbf{#1}}
+\newcommand{\ca}[1]{\mathcal{#1}}
+
+% for algorithms
+\makeatletter
+\newcommand{\HEADER}[1]{\ALC@it\underline{\textsc{#1}}\begin{ALC@g}}
+\newcommand{\ENDHEADER}{\end{ALC@g}}
+\makeatother
+
+% for numbering the theorems            
+\theoremstyle{plain}
+\newtheorem{thm}{Theorem}[section]
+\newtheorem{lemma}[thm]{Lemma}
+\newtheorem{cor}[thm]{Corollary}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% the following are not in italics
+\theoremstyle{definition}
+\newtheorem{defn}[thm]{Definition}
+\newtheorem{eg}[thm]{Example}
+\newtheorem{remark}[thm]{Remark}
+\newtheorem{prop}[thm]{Proposition}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\doublespacing
