@@ -15,17 +15,51 @@
 \subsection{Norms and Metrics}
 
 \begin{defn}
-(Metric)
+(Metric) Let $X$ be a nonempty set. 
+A function $d: X \times X \to \R^+$ satisfying the following is called a  \textbf{metric}  
+
+\begin{itemize}
+    \item (Positive definitiness) $\forall x,y \in X, d(x,y)\geq 0$ if $x \neq y$ and $d(x,y)=0 \iff x=y$
+    \item (Symmetry) $\forall x,y \in X, d(x,y)=d(y,x)$
+    \item (Triangle-inequality) $\forall x,y,z \in X, d(x,y) \leq d(x,z) + d(z,y)$
+\end{itemize}
+
 \end{defn}
-(translation invariant)
+\begin{defn}
+    (Translation invariant) A metric $d$ is \textbf{translation invariant} if $\forall x,y \in X, d(x,y)=d(x+a,y+a)$ for all $a \in X$.
+\end{defn}
 
 \begin{defn}
-(Normed Linear Spaces)
+    (Metric Linear Spaces) 
+    A pair $(X, d)$ with $X$ being a linear space over $\mathbb{K}$ and $d$ being a metric is called a \textbf{metric linear space} if and only if
+    addition and multiplication by scalar are continuous.
+\end{defn}   
+
+
+In other words, the following are true:  
+
+\begin{itemize}
+    \item $x_n \to x, \quad y_n \to y \implies x_n + y_n \to x + y$
+    \item $\lambda_n \to \lambda, \lambda_n, \lambda \in \mathbb{K},  x_n \to x \implies \lambda_n x_n \to \lambda x$
+\end{itemize}
+
+\begin{defn}
+    (Norm) Let $X$ be a nonempty set. A function $||\cdot||: X \to \R^+$ satisfying the following 
+    is called a \textbf{norm}:
+    \begin{itemize}
+        \item (Positive definitiness) $\forall x \in X, ||x|| \geq 0$ and $||x||=0 \iff x=0$
+        \item (Triangle-inequality) $\forall x,y \in X, ||x+y|| \leq ||x|| + ||y||$
+        \item (Homogeneity) $\forall x \in X, \forall \lambda \in \mathbb{K}, ||\lambda x|| = |\lambda| ||x||$
+    \end{itemize}
+\end{defn}
+
+\begin{defn}
+(Normed Linear Spaces) A pair $(X, ||\cdot||)$ with $X$ being a linear space over $\mathbb{K}$ and 
+                    $||\cdot||$ being a norm is called a \textbf{normed linear space}
 \end{defn} 
 
-\begin{defn}
-(Metric Linear Spaces)
-\end{defn}
+
+
 \subsection{Common Spaces}
 \subsection{Inequalities}
 
