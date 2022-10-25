@@ -1,0 +1,251 @@
+\section{Preliminaries}   
+
+\subsection{Norms and Metrics}
+
+\begin{defn}
+(Metric) Let $X$ be a nonempty set. 
+A function $d: X \times X \to \R^+$ satisfying the following is called a  \textbf{metric}  
+
+\begin{itemize}
+    \item (Positive definitiness) $\forall x,y \in X, d(x,y)\geq 0$ if $x \neq y$ and $d(x,y)=0 \iff x=y$
+    \item (Symmetry) $\forall x,y \in X, d(x,y)=d(y,x)$
+    \item (Triangle-inequality) $\forall x,y,z \in X, d(x,y) \leq d(x,z) + d(z,y)$
+\end{itemize}
+
+\end{defn}
+\begin{defn}
+    (Translation invariant) A metric $d$ is \textbf{translation invariant} if $\forall x,y \in X, d(x,y)=d(x+a,y+a)$ for all $a \in X$.
+\end{defn} 
+
+\begin{eg}
+    The Euclidean metric on $\R^n$ is translation invariant.  
+    But the metric $d(x,y)=|x^3-y^3|$ on $\R$ is not translation invariant.
+\end{eg}
+
+To introduce the idea of a metric linear space, we need to define metrics on product spaces.  
+
+\begin{defn} (Metric on Product Spaces)
+    Given metric $\rho$ on a vector space $V$ over $\mathbb{K}$, a metric on $V \times V$ is defined by:  
+    \begin{equation*}
+        d((a,b),(c,d)) = (\rho(a,c)^p+\rho(b,d)^p)^{1/p}, p \in [1,\infty)
+    \end{equation*}  
+    and on $\mathbb{K} \times V$ by:
+    \begin{equation*}
+        d((\lambda, a),(\lambda',a')) = \max \{|\lambda-\lambda'|, \rho (a, a')\}
+    \end{equation*}
+\end{defn}
+
+\begin{defn}
+    (Metric Linear Spaces) 
+    A pair $(X, d)$ with $X$ being a linear space over $\mathbb{K}$ and $d$ being a metric is called a \textbf{metric linear space} if and only if
+    addition and multiplication by scalar are continuous.
+\end{defn}   
+
+
+In other words, the following are true:  
+
+\begin{itemize}
+    \item $x_n \to x, \quad y_n \to y \implies x_n + y_n \to x + y$
+    \item $\lambda_n \to \lambda, \lambda_n, \lambda \in \mathbb{K},  x_n \to x \implies \lambda_n x_n \to \lambda x$
+\end{itemize}  
+
+It is easily verified and if $d$ is translation invariant, then addition of vectors is continuous: namely,
+$d(x_n+y_n, x+y)=d(x_n-x, y-y_n) \leq d(x_n-x,0)+ d(y_n-y, 0)$.  However, a translation invariant metric does not
+guarantee that multiplication by scalar is continuous.  
+
+\begin{eg}
+    Let $X$ be the space of all sequences in $\R$ and $d(x,y) = \sup_{i\in \N} |x^i-y^i|^{1/i}$, where the $x^i$
+    denotes the $i^{th}$ element of the sequence $x$. Then $d$ is a metric on $X$ and it is translation invariant.  
+    
+    Take $(x^i_n)_{i\in \N}=(a)_{i \in \N}$, a constant sequence with $a>1$, and a scalar $\lambda_n = \xi^n, \xi \in (0,1)$, so that $\lambda_n \to 0$
+    and $\lambda_n x_n \to 0$.  
+    \begin{equation*}
+        d(\lambda_n x_n, 0) = \sup_{i\in \N} |\xi|^{n/i} |a|^{1/i} \geq 1
+    \end{equation*}  
+
+    So multiplication by scalar is not continuous.
+\end{eg}
+
+\begin{defn}
+    (Norm) Let $X$ be a nonempty set. A function $||\cdot||: X \to \R^+$ satisfying the following 
+    is called a \textbf{norm}:
+    \begin{itemize}
+        \item (Positive definitiness) $\forall x \in X, ||x|| \geq 0$ and $||x||=0 \iff x=0$
+        \item (Triangle-inequality) $\forall x,y \in X, ||x+y|| \leq ||x|| + ||y||$
+        \item (Homogeneity) $\forall x \in X, \forall \lambda \in \mathbb{K}, ||\lambda x|| = |\lambda| ||x||$
+    \end{itemize}
+\end{defn}  
+
+\begin{remark}
+    Norm is a continuous function.
+\end{remark}
+
+\begin{defn}
+(Normed Linear Spaces) A pair $(X, ||\cdot||)$ with $X$ being a linear space over $\mathbb{K}$ and 
+                    $||\cdot||$ being a norm is called a \textbf{normed linear space}
+\end{defn} 
+
+Note that every normed linear space is a metric space, since every norm can induce a metric by $d(x,y)=||x-y||$. 
+However, not every metric is a norm.  
+
+\begin{eg}
+    Let $X$ be the space of all sequences in $\R$ and $z>1$. A translation invariant metric $d$ is defined by  
+    \begin{equation*}
+        d(x,y) = \sum_{i=1}^{\infty} z^{-n} \dfrac{|x_i-y_i|}{1+|x_i-y_i|}
+    \end{equation*}  
+    But $d$ is not a norm, as it is not homogenous.
+\end{eg}  
+
+\begin{eg}
+    Let $X=\R$ be the real numbers and $|\cdot|$ the Euclidean norm. Another example of a metric that is not a norm 
+    is given by:
+    \begin{equation*}
+        d(x,y) = \min \{|x-y|, 1\}
+    \end{equation*}  
+    this is not a norm because it is not homogenous. (Note also that it is not translation invariant.)
+\end{eg}  
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% move this section to later%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{Common Spaces}  
+
+\paragraph*{$l_p$ Spaces}    
+For $p \in [1,\infty)$, the space $l_p$ is defined as the set of all sequences $(x_n)_{n\in \N}$ such that  
+
+\begin{equation*}
+    \sum_{n=1}^{\infty} |x_n|^p < \infty
+\end{equation*}
+
+the function  
+
+\begin{equation*}
+    ||x||_p = \left(\sum_{i=1}^n |x_i|^p\right)^{1/p}
+\end{equation*}  
+
+defines a norm on $l_p$.  
+\begin{remark}
+    $l_p \subset l_q$ when $p < q$. And $\lim_{p\to \infty} ||x||_p = ||x||_{\infty}$
+\end{remark}
+\paragraph*{$l_\infty$ Spaces}  
+The space $l_\infty$ is defined as the set of all sequences $(x_n)_{n\in \N}$ such that
+
+\begin{equation*}
+    \sup_{n\in \N} |x_n| < \infty
+\end{equation*}
+
+the function
+
+\begin{equation*}
+    ||x||_\infty = \sup_{n\in \N} |x_n|
+\end{equation*}
+
+defines a norm on $l_\infty$.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\subsection{Inequalities}
+
+% Young's inequality
+\begin{prop}
+\label{young}
+(Young) If $p>1$ and $q$ is defined by $\frac{1}{p}+\frac{1}{q}=1$ (such $p,q$ are called conjugates), then for $a,b \geq 0$  
+\begin{equation}
+    a^{\frac{1}{p}}b^{\frac{1}{q}} \leq \frac{a}{p} + \frac{b}{q} 
+\end{equation}
+\end{prop}  
+
+\begin{proof}
+    (Sketch) Consider the function $f(t) = t^{\alpha}-\alpha t+\alpha-1$, where $\alpha \in (0,1), t\geq 0$,
+    $f(1)=0$ is a maximum and consider $f(\frac{a}{b})\leq 0$ with $\alpha=\frac{1}{p}$.  
+\end{proof}
+
+% Holder and Minkowski inequalities
+\begin{cor}
+    The following inequalities are results of \autoref{young}:  
+    \begin{itemize}
+        \item (Hölder) If $p,q$ are conjugates, then for complex numbers $x_1, \dots, x_n$ and $y_1,\dots, y_n$:    
+                        \begin{equation}
+                            \sum_{i=1}^n |x_i y_i| \leq \left[\sum_{i=1}^n |x_i|^p\right]^{1/p} \left[\sum_{i=1}^n |y_i|^q\right]^{1/q}
+                        \end{equation}  
+
+                    For ${x_i} \in l_p, {y_i} \in l_q$, then:  
+                    \begin{equation}
+                        \sum_{i=1}^{\infty} |x_i y_i| \leq \left[\sum_{i=1}^{\infty} |x_i|^p\right]^{1/p} \left[\sum_{i=1}^{\infty} |y_i|^q\right]^{1/q}
+                    \end{equation}  
+                    When $p=q=2$, this is the Cauchy-Schwarz inequality.  
+
+                    For functions $f \in L^p, g \in L^q$, then:  
+                        \begin{equation}
+                            f \cdot g \in L^1 \quad \text{and} \quad ||fg||_{L^1} \leq ||f||_{L^p} ||g||_{L^q}
+                        \end{equation}
+        \item (Minkowski) If $p \geq 1$, then for complex numbers  $x_1, \dots, x_n$ and $y_1,\dots, y_n$:
+                        \begin{equation}
+                            \left[\sum_{i=1}^n |x_i+y_i|^p \right]^{1/p} \leq \left[\sum_{i=1}^n |x_i|^p\right]^{1/p} + \left[\sum_{i=1}^n |y_i|^p\right]^{1/p}
+                        \end{equation}
+                    For ${x_i}, {y_i} \in l_p$, then:
+                    \begin{equation}
+                        \left[\sum_{i=1}^{\infty} |x_i+y_i|^p \right]^{1/p} \leq \left[\sum_{i=1}^{\infty} |x_i|^p\right]^{1/p} + \left[\sum_{i=1}^{\infty} |y_i|^p\right]^{1/p}
+                    \end{equation}
+                    For functions $f, g \in L^p$, then:
+                        \begin{equation}
+                            f+g \in L^p \quad \text{and} \quad ||f+g||_{L^p} \leq ||f||_{L^p} + ||g||_{L^p}
+                        \end{equation}
+    \end{itemize}
+    \begin{proof}
+        (Sketch) For the Hölder inequality, use Young's inequality with $a=(\dfrac{|x_i|}{||\mf{x}||_p})^p$ and 
+        $b=(\dfrac{|y_i|}{||\mf{y}||_q})^q$ (use $L^p$ norm when proving for functions).  
+        
+        For Minkowski, use $(|x_i+y_i|^{p-1})(|x_i|+|y_i|)$ to break down the LHS, then use Hölder's inequality,
+        $\sum_{i=1}^n (|x_i+y_i|^{p-1})|x_i| \leq \left[ \sum_{i=1}^n |x_i|^p\right]^{1/p}
+        \left[ \sum_{i=1}^n ((|x_i|+|y_i|)^{p-1})^q\right]^{1/q}$ and sum up the inequalities.   
+        For the $l^p$ case, first note that $p=1,\infty$ cases are obvious, then note
+        that $|x_i+y_i|^{p/q}$ is in $l^q$ and use Hölder's inequality as before on 
+        $\sum_{i=1}^{\infty} (|x_i+y_i|^{p/q})|x_i|+\sum_{i=1}^{\infty} (|x_i+y_i|^{p/q})|y_i|$.  
+        The $L^p$ case is similar.  
+    \end{proof}
+\end{cor}
+
+\begin{defn}
+    (Convex functions) A function $f$ is convex if 
+    \begin{equation*}
+        f(\alpha x + (1-\alpha)y) \leq \alpha f(x) + (1-\alpha)f(y)
+    \end{equation*}
+    $\forall x,y \in V$ and $\forall \alpha \in [0,1]$.
+\end{defn}
+
+Concave functions are defined similarly but with the inequality reversed. We also note that all convex functions defined
+on an open interval is \textbf{continuous} on that interval but not every convex function is continuous. An example being
+$f(x) = - \sqrt{x}, x>0$ and $f(0)=1$; it is convex on $[0,1)$ but clearly not continuous at $0$.
+
+\begin{prop}
+    (Equivalent forms of convexity) If $f: I \to \R$ is a twice differentiable function,  
+    \begin{itemize}
+        \item If $f''(x)\geq 0, \forall x \in I$.
+        \item If $\forall y \in I$, there exists $\gamma \in \R$, such that $\forall x \in I$, 
+                $\gamma (x-y) \leq f(x)-f(y)$.
+    \end{itemize}
+\end{prop}
+
+
+\begin{prop}
+    (Triangle inequality for concave functions)  
+    If $f: \R_+ \to \R_+$ is concave and $f(0)=0$, then for $x,y \in \R_+$:
+    \begin{equation*}
+        f(x+y) \leq f(x) + f(y)
+    \end{equation*}
+\end{prop}
+
+The above proposition is useful when considering different norms on $\R$. For instance, the function
+$f(x)=x^p$, for $p\in (0,1)$.  
+
+\begin{prop}
+(Jensen) 
+For real continuous convex function $f$ and positive weights satisfying $\sum_{i=1}^n \alpha_i=1$,  
+
+\begin{equation*}
+    f\left(\sum_{i=1}^n \alpha_i x_i\right) \leq \sum_{i=1}^n \alpha_i f(x_i)
+\end{equation*}
+
+If the function is concave, then the inequality is reversed.  
+The equality is attained when $x_i's$ are equal or $f$ is linear.
+\end{prop}
