@@ -25,19 +25,21 @@ $$
 	T_j = \min \{n \in \mathbb{N}: X_n=j\}
 $$   
 
+In other words, $\{T_j=n\}=\{X_n=j, X_{n-1}\neq j, \cdots, X_1 \neq j\}$, if $X_n \neq j, \forall n \in \mathbb{N}$,  then $T_j=\infty$.
+
 The **first passage probability** is   
 
 $$
-	f_{ij}(n) = \Pr(T_j=n|X_0=i)
+	f_{ij}(n) = \Pr(T_j=n|X_0=i), n\in \mathbb{N}_0
 $$
 
 from which the hitting probability follows  
 
 $$
-	f_{ij}=\Pr(T_j < \infty|X_0=i)
+	f_{ij}=\Pr(T_j < \infty|X_0=i)=\sum_{n=0}^{\infty} f_{ij}(n)
 $$  
 
-
+With the special case being $f_{ij}(0)=0$.  
 
 ## Generating Functions of Markov Chain  
 
@@ -78,44 +80,189 @@ $$
 
 # Recurrence and Transience   
 
+A state $j$ is **recurrent** if and only if  
+
+$$
+	\sum_{n=1}^{\infty} p_{jj}(n) = \infty
+$$
+
+A state $j$ is **transient** if and only if  
+$$
+	\sum_{n=1}^{\infty} p_{jj}(n) < \infty
+$$  
+
+**Examples**: Examples of [transient, irreducible chains](https://math.stackexchange.com/questions/242311/example-of-irreductible-transient-markov-chain)
+
+The **number of periods** that the chain is in state $j$ (or **number of visits** to $j$) is  
+
+$$
+	N_j = \sum_{n=1}^{\infty} I_n(j)
+$$  
+where $I_n(j)$ is the indicator function taking value $1$ if $X_n=j$ and $0$ otherwise.  
+
+The **expected number of visits** to state $j$ given $X_0=j$ is  
+
+$$
+	\mathbb{E}[N_j| X_0=j] = \sum_{n=0}^{\infty} p_{jj}(n)
+$$
+
+
 proof using generating functions:  
 
-Taking $s\to 1$ and using Abel's theorem, we can deduce  
+Taking $s\to 1$ and using Abel's theorem, we can deduce...
 
-
-
-## Equivalent conditions for recurrence  
 
 ## Properties of recurrent/transient states  
 
-Examples of [transient, irreducible chains](https://math.stackexchange.com/questions/242311/example-of-irreductible-transient-markov-chain)
+**Theorem (Number of visits is geometric for transient states)**
+
+If $j$ is transient, then  
+
+$$
+	\Pr(N_j=n | X_0=j) = f_{jj}^{n-1} (1-f_{jj}), n\in \mathbb{N}
+$$  
+
+Let $i\neq j$, then  
+
+$$
+	\Pr(N_j=n | X_0=i) = \begin{cases}
+							1- f_{ij} & n=0 \\
+							f_{ij} f_{jj}^{n-1} (1-f_{jj}) & n\geq 1
+						\end{cases}
+$$
+
+Intuition is that the chain visits $j$ for the first time and returns to it for $n-1$ times, then leaves it.  
+
+Therefore, it follows that  for $i\neq j$,  
+
+$$
+	\mathbb{E}[N_j| X_0=i] = \frac{f_{ij}}{1-f_{jj}}
+$$  
+
+and  
+
+$$
+	\mathbb{E}[N_j| X_0=j] = \frac{1}{1-f_{jj}}
+$$  
+
+
+**Theorem(Unlikely to visit a transient state)**
+
+If $j$ is transient, then  
+
+$$
+	\lim_{n \to \infty} p_{ij}(n) = 0, \forall j \in E
+$$  
+
+
 
 ## Mean recurrence time, null and positive recurrence  
 
-**Theorem** When state space is finite, at least one state is *recurrent* and all *recurrent* states are positive  
+The **mean recurrence time** $\mu_j$ is  
 
-**Remark** This combined with later results on stationarity makes a chain with finite state space particularly nice.
+$$
+	\mu_j=\mathbb{E}[T_j | X_0=j]=\sum_{n=1}^{\infty} n f_{jj}(n)
+$$  
+where we recall that $\{T_j=n\}=\{X_n=j, X_{n-1}\neq j, \cdots, X_1 \neq j\}$.  
+
+Similarly, we can define the **mean first passage time**  
+
+$$
+	\mu_{ij}=\mathbb{E}[T_j | X_0=i]=\sum_{n=1}^{\infty} n f_{ij}(n)
+$$
+
+those expectations can be finite or infinite; for transient states, they must be infinite.  
+
+**Theorem(mean first passage time)** 
+
+
+For a recurrent state $j$, it is called **null recurrent** if $\mu_j=\infty$ and **positive recurrent** if $\mu_j<\infty$.  
+
+**Theorem (unlikely to visit null recurrent state)** If $j$ is null recurrent, then  
+
+$$
+	\lim_{n \to \infty} p_{jj}(n) = 0, \forall j \in E
+$$  
+
+In addition,  
+$$
+	\lim_{n \to \infty} p_{ij}(n) = 0, \forall i \neq j \in E
+$$
 
 ## Examples  
 
 # Aperiodicity and Ergodicity  
 
-## Communicating classes   
+The **period** of a state $j$ is  
 
-## Properties preserved  
+$$
+	d(j) = gcd\{n: p_{jj}(n)>0\}
+$$  
+
+It is not necessarily true that $p_{jj}(d(j))>0$ (cf. Notes Pg. 36).  
+
+A state is **ergodic** if it is positive recurrent and aperiodic.  
+
+# Communicating classes   
+
+We say that a state $j$ is **accessible** from state $i$ if	the chain can reach $j$ at some time, written as $i\rightarrow j$.  
+Two states $i$ and $j$ are **communicating** if there exists a state $k$ such that $i\rightarrow k$ and $k\rightarrow j$, we write $i\leftrightarrow j$; this is an **equivalence relation**.  
+If $i \neq j$, then $i\rightarrow j$ if and only if $f_{ij}>0$.  
+
+
+## Properties preserved by Communicating Classes  
+
 - Same period
 - Same transience/recurrence
 - Null recurrence  
 
+For a **set of states** $C$:  
 
+- $C$ is **closed** if $\forall i \in C$, $j \notin C$, $p_{ij}=0$  
+
+- $C$ is **irreducible** if all states in the set communicate with each other  
+
+Therefore, an irreducible set of states share the same properties described above.  
+
+**Theorem (Recurrence and closed)** If $C$ is a communicating class of recurrent states, then $C$ is closed.  
+
+**Theorem (Stochastic matrix on closed states)**  The stochastic matrix $P$ restricted to a closed set of closed states $C$ is still a stochastic matrix.  
 
 ## Decomposition of Chains  
 
-## Finite State Space
+The state space can be partitioned into communicating classes.  
 
-## Gambler's Ruin  
+$$
+	E = T \cup \left(\bigcup_i C_i\right)
+$$  
 
-# Staionarity  
+where $T$ is the set of transient states and $C_i$'s are irreducible closed sets of recurrent states.  
+
+## Class Properties  
+
+The **classes** refer to communicating classes.
+
+**Theorem (Finite Chains have recurrent)** When state space is **finite**, at least one state is *recurrent* and all *recurrent* states are **positive**  
+
+**Remark** This combined with later results on stationarity makes a chain with finite state space particularly nice.  
+
+**Remark** It follows that there are no null recurrent states in a finite state space.  
+
+**Theorem (Finite and closed)** If $C$ is a finite, closed communicating class, then all states are positive recurrent.  
+
+<table>
+<caption>Communicating class properties</caption>
+
+Type of Class     Finite							Infinite
+-------------  -------------  				---------------------
+Closed          positive recurrent			positive/null recurrent, transient
+Not closed      transient					transient
+</table>  
+
+
+# Gambler's Ruin  
+
+# Stationarity  
 
 We are interested in the equilibrium states of a chain  
 
