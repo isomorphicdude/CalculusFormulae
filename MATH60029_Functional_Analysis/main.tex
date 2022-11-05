@@ -14,9 +14,319 @@
 
 \section{Completeness and Separability}  
 
+\begin{defn}
+    (Completeness)
+    A metric space in which every Cauchy sequence converges to some limit in that space is called 
+    \textbf{complete}.  
+\end{defn}  
+
+\begin{defn}
+    (Banach Space) 
+    A \textbf{Banach Space} is a complete normed vector space.
+\end{defn}
+
+\begin{thm}
+    (Completion)  
+    For every metric space $(X, d)$, there exists a complete metric space $(\tilde{X}, \tilde{d})$ 
+    and an isometry $i: X \to \tilde{X}$.   
+\end{thm}  
+
+\begin{remark}
+    The metric space $X$ is isometric to a dense subset of its completion $\tilde{X}$.  
+    We construct the completeion by introducing equivalence relation of Cauchy sequences.
+\end{remark}
+
+\begin{defn}
+    (Separability) 
+    A metric space is \textbf{separable} if it has a countable dense subset.  
+\end{defn}  
+
+We now present some results of completeness and separability of a few common spaces.    
+
+\subsection{Common Spaces}  
+
+\paragraph*{$l_p$ Spaces}    
+For $p \in [1,\infty)$, the space $l_p$ is defined as the set of all sequences $(x_n)_{n\in \N}$ such that  
+
+\begin{equation*}
+    \sum_{n=1}^{\infty} |x_n|^p < \infty
+\end{equation*}
+
+the function  
+
+\begin{equation*}
+    ||x||_p = \left(\sum_{i=1}^n |x_i|^p\right)^{1/p}
+\end{equation*}  
+
+defines a norm on $l_p$.  
+\begin{remark}
+    $l_p \subset l_q$ when $p < q$. And $\lim_{p\to \infty} ||x||_p = ||x||_{\infty}$
+\end{remark}  
+
+\begin{prop}
+    $l_p$ is a Banach space for $p \in [1,\infty)$.
+\end{prop}  
+
+\begin{prop}
+    $l_p$ is separable for $p \in [1,\infty)$.
+\end{prop}  
+
+
+\paragraph*{$l_\infty$ Spaces}  
+The space $l_\infty$ is defined as the set of all sequences $(x_n)_{n\in \N}$ such that
+
+\begin{equation*}
+    \sup_{n\in \N} |x_n| < \infty
+\end{equation*}
+
+the function
+
+\begin{equation*}
+    ||x||_\infty = \sup_{n\in \N} |x_n|
+\end{equation*}
+
+defines a norm on $l_\infty$.  
+
+\begin{prop}
+    $l_\infty$ is a Banach space.
+\end{prop}
+
+\begin{prop}
+    $l_{\infty}$ is \textbf{not} separable.  
+\end{prop} 
+
+\paragraph*{$L^p$ spaces}  
+
+See measure theory notes (I will fill it in later).
+
+\paragraph*{$C[a,b]$ Spaces}  
+The space of continuous functions on $[a,b]$ equipped with the supremum norm is denoted by $C[a,b]$.  
+The norm is defined by   
+
+\begin{equation*}
+    ||f||_{\infty}=\sup_{x \in [a,b]} |f(x)|
+\end{equation*}
+
+\begin{prop}
+    $C[a,b]$ is a Banach space.
+\end{prop}  
+
+\begin{thm}
+    $C[a,b]$ is separable.
+\end{thm}  
+
+\begin{lemma}
+    
+\end{lemma}  
+
+\begin{proof}
+
+\end{proof}
+
+\paragraph*{Special sequence spaces $c, c_0, c_{00}$}  
+
+\begin{itemize}
+    \item $c$ is the set of all convergent sequences in $l_{\infty}$
+    \item $c_0$ is the set of all sequences converging to zero in $l_{\infty}$
+    \item $c_{00}$ is the set of all sequences such that $x_n=0$ for all
+          but finitely many $n$ in $l_{\infty}$
+\end{itemize}  
+
+Note that they are all equipped with the supremum norm.  
+
+\begin{remark}
+    Note that $c_{00} \subset c_{0} \subset c$
+\end{remark}  
+
+We discuss their completeness and separability.  
+
+\begin{prop}
+    $c$ and $c_0$ are both Banach spaces.
+\end{prop}  
+
+\begin{eg}
+    Note that the space $c_{00}$ is not a complete space, as it is not
+    closed in $c$; take the sequence $x_n = (1, \frac{1}{2}, \ldots, \frac{1}{n}, 0, \ldots)$
+\end{eg}
+
+\begin{prop}
+    $c$ and $c_0$ are separable.
+\end{prop}  
+
+
+\paragraph*{Sequence space $s$}  
+(not in the notes but can fill it in later)  
+
+\section{Infinite Dimensional Spaces}  
+
+There are some fundamental differences between finite and infinite dimensional spaces.  
+
+\begin{defn}
+    (Equivalent Norms)
+    Two norms $||\cdot||_1, ||\cdot_2||$ on a vector space $X$ are \textbf{equivalent} 
+    if there exists a constant $C \in [1, \infty)$ such that  
+    \begin{equation*}
+        \forall x \in X, \quad \frac{1}{C}||x||_1 \leq ||x||_2 \leq C||x||_1
+    \end{equation*}
+\end{defn}  
+
+\subsection{Properties of Finite Dimensional Spaces}
+
+\begin{thm}
+    In finite dimensional spaces, all norms are equivalent.
+\end{thm}  
+
+However, this is not true in infinite dimensional spaces.  
+
+\begin{eg}
+    Consider $f_n(t)=t^n$ in $C[0,1]$. This sequence of functions converge to $0$ 
+    in $||\cdot||_1$ but not in $||\cdot||_{\infty}$.
+\end{eg}
+
+\begin{prop}
+    All finite dimensional spaces are complete; hence all finite dimensional spaces are closed.
+\end{prop}  
+
+\subsection{Compactness}
+\begin{defn}
+    (Compact) 
+    A set $K \subset X$ is \textbf{compact} 
+    if every sequence in $K$ has a convergent subsequence with limit in $K$.
+\end{defn}  
+
+\begin{remark}
+    A set $K$ is compact if and only if it is bounded and closed in finite dimensional spaces.  
+    Compactness implies closed and boundedness even in infinite dimensional spaces but the 
+    other direction is not true.
+\end{remark}  
+
+\begin{eg}
+    Take the following set in $l^1$:  
+    \begin{equation*}
+        K = \left\{ e_n = (0, \ldots, 0, 1, 0, \ldots), n \in \mathbb{N} \right\}
+    \end{equation*}  
+    This set is bounded and closed but clearly not compact as each term in the sequence
+    are distance $2$ apart.  
+\end{eg}  
+
+Another example is the following  
+
+\begin{eg}
+    Consider the set $\bar{B}_1 \subset C[0,1]$,  
+    \begin{equation*}
+        \bar{B}_1 = \left\{ f \in C[0,1] : ||f||_{\infty} \leq 1 \right\}
+    \end{equation*}  
+    The sequence of functions,  
+    \begin{equation*}
+        f_n(t) = \sin(2^n \pi t), \quad 0 \leq t \leq 1
+    \end{equation*}  
+    Then $||f_n-f_m||\geq 1$ for all $n \neq m$ and hence no convergent subsequences. 
+\end{eg}
+
+\begin{thm}
+    In a normed space $(X, ||\cdot||)$, the following two conditions are equivalent:  
+    \begin{itemize}
+        \item $\dim X < \infty$
+        \item The unit ball $\bar{B}_1$ is compact 
+    \end{itemize}
+\end{thm}  
+
+Before proving this, we need a lemma that allows us to construct a sequence of vectors
+that are at a fixed distance to each other, hence has no convergent subsequence.  
+
+\begin{lemma}
+    (Riesz)
+\end{lemma}
+
+\subsection{Basis in Infinite Dimensional Spaces}  
+
+Similar to finite dimensional vector spaces, there is something "analogous" to 
+a basis in infinite dimensional spaces.  
+
+\begin{defn}
+    (Hamel)
+\end{defn}  
+
+\begin{defn}
+    (Schauder)
+\end{defn}   
+
+\begin{eg}
+    Schauder basis of $l^p$ is the set of all sequences of the form $e_n$ but there is no 
+    Schauder basis for $l^{\infty}$.  
+\end{eg}  
+
+Sometimes the Schauder basis might look complicated.    
+\begin{eg}
+    A Schauder basis of $C[0,1]$ is
+\end{eg}  
+
+We also provide some counter examples of Schauder bases in $C[0,1]$.  
+
+\begin{eg}
+
+\end{eg}
+
+\begin{thm}
+    If $(X, ||\cdot||)$ has a Schauder basis, then $X$ is separable.  
+\end{thm}  
+
+
+
 \section{Hilbert Spaces}  
 
-\section{Finite Dimensional Spaces}  
+\begin{defn}
+    (Inner Product)
+\end{defn}  
+
+\begin{remark}
+    The inner product is continuous.  
+\end{remark}
+
+\begin{defn}
+    (Hilbert Space)
+\end{defn}  
+
+The inner product and norm naturally leads to the famous inequality.  
+
+\begin{prop}
+    (Cauchy-Schwarz)
+\end{prop}
+
+\begin{eg}
+    $l^2$ is a Hilbert space.
+\end{eg} 
+
+\begin{prop}
+    (Important Identities)
+    \begin{itemize}
+        \item (Parallelogram)
+        \item (Polarization)
+    \end{itemize}
+\end{prop}  
+
+\begin{prop}
+    $l^p$ is not a Hilbert space for $p \neq 2$.
+\end{prop}  
+
+\subsection{Orthogonality}  
+
+\begin{defn}
+    (Orthogonal)
+\end{defn}  
+
+\begin{thm}
+    (Projection)
+\end{thm}  
+
+\begin{thm}
+    (Orthogonal Complement)
+\end{thm}
+
+\begin{thm}
+    (Riesz Representation)
+\end{thm}
+
 
 \section{Linear Operators}  
 
