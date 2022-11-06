@@ -205,9 +205,11 @@ A state is **ergodic** if it is positive recurrent and aperiodic.
 
 # Communicating classes   
 
-We say that a state $j$ is **accessible** from state $i$ if	the chain can reach $j$ at some time, written as $i\rightarrow j$.  
-Two states $i$ and $j$ are **communicating** if there exists a state $k$ such that $i\rightarrow k$ and $k\rightarrow j$, we write $i\leftrightarrow j$; this is an **equivalence relation**.  
-If $i \neq j$, then $i\rightarrow j$ if and only if $f_{ij}>0$.  
+- We say that a state $j$ is **accessible** from state $i$ if	the chain can reach $j$ at some time, written as $i\rightarrow j$.    
+
+- Two states $i$ and $j$ are **communicating** if there exists a state $k$ such that $i\rightarrow k$ and $k\rightarrow j$, we write $i\leftrightarrow j$; this is an **equivalence relation**.    
+
+- If $i \neq j$, then $i\rightarrow j$ if and only if $f_{ij}>0$.  
 
 
 ## Properties preserved by Communicating Classes  
@@ -266,9 +268,9 @@ Not closed      transient					transient
 
 We are interested in the equilibrium states of a chain  
 
-## Distribution  
-- Distribution is a row vector $\lambda$ with $\Sigma_{j} \lambda_j=1$  
-- If $\lambda P=\lambda$ then it is called *invariant*  
+- A **distribution** is a row vector $\lambda$ with $\Sigma_{j} \lambda_j=1$  
+- If $\lambda P=\lambda$ then it is called ***invariant***  
+-  
   
 ## Stationary distributions of irreducible chains  
 
@@ -283,26 +285,31 @@ l_{ji}(n)&=\Pr(X_n=i, T_j \geq n | X_0 =j)
 \end{aligned}
 $$  
 being the probability that the chain reaches $i$ in $n$ steps without returning to $j$    
-**Lemma**
+**Lemma (Decomposing the first hitting)**
 $$
 	f_{jj}(m+n) = \sum_{i \in E, i\neq j} l_{ji}(m) f_{ij}(n)
 $$  
 from which $f_{jj}(m+n) \geq l_{ji}(m) f_{ij}(n)$ follows    
 
-**Lemma** We also have the following recurrence relation
+**Lemma (Formula for hitting)** We also have the following recurrence relation for $l_{ji}(n+1)$  
 
-**Lemma**: A positive recurrent chain has a stationary distribution.
+$$
+	l_{ji}(n+1) = \sum_{r \in E, r \neq j} p_{ri} l_{jr}(n)
+$$  
+with $l_{ji}(1)=p_{ji}$.  
+
+**Lemma (Existence)**: A positive recurrent chain has a stationary distribution.
 
 
 **Proof**: (constructive)  
 
-- **(Step1 Construction)** Let $N_i(j)$ be the number of visits to state $i$ before state $j$ ; the sum of such numbers over i is equal to the hitting time $T_j$  
+- **(Step1 Construction)** Let $N_i(j)$ be the number of visits to state $i$ before visiting state $j$ (again); the sum of such numbers over i is equal to the hitting time $T_j$  
 - Define $\rho_i(j)$ to be the expected number of visits to the state $i$ between two successive visits to state $j$   (in this step the **recurrence** of the chain is used, as the $T_j$ is finite with probability $1$)  
 $$
 \begin{aligned}
 	\rho_i(j) &= \mathbb{E}[N_i(j) | X_0=j] \\
 			  &= \sum_n \Pr(X_n=i, T_j\geq n | X_0=j) \\
-			  &= \sum_n l_{ij}(n) 
+			  &= \sum_n l_{ji}(n) 
 \end{aligned}
 $$
 
@@ -324,33 +331,128 @@ $$
 \begin{aligned}
 \rho_i(j)   &=\sum_n l_{ji} (n) \\
 				&= p_{ji} + \sum_{n=2} \sum_{r,r\neq j} p_{ri} l_{jr}(n-1)\\
-				&=p_{ji}\rho_i(j) + \sum_{n=1} \sum_{r,r\neq j} p_{ri} l_{jr}(n)\\
-				&=p_{ji}\rho_i(j) + \sum_{r,r\neq j} p_{ri}\sum_{n=1}  l_{jr}(n)\\
+				&=p_{ji}\rho_j(j) + \sum_{n=1} \sum_{r\neq j} p_{ri} l_{jr}(n)\\
+				&=p_{ji}\rho_j(j) + \sum_{r,r\neq j} p_{ri}\sum_{n=1}  l_{jr}(n)\\
 				&=\sum_r \rho_r(j)p_{ri}
 \end{aligned} 
 $$  
+
+- which uses the fact that $\rho_j(j)=1$
 
 - This $\rho_i(j)$ does not necessarily give a probability vector when the chain is not positive recurrent.
 
 - Now if the chain is positive recurrent, we have $\mu_j$ finite for every $j$, we have   
 $$
 	\pi_i = \frac{\rho_i(j)}{\mu_j}
+$$  
+
+Therefore, we conclude that  
+
+Every **irreducible, recurrent** chain has a positive solution to the equation  $\mathbf{x}=\mathbf{x}P$, which is unique up to a multiplicative constant (see PS2 for proof).  
+Moreover, the chain is  
+
+- positive recurrent if $\sum_i x_i < \infty$  
+
+- null recurrent if $\sum_i x_i = \infty$  
+
+Also, from the proof, we conclude 3 **identities**:  
+
+**(Sum of expected visits)**   
+$$
+	\mu_j = \sum_i \rho_i(j)
+$$  
+
+**(Sum of hitting prob)**  
+
+$$
+	\rho_i(j) = \sum_n l_{ji}(n)
+$$  
+
+**(Sum of number of visits)**  
+
+$$
+	T_j = \sum_i N_i(j)
+$$
+
+**Lemma (Alternative expectation)** $T$ is a nonnegative integer-valued random variable and $A$ is an event with $\Pr(A)>0$. Then  
+
+$$
+	\mathbb{E}[T|A] = \sum_{n=0}^\infty \Pr(T\geq n|A)
 $$
 
 **Lemma** If a stationary distribution exists, then the chain is positive recurrent and the distribution must be given by $\pi_i = \mu_i^{-1}$  
 
 **proof**:  ...
 
+In a **reducible chain**, the following results are useful:  
 
+- $\pi_i=0$ for stationary distribution $\pi$ if $i$ is transient or null recurrent, so we can only compute the positive recurrent states and set the rest of $\pi_i$ to $0$
+
+- A discrete time Markov chain with **finite** state space always has at least one stationary distribution.  
+
+- This distribution is **unique** unless it has two or more closed communicating classes.  
+
+- Every stationary distribution is a **linear combination** of the stationary distributions of the closed communicating classes, with coefficients adding up to $1$.
 
 
 
 ## Limiting Distribution  
 
+A distribution $\pi$ is a **limiting distribution** of a chain if $\pi$ satisfies  
 
-## Ergodic Theorem  
+$$
+	\lim_{n \to \infty} p_{ij}(n) = \pi_j
+$$  
+
+**Theorem** For an irreducible, aperiodic chain  
+
+$$
+	\lim_{n \to \infty} p_{ij}(n) = \dfrac{1}{\mu_j}
+$$  
+
+**Example of Chain with no limiting distribution**
+
+
+## Ergodic Theorem   
+
+The **number of visits to i before time n** is defined as  
+
+$$
+	V_i(n) = \sum_{k=0}^{n-1} \mathbf{1}_{\{X_k=i\}}
+$$    
+
+**Theorem** If a chain is irreducible, $V_i(n)/n$ denotes the proportion of time the chain spent in state $i$ before time $n$  
+$$
+	\Pr\left(\dfrac{V_i(n)}{n} \to \dfrac{1}{\mu_j} \text{ as } n \to \infty \right) = 1
+$$
+
 
 ## Summary of properties of irreducible chains   
 
-# Time reversibility
+# Time reversibility  
+
+In this section, we assume the Markov chains are **irreducible and positive recurrent**, therefore there is a unique stationary distribution $\pi$. 
+
+The **reversed chain** for some $N\in \mathbb{N}$ is defined as  
+
+$$
+	Y_n = X_{N-n}
+$$  
+
+**Theorem (Reversed still Markov)** The reversed chain is a Markov chain  
+
+$$
+	\Pr(Y_{n+1}=j|Y_n=i) = \dfrac{\pi_j}{\pi_i} p_{ji}
+$$  
+
+A Markov chain $(X_n)$ is called **time-reversible** if its transition matrix is the same as the transition matrix of its reversed chain.  
+
+**Theorem** A Markov chain is time-reversible if and only if  
+
+$$
+	\pi_i p_{ij} = \pi_j p_{ji}
+$$  
+this condition is called **detailed balance**.  
+
+**Theorem (Time reversible and positive recurrent)** For an irreducible chain, if there is a vector $\pi$ such that the condition in the first theorem holds for all $i,j$, then the chain is time-reversible and positive recurrent with stationary distribution $\pi$.
 
