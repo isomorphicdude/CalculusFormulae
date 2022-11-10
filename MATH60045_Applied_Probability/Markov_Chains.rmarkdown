@@ -333,7 +333,8 @@ We are interested in the equilibrium states of a chain
   
 ## Stationary distributions of irreducible chains  
 
-**Theorem** Every irreducible chain has a **stationary distribution** $\pi$ if and only if all states are **positive recurrent** 
+**Theorem** Every irreducible chain has a **stationary distribution** $\pi$ if and only if all states are **positive recurrent**   
+
 - $\pi$ is unique
 - $\pi=\mu_i^{-1}$ the inverse of mean recurrence time    
 
@@ -503,6 +504,36 @@ $$
 
 
 ## Summary of properties of irreducible chains   
+
+**1 Positive Recurrent**  
+
+- Stationary distribution **exists** and is **unique**  
+
+- All mean recurrence times $\mu_j = \mathbb{E}[T_j | x_0=j]$ are finite and $\pi_j=\dfrac{1}{\mu_j}$  
+
+- $V_i(n)/n \to \pi_i$
+
+- If the chain is aperiodic, the limiting distribution is the stationary distribution  
+
+**2 Null Recurrent**  
+
+- All mean recurrence times are infinite  
+
+- No stationary distribution  
+
+- $V_i(n)/n \to 0$  
+
+- The limiting distribution is $0$  
+
+**3 Transient**  
+
+- All mean recurrence times are infinite (any state is eventually never visited)  
+
+- No stationary distribution  
+
+- $V_i(n)/n \to 0$  
+
+- The limiting distribution is $0$  
 
 # Time reversibility  
 
