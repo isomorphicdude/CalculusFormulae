@@ -15,6 +15,23 @@ The **n-step** transition probability is
 
 $$
 	p_{ij}(n) = \Pr(X_{m+n}=j | X_m=i)
+$$  
+
+For a time homogenous Markov chain we have the **CK-equations**  
+
+$$
+	p_{ij}(m+n) = \sum_{l \in E} p_{il}(m)p_{lj}(n)
+$$  
+where $m \in \mathbb{N} \cup \{0\}$ and $n\in \mathbb{N}$  
+
+The formula for **n-step transition matrix** follows:  
+
+$$
+	P_{m+n}=P_m P_n
+$$  
+and in particular  
+$$
+	P_n = P^n
 $$
 
 ## First passage and hitting times   
@@ -39,7 +56,14 @@ $$
 	f_{ij}=\Pr(T_j < \infty|X_0=i)=\sum_{n=0}^{\infty} f_{ij}(n)
 $$  
 
-With the special case being $f_{ij}(0)=0$.  
+With the **special case** being $f_{ij}(0)=0$.  
+
+Decomposing the **n-step transition probability**  
+
+$$
+	p_{ij}(n) = \sum_{l=1}^n f_{ij}(l)p_{jj}(n-l)
+$$  
+
 
 ## Generating Functions of Markov Chain  
 
@@ -70,12 +94,7 @@ $$
 	G_{p_{ij}(n)} = \delta_{ij} + G_{f_{ij}(n)}(s) G_{p_{ij}(n)}
 $$  
 
-The identity used is  
-
-$$
-	p_{ij}(n) = \sum_{l=1}^n f_{ij}(l)p_{jj}(n-l)
-$$  
-
+The identity used is decomposition of n-step transition probability.  
 
 
 # Recurrence and Transience   
@@ -133,7 +152,7 @@ $$
 
 Intuition is that the chain visits $j$ for the first time and returns to it for $n-1$ times, then leaves it.  
 
-Therefore, it follows that  for $i\neq j$,  
+Therefore, it follows that  for $i\neq j$ by the mean of geometric distribution,  
 
 $$
 	\mathbb{E}[N_j| X_0=i] = \frac{f_{ij}}{1-f_{jj}}
@@ -154,6 +173,7 @@ $$
 	\lim_{n \to \infty} p_{ij}(n) = 0, \forall j \in E
 $$  
 
+Similar results hold for null recurrent states.  
 
 
 ## Mean recurrence time, null and positive recurrence  
@@ -173,18 +193,17 @@ $$
 
 those expectations can be finite or infinite; for transient states, they must be infinite.  
 
-**Theorem(mean first passage time)** 
-
 
 For a recurrent state $j$, it is called **null recurrent** if $\mu_j=\infty$ and **positive recurrent** if $\mu_j<\infty$.  
 
-**Theorem (unlikely to visit null recurrent state)** If $j$ is null recurrent, then  
+**Theorem (unlikely to visit null recurrent state)** A state $j$ is null recurrent, if and only if  
 
 $$
 	\lim_{n \to \infty} p_{jj}(n) = 0, \forall j \in E
 $$  
 
-In addition,  
+In addition if the above equation holds,  
+
 $$
 	\lim_{n \to \infty} p_{ij}(n) = 0, \forall i \neq j \in E
 $$
@@ -200,6 +219,15 @@ $$
 $$  
 
 It is not necessarily true that $p_{jj}(d(j))>0$ (cf. Notes Pg. 36).  
+
+$$
+P = \begin{pmatrix}
+	0 & 1 & 0 & 0 \\
+	0 & 0 & 1 & 0 \\
+	0 & 0 & 0 & 1 \\
+	0.5 & 0 & 0.5 & 0 
+\end{pmatrix}
+$$
 
 A state is **ergodic** if it is positive recurrent and aperiodic.  
 
@@ -262,15 +290,46 @@ Not closed      transient					transient
 </table>  
 
 
-# Gambler's Ruin  
+# Gambler's Ruin   
 
+- Starting at state $i \in \{0,1,\ldots, N\}$
+- $p$ of winning one unit and $1-p$ of losing one unit  
+- Assume successive games are independent  
+
+**Question:** What is the probability of reaching $N$ before reaching $0$?  
+
+**Strategy:** Use **first step analysis**:
+
+- Define $V_i=\min \{n\in\mathbb{N}_0: X_n=i\}$, the first time being present at state $i$, desired event is $V_N < V_0$   
+  
+- Consider the conditional probability of starting at $i$ and ending up at $N$  
+
+$$
+	h_i = \Pr(V_N < V_0 \mid X_0 = i)
+$$  
+
+- Consider the first step  
+
+$$
+\begin{aligned}
+h_i &= \Pr(V_N < V_0 \mid X_1 = i+1, X_0 = i) \Pr(X_1 = i+1 \mid X_0 = i) \\ 
+&+ \Pr(V_N < V_0 \mid X_1 = i-1, X_0 = i) \Pr(X_1 = i-1 \mid X_0 = i) \\
+&= h_{i+1}p + h_{i-1}(1-p)
+\end{aligned}
+$$  
+
+Finish by solving this recurrence relation  
+$$
+h_i = \begin{cases} \dfrac{1-(q/p)^i}{1-(q/p)^N} & p \neq \dfrac{1}{2} \\
+					\dfrac{i}{N} & p = \dfrac{1}{2}
+     \end{cases}
+$$
 # Stationarity  
 
 We are interested in the equilibrium states of a chain  
 
 - A **distribution** is a row vector $\lambda$ with $\Sigma_{j} \lambda_j=1$  
 - If $\lambda P=\lambda$ then it is called ***invariant***  
--  
   
 ## Stationary distributions of irreducible chains  
 
@@ -326,7 +385,7 @@ $$
   
 - Namely write $\rho_i(j)=\sum_n l_{ji} (n)$ and bound using the fact that the chain is irreducible, so there exists $f_{ij}(n^*)>0$, so $f_{jj}(m+n^*) \geq l_{ji}(m) f_{ij}(n^*)$
   
-- **(Step3 Stationarity)** Use a recurrence to show     
+- **(Step3 Stationarity)** Use recurrence to show     
 $$
 \begin{aligned}
 \rho_i(j)   &=\sum_n l_{ji} (n) \\
@@ -410,7 +469,23 @@ $$
 	\lim_{n \to \infty} p_{ij}(n) = \dfrac{1}{\mu_j}
 $$  
 
-**Example of Chain with no limiting distribution**
+It follows that for an irreducible, aperiodic, and positive recurrent state, the limiting distribution is its unique stationary distribution  
+
+$$
+	\lim_{n \to \infty} p_{ij}(n) = \pi_j = \dfrac{1}{\mu_j}
+$$
+
+**Example of Chain with no limiting distribution**  
+
+Consider the transistion matrix of two alternating states  
+
+$$
+	P = \begin{pmatrix}
+		0 & 1 \\
+		1 & 0
+	\end{pmatrix}
+$$  
+the even and odd powers differ, but it has stationary distribution $\pi = (1/2, 1/2)$. 
 
 
 ## Ergodic Theorem   
@@ -454,5 +529,5 @@ $$
 $$  
 this condition is called **detailed balance**.  
 
-**Theorem (Time reversible and positive recurrent)** For an irreducible chain, if there is a vector $\pi$ such that the condition in the first theorem holds for all $i,j$, then the chain is time-reversible and positive recurrent with stationary distribution $\pi$.
+**Theorem (Time reversible and positive recurrence)** For an irreducible chain, if **there is a vector** $\pi$ such that the condition in the first theorem holds for all $i,j$, then the chain is time-reversible and positive recurrent with stationary distribution $\pi$.
 
