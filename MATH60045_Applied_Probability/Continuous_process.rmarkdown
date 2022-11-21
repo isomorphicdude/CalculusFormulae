@@ -1,0 +1,73 @@
+---
+title: "Continuous Time Stochastic Processes"
+date:  '`r format(Sys.time(), "%d %B, %Y")`'
+output: 
+  pdf_document:
+    number_sections: true
+---
+
+# Preliminaries
+
+A **right continuous** stochastic process.  
+
+There are three types of right continuous processes  
+
+- **Normal**  
+
+- **Absorption**
+
+- **Explosion**  
+
+The **jump times** are random variables  
+
+The **holding times** are random variables defined as  
+
+A **jump process**  
+
+Compute probabilities using **countable union**  
+
+A **counting process** is a stochastic process $\{N_t\}_{t\geq 0}$ satisfying  
+
+- $N_0=0$
+
+- $\forall t \geq 0, N_t \in \mathbb{N}_0$
+
+- (Non-decreasing) If $0 \leq s \leq t$, $N_s \leq N_t$  
+
+- (Counting)
+
+- (Right continuous)   
+
+
+A **counting process associated the sequence** $(J_n)_{n \in \mathbb{N}_0}$
+
+
+# Poisson Processes  
+
+A **Poisson process**, denoted $\{N_t\}_{t\geq 0}$, is a non-decreasing stochastic process with nonnegative values satisfying  
+
+- $N_0=0$  
+
+- The increments are independent, $0 \leq t_0 \leq t_1 \leq \ldots \leq t_n$, the random variables $N_{t_0}, N_{t_1}-N_{t_0}, \ldots, N_{t_n}-N_{t_{n-1}}$ are independent    
+
+- The increments are stationary 
+
+$$
+\Pr(N_t-N_s=k)=\Pr(N_{t-s}=k)
+$$
+
+- There is a single arrival (only one arrives in a small interval), for all $t \geq 0$ and $\delta >0$, $\delta \to 0$
+
+$$
+\begin{aligned}
+    \Pr(N_{t+\delta}-N_t=1) &= \lambda \delta + o(\delta) \\
+    \Pr(N_{t+\delta}-N_t \geq 2) &= o(\delta) \\
+    \Pr(N_{t+\delta}-N_t = 0) &= 1- \lambda \delta + o(\delta)
+\end{aligned}
+$$
+
+
+- 
+
+
+An equivalent definition replaces the last condition
