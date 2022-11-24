@@ -6,7 +6,9 @@ output:
     number_sections: true
 ---
 
-# Preliminaries
+# Preliminaries  
+
+## Types of Processes
 
 A **right continuous** stochastic process.  
 
@@ -34,15 +36,95 @@ A **counting process** is a stochastic process $\{N_t\}_{t\geq 0}$ satisfying
 
 - (Non-decreasing) If $0 \leq s \leq t$, $N_s \leq N_t$  
 
-- (Counting)
+- (Counting) When $s<t$, $N_t-N_s$ equals the no. of events in $(s,t]$
 
-- (Right continuous)   
+- (Right continuous) The process is piecewise constant and has upward jumps (single step) of size $1$, therefore  
+
+$$
+N_{t^-} = \lim_{s \uparrow t} N_s
+$$
 
 
-A **counting process associated the sequence** $(J_n)_{n \in \mathbb{N}_0}$
+A **counting process associated the sequence** $(J_n)_{n \in \mathbb{N}_0}$  
+
+## Properties of random variables  
+
+The **exponential random variable** has  
+
+$$
+f_X(x)=\lambda e^{-\lambda x}
+$$  
+
+and c.d.f.  
+
+$$
+F_X(x)=1-e^{-\lambda x}
+$$  
+
+with a nonnegative support.  
+
+It has expectation  
+
+$$
+\mathbb{E}[X]=\dfrac{1}{\lambda}
+$$  
+
+and variance  
+
+$$
+\textrm{Var}[X]=\dfrac{1}{\lambda^2}
+$$
+
+The **memoryless property** of a random variable refers to the fact:  
+
+$$
+\Pr(X>x+y \mid X >x) = \Pr(X>y)
+$$ 
+
+- A continuous random variable is memoryless iff it is $\textrm{Exp}(\lambda)$
+
+- A discrete  random variable is memoryless iff it is $\textrm{Geom}(p)$
+
+The **sum of exponential** $\textrm{Exp}(\lambda)$ is a $\textrm{Gamma}(n,\lambda)$ distribution  
+
+$$
+f_{J_n}(t)=\dfrac{\lambda^n}{\Gamma(n)} t^{n-1} e^{-\lambda t}, \qquad t>0
+$$  
+
+The **minimum of exponential** is  
+
+$$
+H \sim \textrm{Exp}(\sum_{i=1}^n \lambda_i)
+$$  
+
+and the probability of any of the $k$ variables being the minimum is  
+
+$$
+\Pr(H=H_k)=\dfrac{\lambda_k}{\sum_{i=1}^n \lambda_i}
+$$
+
+The **Laplace Transform** of a random variable $X$ is given by  
+
+$$
+\mathcal{L}_X(u) = \mathbb{E}[e^{-uX}]
+$$  
+
+A list of transformations for common random variables:  
+
+- (Poisson) $\exp(\lambda t [e^{-u}-1])$
+
+- (Exponential) $\dfrac{\lambda}{\lambda+u}$
+
+The **characteristic function**  of a random variable $X$ is given by
+
+$$
+\phi_X(t) = \mathbb{E}[e^{itX}]
+$$
 
 
 # Poisson Processes  
+
+## Definitions  
 
 A **Poisson process**, denoted $\{N_t\}_{t\geq 0}$, is a non-decreasing stochastic process with nonnegative values satisfying  
 
@@ -64,10 +146,64 @@ $$
     \Pr(N_{t+\delta}-N_t \geq 2) &= o(\delta) \\
     \Pr(N_{t+\delta}-N_t = 0) &= 1- \lambda \delta + o(\delta)
 \end{aligned}
+$$  
+
+An **equivalent definition** replaces the last condition with the variable being Poisson with rate $N_t$      
+
+$$
+  \Pr(N_t=k) = \dfrac{(\lambda t)^k}{k!} e^{-\lambda t}
+$$   
+
+Another **equivalent definition** characterizes Poisson process $\{N_t\}_{t\geq 0}$ explicitly  
+
+- Let $H_1, H_2, \ldots$ denote i.i.d. $\textrm{Exp}(\lambda)$ random variables  
+
+- Let $J_0=0$ and $J_n = \sum_{i=1}^n H_i$  
+
+- We define  
+
+$$
+N_t = \sup \{n \in \mathbb{N}_0: J_n \leq t \}
 $$
 
+## Properties of Poisson Process   
 
-- 
+### Inter-arrival times
+
+The inter-arrival times are  **i.i.d.** $\textrm{Exp}(\lambda)$ random variables   
+
+### Time to $n^{th}$ event    
+
+The time to $n^{th}$ event is defined as  
+
+$$
+J_n = \sum_{i=1}^n H_i
+$$  
+
+which follows a $\textrm{Gamma}(n,\lambda)$ distribution  
+
+$$
+f_{J_n}(t)=\dfrac{\lambda^n}{\Gamma(n)} t^{n-1} e^{-\lambda t}, \qquad t>0
+$$  
+
+### Conditional distribution of arrival times  
+
+The conditional joint density of $(J_1, \ldots, J_n)$ is given by the order statistic  
+
+$$
+f_{(J_1, \ldots, J_n)}(t_1, \ldots, t_n \mid N_t=n)=\begin{cases}
+  \dfrac{n!}{t^n} & 0<t_1<\ldots<t_n \\
+  0 & \textrm{otherwise}
+\end{cases}
+$$  
+
+The expectation of the $k^{th}$ value of $n$ uniformly distributed order statistics on $[0,t]$ is  
+$$
+\mathbb{E}[X_{(k)}]=\dfrac{tk}{n+1}=\mathbb{E}[J_k \mid N_t=n]
+$$  
 
 
-An equivalent definition replaces the last condition
+
+
+
+
