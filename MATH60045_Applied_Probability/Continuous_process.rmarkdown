@@ -91,6 +91,12 @@ $$
 f_{J_n}(t)=\dfrac{\lambda^n}{\Gamma(n)} t^{n-1} e^{-\lambda t}, \qquad t>0
 $$  
 
+The **convergence for infinite sum of exponential** has the following criteria  
+
+- If $\sum \frac{1}{\lambda_i} < \infty$, then $\Pr(J_{\infty}<\infty)<1$  
+
+- If $\sum \frac{1}{\lambda_i}=\infty$, then $\Pr(J_{\infty}=\infty)=1$
+
 The **minimum of exponential** is  
 
 $$
