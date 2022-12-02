@@ -26,7 +26,7 @@ $$
 	\Pr(X_{n+1}=j|X_n=i) = \Pr(X_1=j|X_0=i)
 $$  
 
-for every $n \ in \mathbb{N}_0$ and $i,j \in E$
+for every $n \in \mathbb{N}_0$ and $i,j \in E$
 
 
 ## Chapman-Kolmogorov (CK) equations    
