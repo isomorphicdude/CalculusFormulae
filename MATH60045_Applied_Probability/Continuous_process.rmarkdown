@@ -178,7 +178,9 @@ Another **equivalent definition** characterizes Poisson process $\{N_t\}_{t\geq 
 
 $$
 N_t = \sup \{n \in \mathbb{N}_0: J_n \leq t \}
-$$
+$$  
+
+
 
 ## Properties of Poisson Process
 
@@ -315,7 +317,7 @@ A distribution $\pi$ is the **limiting distribution**
 
 ## Relation between common quantities
 
-```{=html}
+<!-- ```{=html}
 <table>
 <caption>Different 'transition matrices' in continuous time</caption>
 
@@ -330,7 +332,8 @@ $\mathbf{P}_t$     $p_{ij}(t)=\exp(tG)_{ij}$                  the stochastic sem
 $\mathbf{P}^Z$     $p_{ij}=g_{ij}/g_i$		                    transition matrix of jump chain, stochastic  
 ---------------    --------------------------------------     -------------------------------------------------
 </table>
-```
+``` -->
+
 ```{=tex}
 \setlength{\extrarowheight}{.5em}
 \begin{table}[h!]
@@ -339,13 +342,13 @@ $\mathbf{P}^Z$     $p_{ij}=g_{ij}/g_i$		                    transition matrix of
 \hline
 Notation & Element & Meaning and Conditions  \\
 \hline
-$q_{ij}$ & $q_{i}=\sum_{j \in E} q_{ij}$ &   The \textbf{exponential \ rates} $q_{ij}>0$ when $i \neq j$ and $i \leftrightarrow j$, zero otherwise  \\
+$q_{ij}$ & $q_{i}=\sum_{j \in E} q_{ij}$ &   The \textbf{exponential rates} $q_{ij}>0$ when $i \neq j$ and $i \leftrightarrow j$, zero otherwise  \\
 
 $\mathbf{G}$   &  $g_{ij}=q_{ij}$ and $g_{ii}=-q_{ii}$  & \textbf{generator}, $\mathbf{P}_t=\exp(t\mathbf{G})$, not stochastic, row sum is $0$ \\
 
 $\mathbf{P}_t$  & $p_{ij}(t)=\exp(tG)_{ij}$ &  the \textbf{stochastic semigroup}, transition matrix at time $t$, a stochastic matrix \\
 
-$\mathbf{P}^Z$ & $p_{ij}=g_{ij}/g_i$    & transition matrix of \textbf{jump chain}, a stochastic matrix\\
+$\mathbf{P}^Z$ & $p_{ij}^Z=-g_{ij}/g_{ii}=q_{ij}/q_i$    & transition matrix of \textbf{jump chain}, a stochastic matrix\\
 \hline
 \end{tabular}
 \end{table}
