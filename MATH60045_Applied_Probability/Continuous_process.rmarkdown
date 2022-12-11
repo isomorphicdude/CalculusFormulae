@@ -178,9 +178,7 @@ Another **equivalent definition** characterizes Poisson process $\{N_t\}_{t\geq 
 
 $$
 N_t = \sup \{n \in \mathbb{N}_0: J_n \leq t \}
-$$  
-
-
+$$
 
 ## Properties of Poisson Process
 
@@ -256,7 +254,7 @@ The chain is **homogeneous**
 
 -   $\mathbf{P}_0 = I_{K \times K}$
 
--   stochastic
+-   $\mathbf{P}_t$ is stochastic
 
 -   Chapman-Kolmogorov
 
@@ -295,7 +293,11 @@ A distribution is the **stationary distribution**
 **Theorem (find stationary distr)**\
 Subject to regularity conditions, $\pi=\pi \mathbf{P}_t$ for all $t \geq 0$ if and only if $\pi \mathbf{G}=0$,.
 
-A distribution $\pi$ is the **limiting distribution**
+A distribution $\pi$ is the **limiting distribution** if for all $i,j \in E$
+
+$$
+\lim_{t \to \infty} p_{ij}(t) = \pi_j
+$$
 
 **Theorem (Ergodicity in continuous time)**
 
@@ -313,10 +315,43 @@ A distribution $\pi$ is the **limiting distribution**
 
 ### From continuous to discrete
 
+-   $J_n$ being the $n^{th}$ change in value of the chain $X$, $J_0=0$
+
+-   Values right after the jump $Z_n = X_{J_n+}$ form a discrete time Markov chain
+
+-   Construct transition matrix $p_{ij}^Z=\dfrac{g_{ij}}{-g_{ii}}$ and $0$ if absorption (all the diagonal entries are $0$)
+
+-   $\{Z_n\}_{n\geq 0}$ is the **jump chain**
+
 ### From discrete to continuous
+
+-   Let $p_{ii}^Z=0$ to avoid jumps to itself in the discrete chain
+
+-   Construct generator matrix with arbitrary nonnegative $g_i$ for each $i$
+
+$$
+g_{ij} = \begin{cases}
+g_ip_{ij}^Z & i\neq j \\
+-g_i & i=j
+\end{cases}
+$$
+
+-   Condition on $Z_i$, let $H_i \sim \rm{Exp}(g_{Z_{i-1}})$ be the 'holding times'
+
+-   Then at time $t$, check if between two jump times
+
+$$
+X_t = \begin{cases}
+Z_n & J_n \leq t < J_{n+1} \\
+\infty & \rm{otherwise}
+\end{cases}
+$$
+
+The chain explodes if $\Pr(J_{\infty} < \infty)>0$.
 
 ## Relation between common quantities
 
+````{=html}
 <!-- ```{=html}
 <table>
 <caption>Different 'transition matrices' in continuous time</caption>
@@ -333,6 +368,7 @@ $\mathbf{P}^Z$     $p_{ij}=g_{ij}/g_i$		                    transition matrix of
 ---------------    --------------------------------------     -------------------------------------------------
 </table>
 ``` -->
+````
 
 ```{=tex}
 \setlength{\extrarowheight}{.5em}
@@ -353,3 +389,72 @@ $\mathbf{P}^Z$ & $p_{ij}^Z=-g_{ij}/g_{ii}=q_{ij}/q_i$    & transition matrix of 
 \end{tabular}
 \end{table}
 ```
+## Birth Processes
+
+A **birth process** with intensities $\lambda_1, \lambda_2, \ldots$ is a continuous Markov chain $\{N_t\}_{t\geq 0}$ with nonnegative values such that
+
+-   It is non-decreasing
+
+-   There is 'single arrival'
+
+$$
+\Pr(N_{t+\delta}=n+m \mid N_t = n) = \begin{cases}
+1- \lambda_n \delta + o(\delta) & m=0 \\
+\lambda_n\delta + o(\delta) & m=1 \\
+o(\delta) & m>1
+\end{cases}
+$$
+
+-   Conditional on $N_s$, the increment $N_t-N_s$ is independent of all arrivals prior to time $s$, where $t>s$.
+
+A birth process with constant intensity is a Poisson process.
+
+### Simple Birth Process
+
+The **Forward & Backward** equations are given by
+
+The equations have a unique solution
+
+## Birth-Death Processes
+
+### Stationary Distributions
+
+The solution to $\pi G = 0$ is given by
+
+### Immigration
+
+# Brownian Motions
+
+A real-valued stochastic process $B=\{B_t\}_{t\geq 0}$ is a **Brownian Motion** if
+
+-   $B_0=0$ almost surely
+
+-   $B$ has independent increments
+
+-   $B$ has stationary increments
+
+-   The increments are Gaussian, for $0 \leq s < t$
+
+$$
+B_t - B_s \sim N(0, t-s)
+$$
+
+-   The samples paths are a.s. continuous. ($t \mapsto B_t$ is a.s. continuous)
+
+## Construction of Brownian Motion
+
+Consider the random walk $X_n = \sum_{i=1}^n Y_n$ with $Y_i \in \{-1,1\}$, from the central limit theorem, we have
+
+$$
+\dfrac{X_n}{\sqrt{n}} \overset{d}{\to} N(0, 1)
+$$
+
+We define the Brownian motion as a limit when $n \to \infty$
+
+$$
+B^{(n)}_t = \dfrac{X_{\lfloor nt \rfloor}}{\sqrt{n}} \overset{d}{\to} N(0, t)
+$$
+
+by Slutsky's Theorem. So $\dfrac{X_{\lfloor nt \rfloor}}{\sqrt{n}} \overset{d}{\to} B_t$
+
+## Properties
