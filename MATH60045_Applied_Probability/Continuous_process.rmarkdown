@@ -278,26 +278,68 @@ $$
 
 ### Exponential Alarm Clocks
 
-## The jump chain
+-   For each state $i \in E$, it can reach $n_i$ states
+
+-   Set $n_i$ independent exponential alarm clocks with rates $q_{ij}$
+
+-   The state transfers to the index of the first alarm clock that rings
+
+-   Transfer to state $j$ with probability $\dfrac{q_{ij}}{\sum_k q_{ik}}$ (ordering of exponential random variables)
 
 ## The generator
 
+The **generator** $\mathbf{G}=(g_{ij})_{i,j\in E}$ of the Markov chain with stochastic semigroup $P_t$ is defined as the $\rm{card}(E) \times \rm{card}(E)$ matrix
+
+$$
+\mathbf{G} = \lim_{\delta \downarrow 0} \dfrac{1}{\delta} [\mathbf{P_{\delta}}-\mathbf{I}]
+$$
+
+Hence we have the estimates for transition probabilities
+
+$$
+p_{ij}(\delta) \approx g_{ij} \delta = q_{ij} \delta \\
+p_{ii}(\delta) \approx 1 + g_{ii} \delta = -\sum_{j \in E} q_{ij} \delta
+$$
+
 ## Forward and backward equations
+
+**Theorem** Subject to regularity conditions, a continuous-time Markov chain with stochastic semigroup $\{P_t\}$ and generator $\mathbf{G}$ satisfies the **Kolmogorov forward equation** and the **Kolmogorov backward equation**
+
+$$
+\begin{aligned}
+  \mathbf{P}_t' &= \mathbf{P}_t \mathbf{G} \\
+\mathbf{P}_t' &= \mathbf{G} \mathbf{P}_t 
+\end{aligned}
+$$
+
+This allows us to write
+
+$$
+\mathbf{P}_t = \exp(t\mathbf{G})
+$$
+
+using matrix exponential.
 
 ## Irreducibility and stationarity
 
-The chain is **irreducible**
+The chain is **irreducible** if for all $i,j \in E$ there exists $t>0$ such that $p_{ij}(t)>0$.
 
-A distribution is the **stationary distribution**
+A distribution is the **stationary distribution** if it satisfies
 
-**Theorem (find stationary distr)**\
-Subject to regularity conditions, $\pi=\pi \mathbf{P}_t$ for all $t \geq 0$ if and only if $\pi \mathbf{G}=0$,.
+$$
+\mathbf{\pi} \mathbf{P}_t = \mathbf{\pi}
+$$
+
+for all $t \geq 0$.
 
 A distribution $\pi$ is the **limiting distribution** if for all $i,j \in E$
 
 $$
 \lim_{t \to \infty} p_{ij}(t) = \pi_j
 $$
+
+**Theorem (find stationary distr)**\
+Subject to regularity conditions, $\pi=\pi \mathbf{P}_t$ for all $t \geq 0$ if and only if $\pi \mathbf{G}=0$,.
 
 **Theorem (Ergodicity in continuous time)**
 
@@ -306,8 +348,7 @@ $$
     \lim_{t\to +\infty} p_{ij}(t) = \pi_j
     $$
 
-2.  If there is no stationary distribution then\
-    $$
+2.  If there is no stationary distribution then $$
     \lim_{t \to +\infty} p_{ij}(t) = 0
     $$
 
@@ -407,19 +448,76 @@ $$
 
 -   Conditional on $N_s$, the increment $N_t-N_s$ is independent of all arrivals prior to time $s$, where $t>s$.
 
-A birth process with constant intensity is a Poisson process.
+A birth process with constant intensity is a Poisson process. (Poisson process is a special case of birth process.)
+
+It has generator $\mathbf{G}$
+
+$$
+\mathbf{G} = \begin{pmatrix}
+-\lambda_0 & \lambda_0 & 0 & \cdots & 0 & \cdots \\
+0 & -\lambda_1 & \lambda_1 & 0 & 0 & \cdots \\
+0 & 0 & -\lambda_2 & \lambda_2 & 0  & \cdots \\
+\vdots & \vdots & \vdots & \vdots & \vdots & \vdots \\
+\end{pmatrix}
+$$
 
 ### Simple Birth Process
 
+-   We take intensities $\lambda_n = n \lambda$
+
+$$
+\Pr(N_{t+\delta}=n+m \mid N_t = n) = \binom{n}{m} (\lambda \delta)^m (1-\lambda \delta)^{n-m} + o(\delta)
+$$
+
+which gives
+
+$$
+\Pr(N_{t+\delta}=n+m \mid N_t = n) = \begin{cases}
+  (1-\lambda \delta)^n + o(\delta) & m=0 \\
+  n \lambda \delta (1-\lambda \delta)^{n-1} + o(\delta) & m=1 \\
+  o(\delta) & m>1
+\end{cases} 
+$$
+
 The **Forward & Backward** equations are given by
 
-The equations have a unique solution
+$$
+\begin{aligned}
+p'_{ij}(t) &= -\lambda_j p_{ij}(t) + \lambda_{j-1} p_{i, j-1}(t)  \\
+p'_{ij}(t) &= -\lambda_i p_{ij}(t) + \lambda_{i} p_{i+1, j}(t)
+\end{aligned}
+$$
+
+**Theorem** The forward equation has a unique solution, which is also satisfied by the backward equation.
 
 ## Birth-Death Processes
 
-### Stationary Distributions
+The **birth-death process** $\{X_t\}_{t\geq 0}$ is a continuous-time Markov chain taking values in $\mathbb{N}_0$ such that
 
-The solution to $\pi G = 0$ is given by
+-   The birth rates $\lambda_n$ and death rates $\mu_n$ are nonnegative with $\mu_0=0$
+
+-   The infinitesimal transition probabilities are
+
+$$
+\Pr(X_{t+\delta}=n+m \mid X_t = n) = \begin{cases}
+1- (\lambda_n + \mu_n)\delta + o(\delta) & m=0 \\
+\lambda_n\delta + o(\delta) & m=1 \\
+\mu_n\delta + o(\delta) & m=-1 \\
+o(\delta) & |m|>1
+\end{cases}
+$$
+
+The **stationary distribution** of a birth-death process is
+
+$$
+\mathbf{\pi}_n = \dfrac{\lambda_0 \times \cdots \lambda_{n-1}}{\mu_1 \times \cdots \times \mu_n} \pi_0
+$$
+
+with normalizing constant when the sum $\sum_{n=0}^\infty \mathbf{\pi}_n < \infty$
+
+$$
+\pi_0 = \dfrac{1}{\sum_{n=0}^\infty \mathbf{\pi}_n}
+$$
 
 ### Immigration
 
