@@ -219,10 +219,10 @@ For a recurrent state $j$, it is called **null recurrent** if $\mu_j=\infty$ and
 **Theorem (unlikely to visit null recurrent state)** A state $j$ is null recurrent, if and only if  
 
 $$
-	\lim_{n \to \infty} p_{jj}(n) = 0, \forall j \in E
+	\lim_{n \to \infty} p_{jj}(n) = 0
 $$  
 
-In addition if the above equation holds,  
+In addition if the above equation holds, then  
 
 $$
 	\lim_{n \to \infty} p_{ij}(n) = 0, \forall i \neq j \in E
