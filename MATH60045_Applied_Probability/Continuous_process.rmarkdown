@@ -265,7 +265,35 @@ The stationarity also changes. We have
 
 $$
 N_t-N_s \sim \textrm{Poisson}(\int_s^t \lambda(u) du)=\textrm{Poisson}(m(t)-m(s))
+$$  
+
+### Deriving the forward equations  
+
+An important technique for deriving concrete probability mass functions using the single arrival property.  
+
 $$
+\begin{aligned}
+  p_n(t+\delta) = \Pr(N_{t+\delta}=n) &= \sum_{k=0}^n \Pr(N_{t+\delta}=n \mid N_t=k) \Pr(N_t=k) \\
+                                      &= \sum_{k=0}^n \Pr(N_{t+\delta}-N_t=n-k \mid N_t=k) \Pr(N_t=k) \\
+                                      &= \sum_{k=0}^n \Pr(N_{t+\delta}-N_t=n-k) \Pr(N_t=k) \\
+                                      &= (1-\lambda (t) \delta)p_n(t) + \lambda (t) \delta p_{n-1}(t) + o(\delta) \\
+\end{aligned}
+$$  
+
+Note the use of independence of increments and the single arrival property.  
+
+This gives the differential equation  
+
+$$
+\frac{dp_n(t)}{dt} = \lambda (t) p_{n-1}(t) - \lambda (t) p_n(t)
+$$  
+
+When $n=0$,  
+
+$$
+\frac{dp_0(t)}{dt} = -\lambda (t) p_0(t)
+$$
+
 
 ## Compound Poisson processes
 
@@ -374,10 +402,12 @@ $$
 \mathbb{E}\left(\sum_{k=1}^{n-1} H_k \right) = \sum_{k=1}^{n-1} \frac{2}{k(k+1)}=2(1-\frac{1}{n})
 $$
 
-Comparing with the last coalescence time, we have\
+Comparing with the last coalescence time, we have  
+
 $$
 \mathbb{E}(H_{n-1})=1>2(1-\frac{1}{n})
-$$\
+$$  
+
 showing that the last coalescence time is larger than half of the expected total coalescence time.
 
 # Continuous-time Markov chains
@@ -390,9 +420,19 @@ $$
 
 for all $j, i_1, \ldots, i_{n-1} \in E$ and for any sequence $0 \leq t_1 < \cdots < t_n < \infty$.
 
-The **transition probability**
+The **transition probability** is $p_{ij}(s,t)$, for $s \leq t$, $i, j \in E$  
 
-The chain is **homogeneous**
+$$
+p_{ij}(s,t) = \Pr(X_t=j \mid X_s=i)
+$$
+
+The chain is **homogeneous** if   
+
+$$
+p_{ij}(s,t) = p_{ij}(0,t-s)
+$$  
+
+In this course, it is always assumed that the chain is homogeneous.  
 
 **Theorem** The family is a **stochastic semigroup** if:
 
@@ -400,7 +440,11 @@ The chain is **homogeneous**
 
 -   $\mathbf{P}_t$ is stochastic
 
--   Chapman-Kolmogorov
+-   Chapman-Kolmogorov equations are satisfied  
+
+$$
+p_{ij}(s+t) = \sum_{k\in E} p_{ik}(s) p_{kj}(t)
+$$
 
 The semigroup $\{P_t\}$ is called **standard** if
 
@@ -487,14 +531,15 @@ Subject to regularity conditions, $\pi=\pi \mathbf{P}_t$ for all $t \geq 0$ if a
 
 **Theorem (Ergodicity in continuous time)**
 
-1.  If there exists a stationary distribution, then it is *unique* and $\forall i,j \in E$\
+1.  If there exists a stationary distribution, then it is *unique* and $\forall i,j \in E$
     $$
     \lim_{t\to +\infty} p_{ij}(t) = \pi_j
     $$
 
-2.  If there is no stationary distribution then $$
+2.  If there is no stationary distribution then 
+$$
     \lim_{t \to +\infty} p_{ij}(t) = 0
-    $$
+$$
 
 ## Jump chain and explosion
 
@@ -621,7 +666,8 @@ $$
   n \lambda \delta (1-\lambda \delta)^{n-1} + o(\delta) & m=1 \\
   o(\delta) & m>1
 \end{cases} 
-$$
+$$  
+Note that the higher order terms are $o(\delta)$, so we have $1-n\lambda \delta + o(\delta)$ and $n\lambda \delta + o(\delta)$.  
 
 The **Forward & Backward** equations are given by
 
@@ -630,7 +676,25 @@ $$
 p'_{ij}(t) &= -\lambda_j p_{ij}(t) + \lambda_{j-1} p_{i, j-1}(t)  \\
 p'_{ij}(t) &= -\lambda_i p_{ij}(t) + \lambda_{i} p_{i+1, j}(t)
 \end{aligned}
+$$  
+
+### Deriving the Forward & Backward Equations  
+
+We need to use the Chapman-Kolmogorov equations  
+
 $$
+p_{ij}(t+\delta) = \sum_{l\in E} p_{il}(t) p_{lj}(\delta)
+$$  
+
+which gives the forward direction with $p_{i,j-1}(t)\lambda_{j-1} \delta + p_{ij}(t) (1-\lambda_j \delta) + o(\delta)$.  
+
+The backward direction is similar but 'splitting' in a different way.  
+
+$$
+p_{ij}(t+\delta) = \sum_{l\in E} p_{il}(\delta) p_{lj}(t)
+$$  
+
+with $p_{i+1,j}(t) \lambda_i \delta + p_{ij}(t) (1-\lambda_i \delta) + o(\delta)$.  
 
 **Theorem** The forward equation has a unique solution, which is also satisfied by the backward equation.
 
@@ -649,7 +713,10 @@ $$
 \mu_n\delta + o(\delta) & m=-1 \\
 o(\delta) & |m|>1
 \end{cases}
-$$
+$$  
+
+*The single arrival property rids us of the cancellation of birth and death.*  
+
 
 The **stationary distribution** of a birth-death process is
 
@@ -681,7 +748,19 @@ $$
 B_t - B_s \sim N(0, t-s)
 $$
 
--   The samples paths are a.s. continuous. ($t \mapsto B_t$ is a.s. continuous)
+-   The samples paths are a.s. continuous. ($t \mapsto B_t$ is a.s. continuous)  
+
+A Brownian motion with **drift** $\mu$ and **variance** $\sigma^2$ is given by  
+
+$$
+Y_t = \mu t + \sigma B_t
+$$  
+
+then we have  
+
+$$
+Y_t-Y_s \sim N(\mu (t-s), \sigma^2 (t-s))
+$$
 
 ## Construction of Brownian Motion
 
@@ -699,4 +778,61 @@ $$
 
 by Slutsky's Theorem. So $\dfrac{X_{\lfloor nt \rfloor}}{\sqrt{n}} \overset{d}{\to} B_t$
 
-## Properties
+## Properties  
+
+The covariance of $B_t$ and $B_s$ is  
+
+$$
+\text{Cov}(B_t, B_s) = \min(t,s)
+$$  
+
+### The symmetries of Brownian motion
+
+Let $B_t$ be a standard Brownian motion, then each of the following is also a Brownian motion:  
+
+- (Reflection) $\{-B_t\}$ 
+
+- (Translation) $\{B_{t+s} - B_s\}$ 
+
+- (Rescaling) For $a>0$, $\{aB_{t/a^2}\}$ 
+
+- (Inversion)  $\{tB_{1/t}\}$   
+
+### Reflection  
+
+The **stopping-time** $\tau$ is the first time $B_t$ hits $x$ for some $x>0$.  
+
+$$
+\tau = \inf \{t \geq 0 \mid B_t \geq x\}
+$$
+
+The **reflected Brownian motion** $B''_t$ is given by  
+
+$$
+B''_t = \begin{cases}
+B_t & t \leq \tau \\
+x-(B_t-x) & t > \tau
+\end{cases}
+$$  
+
+This is also a Brownian motion.  
+
+The **maximum and minimum processes** of a Brownian motion are given by  
+
+$$
+\begin{aligned}
+  M_t^+ &= \max_{0 \leq s \leq t} B_s \\
+  M_t^- &= \min_{0 \leq s \leq t} B_s
+\end{aligned}
+$$  
+
+The distribution of $M_t^+$ is given by  
+
+$$
+\Pr(M_t^+ \geq x) = \Pr(\tau \leq t) =2-2\Phi(x/\sqrt{t})
+$$
+whence the density of $\tau$ is given by  
+
+$$
+p_{\tau}(t) = \frac{x}{\sqrt{2\pi t^3}} \exp(-\frac{x^2}{2t})
+$$
