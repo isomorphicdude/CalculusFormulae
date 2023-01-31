@@ -24,13 +24,19 @@ A **right continuous** stochastic process.
 
 There are three types of right continuous processes
 
--   **Normal**
+-   **Normal**: infinitely many jumps but only finitely many in a finite time interval
 
--   **Absorption**
+-   **Absorption**: Only has finitely many jumps, gets absorbed at some point (stay at one state)
 
--   **Explosion**
+-   **Explosion**: Infinitely many jumps in a finite time interval.  
 
-The **jump times** are random variables
+The **jump times** are random variables $J_{n+1}=\inf \{t \geq J_n: X_t \neq X_{J_n}\}$.  
+
+The **explosion time** is   
+
+$$
+J_{\infty} = \sup_{n \in \mathbb{N}_0} J_n = \sum_{n=1}^{\infty} H_n
+$$
 
 The **holding times** are random variables defined as
 
@@ -56,7 +62,22 @@ $$
 
 A **counting process associated the sequence** $(J_n)_{n \in \mathbb{N}_0}$
 
-## Properties of random variables
+## Properties of random variables  
+
+The **Poisson random variable** has (pmf)
+
+$$
+f_X(x)=\dfrac{\lambda^x}{x!} e^{-\lambda}, \qquad x \in \mathbb{N}_0
+$$  
+
+It has expectation  
+$$
+\mathbb{E}[X]=\lambda
+$$  
+and variance  
+$$
+\text{Var}[X]=\lambda
+$$
 
 The **exponential random variable** has
 
@@ -730,7 +751,11 @@ $$
 \pi_0 = \dfrac{1}{\sum_{n=0}^\infty \mathbf{\pi}_n}
 $$
 
-### Immigration
+### Immigration  
+- Constant immigration(birth) rate $\lambda$
+- Varying death rate $\mu_n=\mu n$  
+
+equivalent to a birth-death process with $\lambda_n = n \lambda$ and $\mu_n = \mu n$. Same formulas above.
 
 # Brownian Motions
 
