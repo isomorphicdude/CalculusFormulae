@@ -324,7 +324,7 @@ $$
 S_t = \sum_{n=1}^{N_t} Y_n
 $$
 
-is a **compound Poisson process**.
+$\{S_t\}_{t\geq 0}$ is a **compound Poisson process**.
 
 The mean and variance of $S_t$ are
 
@@ -335,7 +335,7 @@ $$
 \end{aligned}
 $$
 
-This is proveb by conditioning on $N_t$ and using the fact that $Y_n$ are independent.
+This is proven by conditioning on $N_t$ and using the fact that $Y_n$ are independent.
 
 We also recall the laws of total expectation and total variance.
 
@@ -350,7 +350,12 @@ $$
 
 An application of the compound Poisson process is the Cramer-Lundberg model.
 
-For an insurance company, there are **claims** $S_t$ (expense to pay when there are accidents) modelled by a **compound Poisson process**, **initial capital** $u$, and **premiums** $ct$ (money collected from customers with rate $c$).
+For an insurance company, there are
+- **Claims** $S_t$ (expense to pay when there are accidents) modelled by a **compound Poisson process**  
+  
+- **Initial capital** $u$  
+  
+- **Premiums** $ct$ (money collected from customers with rate $c$)  
 
 We define the **risk process** to be
 
@@ -363,7 +368,7 @@ The company goes bankrupt if $U_t < 0$.
 Thus, the **ruin probability** is defined as
 
 $$
-\psi(u, T) = \Pr(U_T <0 \text{\ for \ some \ t} \leq T), \qquad T > 0, u \geq 0
+\psi(u, T) = \Pr(U_t <0 \text{\ for \ some \ t} \leq T), \qquad T > 0, u \geq 0
 $$
 
 The **total claim amount** $\{S_t\}_{t\geq 0}$ is
@@ -497,11 +502,13 @@ $$
 
 ## The generator
 
-The **generator** $\mathbf{G}=(g_{ij})_{i,j\in E}$ of the Markov chain with stochastic semigroup $P_t$ is defined as the $\rm{card}(E) \times \rm{card}(E)$ matrix
+The **generator** $\mathbf{G}=(g_{ij})_{i,j\in E}$ of the Markov chain with stochastic semigroup $\mathbf{P}_t$ is defined as the $\rm{card}(E) \times \rm{card}(E)$ matrix
 
 $$
 \mathbf{G} = \lim_{\delta \downarrow 0} \dfrac{1}{\delta} [\mathbf{P_{\delta}}-\mathbf{I}]
 $$
+
+where $\mathbf{P}_t$ is differentiable at $t=0$.  
 
 Hence we have the estimates for transition probabilities
 
@@ -512,7 +519,8 @@ $$
 
 ## Forward and backward equations
 
-**Theorem** Subject to regularity conditions, a continuous-time Markov chain with stochastic semigroup $\{P_t\}$ and generator $\mathbf{G}$ satisfies the **Kolmogorov forward equation** and the **Kolmogorov backward equation**
+**Theorem**   
+Subject to regularity conditions, a continuous-time Markov chain with stochastic semigroup $\{P_t\}$ and generator $\mathbf{G}$ satisfies the **Kolmogorov forward equation** and the **Kolmogorov backward equation**
 
 $$
 \begin{aligned}
@@ -609,7 +617,7 @@ The chain explodes if $\Pr(J_{\infty} < \infty)>0$.
 
 Notation           Element							                      Meaning and Condition
 ---------------    --------------------------------------     -------------------------------------------------
-$q_{ij}$           $q_{i}=\sum_{j \in E} q_{ij}$		          $q_{ii}=0$ and $q_{ij}>0$ the exponential rates  
+$q_{ij}$           $q_{ii}=\sum_{j \in E} q_{ij}$		          $q_{ii}=0$ and $q_{ij}>0$ the exponential rates  
 ---------------    --------------------------------------     -------------------------------------------------
 $\mathbf{G}$       $g_{ij}=q_{ij}$ and $g_{ii}=-q_{ii}$       generator, $\mathbf{P}_t=\exp(tG)$
 ---------------    --------------------------------------     -------------------------------------------------
@@ -629,13 +637,13 @@ $\mathbf{P}^Z$     $p_{ij}=g_{ij}/g_i$		                    transition matrix of
 \hline
 Notation & Element & Meaning and Conditions  \\
 \hline
-$q_{ij}$ & $q_{i}=\sum_{j \in E} q_{ij}$ &   The \textbf{exponential rates} $q_{ij}>0$ when $i \neq j$ and $i \leftrightarrow j$, zero otherwise  \\
+$q_{ij}$ & $q_i:=q_{ii}=\sum_{j \in E} q_{ij}$ &   The \textbf{exponential rates} $q_{ij}>0$ when $i \neq j$ and $i \leftrightarrow j$, zero otherwise  \\
 
 $\mathbf{G}$   &  $g_{ij}=q_{ij}$ and $g_{ii}=-q_{ii}$  & \textbf{generator}, $\mathbf{P}_t=\exp(t\mathbf{G})$, not stochastic, row sum is $0$ \\
 
 $\mathbf{P}_t$  & $p_{ij}(t)=\exp(tG)_{ij}$ &  the \textbf{stochastic semigroup}, transition matrix at time $t$, a stochastic matrix \\
 
-$\mathbf{P}^Z$ & $p_{ij}^Z=-g_{ij}/g_{ii}=q_{ij}/q_i$    & transition matrix of \textbf{jump chain}, a stochastic matrix\\
+$\mathbf{P}^Z$ & $p_{ij}^Z=-g_{ij}/g_{ii}=q_{ij}/q_{ii}$    & transition matrix of \textbf{jump chain}, a stochastic matrix\\
 \hline
 \end{tabular}
 \end{table}
@@ -798,10 +806,10 @@ $$
 We define the Brownian motion as a limit when $n \to \infty$
 
 $$
-B^{(n)}_t = \dfrac{X_{\lfloor nt \rfloor}}{\sqrt{n}} \overset{d}{\to} N(0, t)
+B^{(n)}_t = \dfrac{X_{\lfloor nt \rfloor}}{\sqrt{n}}=\sqrt{t}\dfrac{X_k}{\sqrt{k}} \overset{d}{\to} N(0, t)
 $$
 
-by Slutsky's Theorem. So $\dfrac{X_{\lfloor nt \rfloor}}{\sqrt{n}} \overset{d}{\to} B_t$
+where $k$ is such that $k \leq nt < k+1$ and this follows by Slutsky's Theorem. So $\dfrac{X_{\lfloor nt \rfloor}}{\sqrt{n}} \overset{d}{\to} B_t$
 
 ## Properties  
 
