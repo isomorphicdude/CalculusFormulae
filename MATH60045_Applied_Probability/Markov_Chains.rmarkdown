@@ -9,7 +9,7 @@ output:
 
 # Basics  
 
-A **discret-time stochastic process** is defined as a sequence of discrete random variables $\{X_n\}_{n\in \mathbb{N}_0}$, each taking values in a countable state space $E$
+A **discrete-time stochastic process** is defined as a sequence of discrete random variables $\{X_n\}_{n\in \mathbb{N}_0}$, each taking values in a countable state space $E$
 
 A discrete time stochastic process satisfying the **Markov condition**  is called a **Markov Chain**  
 
@@ -84,6 +84,8 @@ $$
 	p_{ij}(n) = \sum_{l=1}^n f_{ij}(l)p_{jj}(n-l)
 $$  
 
+this is the same as starting from $l=0$.  
+
 
 ## Generating Functions of Markov Chain  
 
@@ -135,7 +137,7 @@ $$
 The **number of periods** that the chain is in state $j$ (or **number of visits** to $j$) is  
 
 $$
-	N_j = \sum_{n=1}^{\infty} I_n(j)
+	N_j = \sum_{n=0}^{\infty} I_n(j)
 $$  
 where $I_n(j)$ is the indicator function taking value $1$ if $X_n=j$ and $0$ otherwise.  
 
@@ -170,7 +172,7 @@ $$
 						\end{cases}
 $$
 
-Intuition is that the chain visits $j$ for the first time and returns to it for $n-1$ times, then leaves it.  
+Intuition is that the chain visits $j$ for the first time and returns to it for $n-1$ times, then leaves it.  (note the $N_j$ starts from $0$)
 
 Therefore, it follows that  for $i\neq j$ by the mean of geometric distribution,  
 
@@ -205,7 +207,7 @@ $$
 $$  
 where we recall that $\{T_j=n\}=\{X_n=j, X_{n-1}\neq j, \cdots, X_1 \neq j\}$.  
 
-Similarly, we can define the **mean first passage time**  
+Similarly, we can define the **mean first passage time**  $\mu_{ij}$:  
 
 $$
 	\mu_{ij}=\mathbb{E}[T_j | X_0=i]=\sum_{n=1}^{\infty} n f_{ij}(n)
@@ -216,7 +218,9 @@ those expectations can be finite or infinite; for transient states, they must be
 
 For a recurrent state $j$, it is called **null recurrent** if $\mu_j=\infty$ and **positive recurrent** if $\mu_j<\infty$.  
 
-**Theorem (unlikely to visit null recurrent state)** A state $j$ is null recurrent, if and only if  
+**Theorem (unlikely to visit null recurrent state)**   
+
+A state $j$ is null recurrent, if and only if  
 
 $$
 	\lim_{n \to \infty} p_{jj}(n) = 0
@@ -228,14 +232,14 @@ $$
 	\lim_{n \to \infty} p_{ij}(n) = 0, \forall i \neq j \in E
 $$
 
-## Examples  
+<!-- ## Examples   -->
 
 # Aperiodicity and Ergodicity  
 
 The **period** of a state $j$ is  
 
 $$
-	d(j) = gcd\{n: p_{jj}(n)>0\}
+	d(j) = gcd\{n \in \mathbb{N}: p_{jj}(n)>0\}
 $$  
 
 It is not necessarily true that $p_{jj}(d(j))>0$ (cf. Notes Pg. 36).  
@@ -274,9 +278,11 @@ For a **set of states** $C$:
 
 Therefore, an irreducible set of states share the same properties described above.  
 
-**Theorem (Recurrence and closed)** If $C$ is a communicating class of recurrent states, then $C$ is closed.  
+**Theorem (Recurrence and closed)**   
+If $C$ is a communicating class of recurrent states, then $C$ is closed.  
 
-**Theorem (Stochastic matrix on closed states)**  The stochastic matrix $P$ restricted to a closed set of closed states $C$ is still a stochastic matrix.  
+**Theorem (Stochastic matrix on closed states)**    
+The stochastic matrix $P$ restricted to a closed set of closed states $C$ is still a stochastic matrix.  
 
 ## Decomposition of Chains  
 
@@ -292,13 +298,15 @@ where $T$ is the set of transient states and $C_i$'s are irreducible closed sets
 
 The **classes** refer to communicating classes.
 
-**Theorem (Finite Chains have recurrent)** When state space is **finite**, at least one state is *recurrent* and all *recurrent* states are **positive**  
+**Theorem (Finite Chains have recurrent)**   
+When state space is **finite**, at least one state is *recurrent* and all *recurrent* states are **positive**  
 
 **Remark** This combined with later results on stationarity makes a chain with finite state space particularly nice.  
 
 **Remark** It follows that there are no null recurrent states in a finite state space.  
 
-**Theorem (Finite and closed)** If $C$ is a finite, closed communicating class, then all states are positive recurrent.  
+**Theorem (Finite and closed)**   
+If $C$ is a finite, closed communicating class, then all states are positive recurrent.  
 
 <table>
 <caption>Communicating class properties</caption>
@@ -454,7 +462,8 @@ $$
 	T_j = \sum_i N_i(j)
 $$
 
-**Lemma (Alternative expectation)** $T$ is a nonnegative integer-valued random variable and $A$ is an event with $\Pr(A)>0$. Then  
+**Lemma (Tail probability is expectation)**   
+$T$ is a nonnegative integer-valued random variable and $A$ is an event with $\Pr(A)>0$. Then  
 
 $$
 	\mathbb{E}[T|A] = \sum_{n=0}^\infty \Pr(T\geq n|A)
@@ -568,7 +577,7 @@ $$
 **Theorem (Reversed still Markov)** The reversed chain is a Markov chain  
 
 $$
-	\Pr(Y_{n+1}=j|Y_n=i) = \dfrac{\pi_j}{\pi_i} p_{ji}
+	\Pr(Y_{n+1}=j|Y_n=i) = \Pr(X_{N-n-1}=j | X_{N-n}=i)= \dfrac{\pi_j}{\pi_i} p_{ji}
 $$  
 
 A Markov chain $(X_n)$ is called **time-reversible** if its transition matrix is the same as the transition matrix of its reversed chain.  
@@ -580,5 +589,24 @@ $$
 $$  
 this condition is called **detailed balance**.  
 
-**Theorem (Time reversible and positive recurrence)** For an irreducible chain, if **there is a vector** $\pi$ such that the condition in the first theorem holds for all $i,j$, then the chain is time-reversible and positive recurrent with stationary distribution $\pi$.
 
+**Theorem (Detailed balance implies positive recurrence)**    
+For an irreducible chain, if **there is a vector** $\pi$ such that the detailed balance equation holds for all $i,j$, then the chain is **time-reversible and positive recurrent** with stationary distribution $\pi$.   
+
+**Proof:** Note that the detailed balance conditions imply the chain has a stationary distribution, hence positive recurrent by previous theorems.
+
+
+
+<!-- Copied and pasted -->
+
+<!-- <div class="warning" style='background-color:#E9D8FD; color: #69337A; border-left: solid #805AD5 4px; border-radius: 4px; padding:0.7em;'>
+<span>
+<p style='margin-top:1em; text-align:center'>
+<b>On the importance of sentence length</b></p>
+<p style='margin-left:1em;'>
+This sentence has five words. Here are five more words. Five-word sentences are fine. But several together bocome monotonous. Listen to what is happening. The writing is getting boring. The sound of it drones. It's like a stuck record. The ear demands some variety.<br><br>
+    Now listen. I vary the sentence length, and I create music. Music. The writing sings. It has a pleasent rhythm, a lilt, a harmony. I use short sentences. And I use sentences of medium length. And sometimes when I am certain the reader is rested, I will engage him with a sentence of considerable length, a sentence that burns with energy and builds with all the impetus of a crescendo, the roll of the drums, the crash of the cymbals -- sounds that say listen to this, it is important.
+</p>
+<p style='margin-bottom:1em; margin-right:1em; text-align:right; font-family:Georgia'> <b>- Gary Provost</b> <i>(100 Ways to Improve Your Writing, 1985)</i>
+</p></span>
+</div> -->
