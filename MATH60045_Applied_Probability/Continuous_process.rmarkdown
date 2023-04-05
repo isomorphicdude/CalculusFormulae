@@ -20,7 +20,13 @@ library(kableExtra)
 
 ## Types of Processes
 
-A **right continuous** stochastic process.
+A **right continuous** stochastic process $\{X_t\}_{t\geq 0}$ is such that for any $\omega\in \Omega$ and $t\geq 0$, there is $\varepsilon>0$, such that  
+
+$$
+X_t(\omega) = X_s(\omega) \qquad \forall s \in [t, t+\varepsilon]
+$$  
+
+Can be thought as closed point on the left and open point on the right.  
 
 There are three types of right continuous processes
 
@@ -30,7 +36,18 @@ There are three types of right continuous processes
 
 -   **Explosion**: Infinitely many jumps in a finite time interval.  
 
-The **jump times** are random variables $J_{n+1}=\inf \{t \geq J_n: X_t \neq X_{J_n}\}$.  
+The **jump times** are random variables $J_{n+1}=\inf \{t \geq J_n: X_t \neq X_{J_n}\}$.   
+
+The **holding times** are random variables defined as:  
+
+$$
+H_n = \begin{cases}
+  J_n - J_{n-1} & \text{if } J_{n-1} < \infty \\
+  \infty & \text{otherwise}
+\end{cases}
+$$
+
+from which it follows that $J_n = \sum_{i=1}^n H_i$.  
 
 The **explosion time** is   
 
@@ -38,11 +55,9 @@ $$
 J_{\infty} = \sup_{n \in \mathbb{N}_0} J_n = \sum_{n=1}^{\infty} H_n
 $$
 
-The **holding times** are random variables defined as
+A **jump process** or jump chain is a discrete time stochastic process $Z_n = X_{J_n}$, where $J_n$ is the $n$th jump time.  
 
-A **jump process**
-
-Compute probabilities using **countable union**
+### Relating continuous process to its jump process  
 
 A **counting process** is a stochastic process $\{N_t\}_{t\geq 0}$ satisfying
 
@@ -444,7 +459,7 @@ $$
 \Pr(X_{t_n}=j \mid X_{t_1}=i_1, \ldots, X_{t_{n-1}}=i_{n-1}) = \Pr(X_{t_n}=j \mid X_{t_{n-1}}=i_{n-1})
 $$
 
-for all $j, i_1, \ldots, i_{n-1} \in E$ and for any sequence $0 \leq t_1 < \cdots < t_n < \infty$.
+for all $j, i_1, \ldots, i_{n-1} \in E$ and for **any** sequence $0 \leq t_1 < \cdots < t_n < \infty$.
 
 The **transition probability** is $p_{ij}(s,t)$, for $s \leq t$, $i, j \in E$  
 
@@ -541,6 +556,10 @@ using matrix exponential.
 
 The chain is **irreducible** if for all $i,j \in E$ there exists $t>0$ such that $p_{ij}(t)>0$.
 
+**Theorem (No periodicity in continuous)**   
+If $p_{ij}(t)>0$ for some $t>0$, then $p_{ij}(t)>0$ for all $t>0$.  
+
+
 A distribution is the **stationary distribution** if it satisfies
 
 $$
@@ -572,7 +591,9 @@ $$
 
 ## Jump chain and explosion
 
-### From continuous to discrete
+### From continuous to discrete  
+
+Assume the generator is known.  
 
 -   $J_n$ being the $n^{th}$ change in value of the chain $X$, $J_0=0$
 
@@ -582,7 +603,9 @@ $$
 
 -   $\{Z_n\}_{n\geq 0}$ is the **jump chain**
 
-### From discrete to continuous
+### From discrete to continuous  
+
+Assume the transition matrix is known.  
 
 -   Let $p_{ii}^Z=0$ to avoid jumps to itself in the discrete chain
 
@@ -650,7 +673,7 @@ $\mathbf{P}^Z$ & $p_{ij}^Z=-g_{ij}/g_{ii}=q_{ij}/q_{ii}$    & transition matrix 
 ```
 ## Birth Processes
 
-A **birth process** with intensities $\lambda_1, \lambda_2, \ldots$ is a continuous Markov chain $\{N_t\}_{t\geq 0}$ with nonnegative values such that
+A **birth process** with intensities $\lambda_1, \lambda_2, \ldots$ is a continuous time Markov chain $\{N_t\}_{t\geq 0}$ with nonnegative values such that
 
 -   It is non-decreasing
 
@@ -763,7 +786,7 @@ $$
 - Constant immigration(birth) rate $\lambda$
 - Varying death rate $\mu_n=\mu n$  
 
-equivalent to a birth-death process with $\lambda_n = n \lambda$ and $\mu_n = \mu n$. Same formulas above.
+equivalent to a birth-death process with $\lambda_n =\lambda$ and $\mu_n = n \mu$. Same formulas above.
 
 # Brownian Motions
 
@@ -868,4 +891,12 @@ whence the density of $\tau$ is given by
 
 $$
 p_{\tau}(t) = \frac{x}{\sqrt{2\pi t^3}} \exp(-\frac{x^2}{2t})
+$$  
+
+## A model for assest prices
+
+Let $S_t$ be the price of an asset at time $t$. We can model the price as:  
 $$
+S_t = S_0 \exp\left((\mu - \sigma^2 / 2) t + \sigma B_t\right)
+$$  
+where $S_0$ is the initial price, $\mu$ is the risk-free interest rate and $\sigma$ is the volatility (the instantaneous standard deviation of the stock). 

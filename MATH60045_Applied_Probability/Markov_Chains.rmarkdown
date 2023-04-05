@@ -493,6 +493,8 @@ $$
 	\lim_{n \to \infty} p_{ij}(n) = \pi_j
 $$  
 
+for any $i \in E$.  
+
 **Theorem** For an irreducible, aperiodic chain  
 
 $$
