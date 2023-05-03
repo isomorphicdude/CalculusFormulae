@@ -249,7 +249,8 @@ f_{(J_1, \ldots, J_n)}(t_1, \ldots, t_n \mid N_t=n)=\begin{cases}
 \end{cases}
 $$
 
-The expectation of the $k^{th}$ value of $n$ uniformly distributed order statistics on $[0,t]$ is\
+The expectation of the $k^{th}$ value of $n$ uniformly distributed order statistics on $[0,t]$ is  
+
 $$
 \mathbb{E}[X_{(k)}]=\dfrac{tk}{n+1}=\mathbb{E}[J_k \mid N_t=n]
 $$
@@ -270,13 +271,17 @@ This is called a **superposition of Poisson processes**.
 
 ### Thinning
 
-Each arrival of a Poisson Process $\{N_t\}_{t\geq 0}$ is marked as a type $k$ event with probability $p_k$, for $k=1, \ldots, n$, where $\sum_{k=1}^n p_k=1$. Then let $N_t^{(k)}$ denote the number of type $k$ events up to time $t$ (in $[0, t]$). Then each $N_t^{(k)}$ is a Poisson process with rate $\lambda p_k$.
+- Each arrival of a Poisson Process $\{N_t\}_{t\geq 0}$ is marked as a type $k$ event with probability $p_k$, for $k=1, \ldots, n$, where $\sum_{k=1}^n p_k=1$.   
+
+- Then let $N_t^{(k)}$ denote the number of type $k$ events up to time $t$ (in $[0, t]$).  
+
+- Every $N_t^{(k)}$ is a Poisson process with rate $\lambda p_k$.
 
 Each process is called a **thinned Poisson Process**.
 
 ## Non-homogenous Poisson processes
 
-Let $\lambda: [0, \infty) \to (0, \infty)$ denote a non-ngative and locally integrable function. Then the process $N = \{N_t\}_{t\geq 0}$ is a **non-homogenous Poisson process** with intensity function $\lambda(t)$ if
+Let $\lambda: [0, \infty) \to (0, \infty)$ denote a non-negative and locally integrable function. Then the process $N = \{N_t\}_{t\geq 0}$ is a **non-homogenous Poisson process** with intensity function $\lambda(t)$ if
 
 -   $N_0=0$
 
@@ -453,7 +458,7 @@ showing that the last coalescence time is larger than half of the expected total
 
 # Continuous-time Markov chains
 
-A continuous-time process $\{X_t\}_{t \in [0, \infty)}$ satisfies the **Markov property** if
+A continuous-time stochastic process $\{X_t\}_{t \in [0, \infty)}$ satisfies the **Markov property** if
 
 $$
 \Pr(X_{t_n}=j \mid X_{t_1}=i_1, \ldots, X_{t_{n-1}}=i_{n-1}) = \Pr(X_{t_n}=j \mid X_{t_{n-1}}=i_{n-1})
@@ -473,7 +478,7 @@ $$
 p_{ij}(s,t) = p_{ij}(0,t-s)
 $$  
 
-In this course, it is always assumed that the chain is homogeneous.  
+In this course, it is always assumed that the chain is homogeneous, thus we always denote $p_{ij}(t) = p_{ij}(0,t)$.   
 
 **Theorem** The family is a **stochastic semigroup** if:
 
@@ -525,11 +530,11 @@ $$
 
 where $\mathbf{P}_t$ is differentiable at $t=0$.  
 
-Hence we have the estimates for transition probabilities
+Informally, we have $g_{ij}=q_{ij}=p'_{ij}(0)$, so when the time interval $\delta$ is small enough, we have the estimates for transition probabilities:  
 
 $$
 p_{ij}(\delta) \approx g_{ij} \delta = q_{ij} \delta \\
-p_{ii}(\delta) \approx 1 + g_{ii} \delta = -\sum_{j \in E} q_{ij} \delta
+p_{ii}(\delta) \approx 1 + g_{ii} \delta = 1-\sum_{j \in E} q_{ij} \delta
 $$
 
 ## Forward and backward equations
@@ -554,7 +559,7 @@ using matrix exponential.
 
 ## Irreducibility and stationarity
 
-The chain is **irreducible** if for all $i,j \in E$ there exists $t>0$ such that $p_{ij}(t)>0$.
+The chain is **irreducible** if for all $i,j \in E$, there exists $t>0$ such that $p_{ij}(t)>0$.
 
 **Theorem (No periodicity in continuous)**   
 If $p_{ij}(t)>0$ for some $t>0$, then $p_{ij}(t)>0$ for all $t>0$.  
@@ -731,6 +736,8 @@ p'_{ij}(t) &= -\lambda_i p_{ij}(t) + \lambda_{i} p_{i+1, j}(t)
 $$  
 
 ### Deriving the Forward & Backward Equations  
+
+Note here we are looking at the transition probabilities $p_{ij}(t)$, not the value of the process $N_t$.  
 
 We need to use the Chapman-Kolmogorov equations  
 
