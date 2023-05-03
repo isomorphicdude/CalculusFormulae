@@ -595,7 +595,7 @@ this condition is called **detailed balance**.
 **Theorem (Detailed balance implies positive recurrence)**    
 For an irreducible chain, if **there is a vector** $\pi$ such that the detailed balance equation holds for all $i,j$, then the chain is **time-reversible and positive recurrent** with stationary distribution $\pi$.   
 
-**Proof:** Note that the detailed balance conditions imply the chain has a stationary distribution, hence positive recurrent by previous theorems.
+**Proof:** Note that the detailed balance conditions imply the chain has a stationary distribution (summing w.r.t. $i$), hence positive recurrent by previous theorems.
 
 
 
