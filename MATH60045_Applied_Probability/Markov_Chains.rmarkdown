@@ -218,6 +218,9 @@ those expectations can be finite or infinite; for transient states, they must be
 
 For a recurrent state $j$, it is called **null recurrent** if $\mu_j=\infty$ and **positive recurrent** if $\mu_j<\infty$.  
 
+**Example:**  A symmetric random walk is null recurrent. (can be shown by Stirling's approximation on $\sum p_{ii}(n)$ and theorem on stationary distribution later)  
+
+
 **Theorem (unlikely to visit null recurrent state)**   
 
 A state $j$ is null recurrent, if and only if  
