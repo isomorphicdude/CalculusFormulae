@@ -786,8 +786,10 @@ $$
 with normalizing constant when the sum $\sum_{n=0}^\infty \mathbf{\pi}_n < \infty$
 
 $$
-\pi_0 = \dfrac{1}{\sum_{n=0}^\infty \mathbf{\pi}_n}
-$$
+\pi_0 = \dfrac{1}{\sum_{n=0}^\infty \dfrac{\lambda_0 \times \cdots \lambda_{n-1}}{\mu_1 \times \cdots \times \mu_n}}
+$$  
+
+where the first term is defined to be $1$.  
 
 ### Immigration  
 - Constant immigration(birth) rate $\lambda$
