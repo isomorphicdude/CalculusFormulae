@@ -692,7 +692,7 @@ o(\delta) & m>1
 \end{cases}
 $$
 
--   Conditional on $N_s$, the increment $N_t-N_s$ is independent of all arrivals prior to time $s$, where $t>s$.
+-   Conditional on $N_s$, the increment $N_t-N_s$ is independent of all arrivals prior to time $s$, where $t>s$. (this shows the birth process is a continuous time Markov chain)
 
 A birth process with constant intensity is a Poisson process. (Poisson process is a special case of birth process.)
 
