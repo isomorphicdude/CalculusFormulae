@@ -4,3 +4,5 @@ This repository contains notes for some of the courses I have taken/ am currentl
 
 Notes can be found in folders starting with `MATH` and a simple calculator using `Sage` can be found in the folder `Tools_For_TRA`.  
 
+The MATH60029 Notes have been moved to [this repo](https://github.com/isomorphicdude/Imperial-Functional-Analysis).
+
