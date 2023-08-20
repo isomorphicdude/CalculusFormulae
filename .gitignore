@@ -6,3 +6,6 @@
 *.Rhistory
 *.out
 MATH60029_Functional_Analysis/editing.pdf
+.vscode/settings.json
+*.DS_Store
+
