@@ -9,51 +9,50 @@ header-includes:
   \usepackage{amsmath}
   \usepackage{tabularx}
   \usepackage{array}
----   
+---
 
-## Dynamical and Equilibrium Equations  
+## Dynamical and Equilibrium Equations
 
-- **Dynamical equations** invovle the time derivative $\frac{\partial}{\partial t}$
+-   **Dynamical equations** involve the time derivative $\frac{\partial}{\partial t}$
 
-- Examples of dynamical equations include the heat equation, wave equation, and the Schrödinger equation  
+-   Examples of dynamical equations include the heat equation, wave equation, and the Schrödinger equation
 
-- (**Heat equation**)  
+-   (**Heat equation**)
 
 $$
 \frac{\partial u}{\partial t} = \alpha \frac{\partial^2 u}{\partial x^2}
 $$
 
-- (**Schrödinger equation**)  
+-   (**Schrödinger equation**)
 
 $$
 i \hbar \frac{\partial \psi}{\partial t} = -\frac{\hbar^2}{2m} \frac{\partial^2 \psi}{\partial x^2} + V \psi
-$$  
-where the $\hbar$ is the Planck constant, $m$ is the mass of the particle, and $V$ is the potential energy of the particle.  
+$$\
+where the $\hbar$ is the Planck constant, $m$ is the mass of the particle, and $V$ is the potential energy of the particle.
 
-- **Equilibrium equations** do not involve the time derivative $\frac{\partial}{\partial t}$
+-   **Equilibrium equations** do not involve the time derivative $\frac{\partial}{\partial t}$
 
-- Examples of equilibrium equations include the Poisson equation and the Laplace equation  
+-   Examples of equilibrium equations include the Poisson equation and the Laplace equation
 
-- (**Poisson equation**)  
+-   (**Poisson equation**)
 
 $$
 \nabla^2 \phi = f
 $$
 
-- When $f=0$, the Poisson equation becomes the Laplace equation
+-   When $f=0$, the Poisson equation becomes the Laplace equation
 
+## Linear and Nonlinear Equations
 
-## Linear and Nonlinear Equations  
+-   Linear equations are equations that are linear in the dependent variable and its derivatives
 
-- Linear equations are equations that are linear in the dependent variable and its derivatives  
+-   e.g. the equation $\frac{\partial u}{\partial t} = e^x \frac{\partial^2 u}{\partial x^2} + \cos(x-t) u$ is linear (despite the product term of independent variable with its derivative)
 
-- e.g. the equation $\frac{\partial u}{\partial t} = e^x \frac{\partial^2 u}{\partial x^2} + \cos(x-t) u$ is linear (despite the product term of independent variable with its derivative)  
-
-- The **Burger's equation** is an example of a nonlinear equation  
+-   The **Burger's equation** is an example of a *nonlinear* equation
 
 $$
 \frac{\partial u}{\partial t} + u \frac{\partial u}{\partial x} = \frac{\partial^2 u}{\partial x^2}
-$$  
+$$
 
 A **homogeneous linear differential equation** has the form:
 
@@ -61,12 +60,11 @@ $$
 \mathcal{L} u = 0
 $$
 
-where $\mathcal{L}$ is a linear differential operator. 
+where $\mathcal{L}$ is a linear differential operator.
 
-- Examples of $\mathcal{L}$ include: $\mathbf{div}, \mathbf{curl}, \nabla, \nabla^2, \frac{\partial}{\partial t}$.  
+-   Examples of $\mathcal{L}$ include: $\mathbf{div}, \mathbf{curl}, \nabla, \nabla^2, \frac{\partial}{\partial t}$.
 
+The **Superposition Principle** states that if $u_1$ and $u_2$ are solutions to $\mathcal{L} u = 0$, then $u = c_1 u_1 + c_2 u_2$ is also a solution to $\mathcal{L} u = 0$ for any constants $c_1$ and $c_2$..
 
-The **Superposition Principle** states that if $u_1$ and $u_2$ are solutions to $\mathcal{L} u = 0$, then $u = c_1 u_1 + c_2 u_2$ is also a solution to $\mathcal{L} u = 0$ for any constants $c_1$ and $c_2$..  
-
-- A consequence is that the solutions form a vector space.  
-- For nonhomogeneous linear differential equations, there is a similar result. 
+-   A consequence is that the solutions form a vector space.\
+-   For nonhomogeneous linear differential equations, there is a similar result.
